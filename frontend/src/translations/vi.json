@@ -1,0 +1,27 @@
+{
+  "home": {
+    "hello": "Chao trang chu"
+  },
+  "user": {
+    "users": "Nguoi dung"
+  },
+  "inventory": {
+    "inventories": "Ton kho"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Mật khẩu",
+    "rememberMe": "Ghi nhớ tôi",
+    "forgotPassword": "Quên mật khẩu?",
+    "signIn": "Đăng nhập",
+    "signingIn": "Đang đăng nhập...",
+    "noAccount": "Chưa có tài khoản?",
+    "signUp": "Đăng ký",
+    "invalidEmail": "Email không hợp lệ",
+    "required": "Mật khẩu tối thiểu 6 ký tự",
+    "serverError": "Đăng nhập thất bại. Vui lòng thử lại.",
+    "address": "Địa chỉ",
+    "alreadyAccount": "Đã có tài khoản?",
+    "signingUp": "Đang đăng ký..."
+  }
+}

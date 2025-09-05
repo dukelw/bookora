@@ -1,0 +1,27 @@
+{
+  "home": {
+    "hello": "Hello homepage"
+  },
+  "user": {
+    "users": "Users"
+  },
+  "inventory": {
+    "inventories": "Inventories"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forget the password?",
+    "signIn": "Log in",
+    "signingIn": "Login ...",
+    "noAccount": "No account?",
+    "signUp": "Register",
+    "invalidEmail": "Invalid email",
+    "required": "Minimum password 6 characters",
+    "serverError": "Login fails. Please try again.",
+    "address": "Address",
+    "alreadyAccount": "There is an account?",
+    "signingUp": "Register ..."
+  }
+}
