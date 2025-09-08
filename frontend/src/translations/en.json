@@ -7,7 +7,8 @@
   },
   "home": {
     "welcome": "Welcome to Bookora, your online bookstore",
-    "welcomeBack": "Welcome back"
+    "welcomeBack": "Welcome back",
+    "typeToSearch": "Enter key to search..."
   },
   "notFound": {
     "title": "Oops! Page not found",

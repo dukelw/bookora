@@ -1,7 +1,8 @@
 {
   "home": {
     "welcome": "Chào mừng đến Bookora, trang web bán sách của bạn",
-    "welcomeBack": "Chào mừng trở lại"
+    "welcomeBack": "Chào mừng trở lại",
+    "typeToSearch": "Nhập để tìm kiếm ..."
   },
   "user": {
     "users": "Nguoi dung"

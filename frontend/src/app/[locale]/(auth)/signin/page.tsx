@@ -22,6 +22,8 @@ import { toast } from "react-toastify";
 import { authService } from "@/services/authService"; // file authService của bạn
 import { useAuthStore } from "@/store/authStore";
 import { loginWithGithub, loginWithGoogle } from "@/lib/actions/auth";
+import { FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 export default function SignIn() {
   const t = useTranslations("auth");
@@ -63,22 +65,27 @@ export default function SignIn() {
           <div className="text-center">
             <h1 className="text-2xl font-bold">{t("signIn")}</h1>
           </div>
-          <Button
-            color="gray"
-            onClick={() => {
-              loginWithGoogle();
-            }}
-          >
-            Sign up with Google
-          </Button>
-          <Button
-            color="dark"
-            onClick={() => {
-              loginWithGithub();
-            }}
-          >
-            Sign up with GitHub
-          </Button>
+
+          <div className="flex flex-col gap-3 mt-4">
+            {/* Google */}
+            <Button
+              color="white"
+              outline
+              onClick={() => loginWithGoogle()}
+              className="flex shadow items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
+            >
+              <FcGoogle size={20} /> Sign in with Google
+            </Button>
+
+            {/* GitHub */}
+            <Button
+              color="dark"
+              onClick={() => loginWithGithub()}
+              className="flex items-center justify-center gap-2"
+            >
+              <FaGithub size={20} /> Sign in with GitHub
+            </Button>
+          </div>
 
           <form onSubmit={handleSubmit} className="mt-2 space-y-4">
             {/* Email */}

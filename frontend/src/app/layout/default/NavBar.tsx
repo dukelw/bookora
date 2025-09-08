@@ -18,6 +18,7 @@ import {
   FaPhone,
   FaMapMarkerAlt,
   FaHeart,
+  FaSearch,
 } from "react-icons/fa";
 import LanguageSwitcher from "../../components/header/LanguageSwitcher";
 import Image from "next/image";
@@ -26,6 +27,9 @@ import { usePathname } from "next/navigation";
 import { navItems } from "@/constants";
 import UserDropdown from "./UserDropdown";
 import { useTranslations } from "use-intl";
+import { useState } from "react";
+import SearchModal from "@/app/components/header/SearchModal";
+import MenuDrawer from "@/app/components/header/MenuDrawer";
 
 const AppNavbar = () => {
   const wishlistCount = 2;
@@ -37,62 +41,55 @@ const AppNavbar = () => {
   const segments = pathname.split("/").filter(Boolean);
   const locale = segments[0] || "en";
   const currentPath = "/" + (segments[1] ?? "");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
 
   return (
     <div className="w-full">
       {/* Top bar */}
-      <div className="bg-black text-white text-sm flex justify-between items-center px-4 py-1">
-        <div className="flex gap-4 items-center">
-          {/* Email */}
+      <div className="bg-black text-white text-sm flex flex-col sm:flex-row justify-between items-center px-4 py-1">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center">
           <a
-            href="mailto:setsail@qode.com"
+            href="mailto:..."
             className="flex items-center gap-1 hover:text-cyan transition-colors"
           >
-            <FaEnvelope className="text-cyan mr-2" />
-            bookora@gmail.com
+            <FaEnvelope className="text-cyan mr-2" /> bookora@gmail.com
           </a>
-
-          {/* Phone */}
           <a
-            href="tel:0324782904"
+            href="tel:..."
             className="flex items-center gap-1 hover:text-cyan transition-colors"
           >
-            <FaPhone className="text-cyan mr-2" />0 324 782 904
+            <FaPhone className="text-cyan mr-2" /> 0 324 782 904
           </a>
-
-          {/* Address */}
           <a
-            href="https://www.google.com/maps/place/Broadway+%26+Morris+St,+New+York"
+            href="..."
             target="_blank"
-            rel="noopener noreferrer"
             className="flex items-center gap-1 hover:text-cyan transition-colors"
           >
-            <FaMapMarkerAlt className="text-cyan mr-2" />
-            Broadway and Morris St, New York
+            <FaMapMarkerAlt className="text-cyan mr-2" /> Broadway and Morris
+            St, NY
           </a>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Social icons */}
+        <div className="flex items-center gap-4 mt-2 sm:mt-0">
           <div className="flex gap-3">
-            <Link href="https://twitter.com" target="_blank">
+            <Link href="...">
               <FaTwitter className="cursor-pointer hover:text-cyan transition-colors" />
             </Link>
-            <Link href="https://pinterest.com" target="_blank">
+            <Link href="...">
               <FaPinterest className="cursor-pointer hover:text-cyan transition-colors" />
             </Link>
-            <Link href="https://facebook.com" target="_blank">
+            <Link href="...">
               <FaFacebook className="cursor-pointer hover:text-cyan transition-colors" />
             </Link>
-            <Link href="https://instagram.com" target="_blank">
+            <Link href="...">
               <FaInstagram className="cursor-pointer hover:text-cyan transition-colors" />
             </Link>
           </div>
-
-          {/* Language dropdown */}
           <LanguageSwitcher />
-
-          {/* User dropdown */}
           <UserDropdown />
         </div>
       </div>
@@ -110,11 +107,13 @@ const AppNavbar = () => {
           />
         </NavbarBrand>
 
-        <div className="flex items-center">
+        {/* Search bar */}
+        <div className="hidden md:flex items-center ml-6">
           <SearchBar />
         </div>
+
         {/* Menu items */}
-        <NavbarCollapse>
+        <NavbarCollapse className="md:flex hidden">
           {navItems.map((item) => {
             const isActive =
               (item.path === "/" && currentPath === "/") ||
@@ -136,8 +135,16 @@ const AppNavbar = () => {
         </NavbarCollapse>
 
         {/* Right icons */}
-        <div className="flex items-center gap-6">
-          {/* Wishlist with badge */}
+        <div className="flex items-center gap-4">
+          {/* Search icon on mobile */}
+          <div
+            className="md:hidden relative cursor-pointer"
+            onClick={toggleSearch}
+          >
+            <FaSearch className="text-xl hover:text-cyan transition-colors" />
+          </div>
+
+          {/* Wishlist */}
           <div className="relative cursor-pointer">
             <FaHeart className="text-xl hover:text-cyan transition-colors" />
             {wishlistCount > 0 && (
@@ -147,8 +154,8 @@ const AppNavbar = () => {
             )}
           </div>
 
-          {/* Cart with badge */}
-          <div className="relative cursor-pointer mr-2">
+          {/* Cart */}
+          <div className="relative cursor-pointer">
             <FaShoppingCart className="text-xl hover:text-cyan transition-colors" />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
@@ -157,9 +164,23 @@ const AppNavbar = () => {
             )}
           </div>
 
-          <FaBars className="text-xl cursor-pointer hover:text-cyan transition-colors md:hidden" />
+          {/* Hamburger for drawer */}
+          <div className="md:hidden cursor-pointer" onClick={toggleDrawer}>
+            <FaBars className="text-xl hover:text-cyan transition-colors" />
+          </div>
         </div>
       </Navbar>
+
+      {/* Search modal */}
+      <SearchModal isOpen={isSearchOpen} onClose={toggleSearch} />
+
+      {/* Menu drawer */}
+      <MenuDrawer
+        isOpen={isDrawerOpen}
+        onClose={toggleDrawer}
+        navItems={navItems}
+        locale={locale}
+      />
     </div>
   );
 };
