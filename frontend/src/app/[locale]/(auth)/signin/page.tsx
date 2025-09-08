@@ -24,6 +24,7 @@ import { useAuthStore } from "@/store/authStore";
 import { loginWithGithub, loginWithGoogle } from "@/lib/actions/auth";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { FiHome } from "react-icons/fi";
 
 export default function SignIn() {
   const t = useTranslations("auth");
@@ -62,6 +63,11 @@ export default function SignIn() {
     <>
       <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md shadow-lg">
+          <div className="mb-4">
+            <Link href="/" className="flex items-center gap-1">
+              <FiHome size={14} /> {t("home")}
+            </Link>
+          </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold">{t("signIn")}</h1>
           </div>
@@ -74,7 +80,7 @@ export default function SignIn() {
               onClick={() => loginWithGoogle()}
               className="flex shadow items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
             >
-              <FcGoogle size={20} /> Sign in with Google
+              <FcGoogle size={20} /> {t("signInWithGoogle")}
             </Button>
 
             {/* GitHub */}
@@ -83,7 +89,7 @@ export default function SignIn() {
               onClick={() => loginWithGithub()}
               className="flex items-center justify-center gap-2"
             >
-              <FaGithub size={20} /> Sign in with GitHub
+              <FaGithub size={20} /> {t("signInWithGithub")}
             </Button>
           </div>
 
