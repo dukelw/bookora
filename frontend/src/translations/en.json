@@ -1,12 +1,19 @@
 {
-  "home": {
-    "hello": "Hello homepage"
-  },
   "user": {
     "users": "Users"
   },
   "inventory": {
     "inventories": "Inventories"
+  },
+  "home": {
+    "welcome": "Welcome to Bookora, your online bookstore",
+    "welcomeBack": "Welcome back"
+  },
+  "notFound": {
+    "title": "Oops! Page not found",
+    "description": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+    "backHome": "Back to Home",
+    "contactSupport": "Contact Support"
   },
   "auth": {
     "email": "Email",
@@ -23,5 +30,19 @@
     "address": "Address",
     "alreadyAccount": "There is an account?",
     "signingUp": "Register ..."
+  },
+  "navbar": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "profile": "Profile",
+    "orderHistory": "Order History",
+    "logout": "Logout",
+    "home": "Home",
+    "categories": "Categories",
+    "bestsellers": "Bestsellers",
+    "newarrivals": "New Arrivals",
+    "authors": "Authors",
+    "blogs": "Blogs",
+    "contact": "Contact"
   }
 }

@@ -1,12 +1,19 @@
 {
   "home": {
-    "hello": "Chao trang chu"
+    "welcome": "Chào mừng đến Bookora, trang web bán sách của bạn",
+    "welcomeBack": "Chào mừng trở lại"
   },
   "user": {
     "users": "Nguoi dung"
   },
   "inventory": {
     "inventories": "Ton kho"
+  },
+  "notFound": {
+    "title": "Rất tiếc! Trang không tìm thấy",
+    "description": "Trang bạn đang tìm kiếm có thể đã bị xóa, đã thay đổi tên của nó hoặc tạm thời không có sẵn.",
+    "backHome": "Trở về trang chủ",
+    "contactSupport": "Hỗ trợ liên hệ"
   },
   "auth": {
     "email": "Email",
@@ -23,5 +30,19 @@
     "address": "Địa chỉ",
     "alreadyAccount": "Đã có tài khoản?",
     "signingUp": "Đang đăng ký..."
+  },
+  "navbar": {
+    "signIn": "Đăng nhập",
+    "signUp": "Đăng ký",
+    "profile": "Hồ sơ",
+    "orderHistory": "Lịch sử đặt hàng",
+    "logout": "Đăng xuất",
+    "home": "Trang chủ",
+    "categories": "Danh mục",
+    "bestsellers": "Bán chạy",
+    "newarrivals": "Mới về",
+    "authors": "Tác giả",
+    "blogs": "Blog",
+    "contact": "Liên hệ"
   }
 }

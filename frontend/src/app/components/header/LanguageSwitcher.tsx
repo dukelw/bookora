@@ -4,6 +4,13 @@ import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { locales, type Locale } from "@/i18n/config";
 import { setUserLocale } from "@/actions/locale";
+import { Dropdown, DropdownItem } from "flowbite-react";
+import { FaGlobe } from "react-icons/fa";
+
+const localeLabels: Record<Locale, string> = {
+  en: "English",
+  vi: "Tiếng Việt",
+};
 
 export default function LanguageSwitcher() {
   const currentLocale = useLocale();
@@ -21,19 +28,29 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="flex gap-2 items-center">
+    <Dropdown
+      inline
+      arrowIcon={false}
+      label={
+        <span className="flex items-center gap-2 text-sm font-mediu hover:text-cyan transition-colors">
+          <FaGlobe />
+          {currentLocale.toUpperCase()}
+        </span>
+      }
+    >
       {locales.map((lang) => (
-        <button
+        <DropdownItem
           key={lang}
           onClick={() => handleChange(lang)}
-          disabled={lang === currentLocale}
-          className={`px-3 py-1 rounded ${
-            lang === currentLocale ? "bg-gray-300" : "bg-blue-600 text-white"
+          className={`${
+            lang === currentLocale
+              ? "font-bold text-cyan"
+              : "hover:text-cyan transition-colors"
           }`}
         >
-          {lang.toUpperCase()}
-        </button>
+          {localeLabels[lang as Locale]}
+        </DropdownItem>
       ))}
-    </div>
+    </Dropdown>
   );
 }

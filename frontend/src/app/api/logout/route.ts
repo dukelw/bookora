@@ -15,7 +15,7 @@ export async function POST() {
     maxAge: 0,
   });
 
-  response.cookies.set("refresh_token", "", {
+  response.cookies.set("refreshToken", "", {
     httpOnly: true,
     path: "/",
     maxAge: 0,

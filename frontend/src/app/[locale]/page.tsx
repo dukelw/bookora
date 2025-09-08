@@ -1,44 +1,37 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/authStore";
-import { Button } from "flowbite-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "use-intl";
 
 export default function HomePage() {
-  const { user, setUser, setTokens } = useAuthStore();
-  const router = useRouter();
-  console.log("User", user);
-
-  const handleLogout = async () => {
-    await authService.logout();
-    setUser(null);
-    setTokens(null);
-    router.push("/signin");
-  };
+  const { user } = useAuthStore();
+  const t = useTranslations("home");
 
   return (
-    <div className="p-6 space-y-10">
-      {user ? (
-        <>
-          <h1>{user.email}</h1>
-          <h1>{user.address}</h1>
-          <Image src={user.avatar} width={40} height={40} alt="User" />
-          <Button onClick={handleLogout}>Logout</Button>
-        </>
-      ) : (
-        <div className="flex mx-auto items-center justify-center">
-          <Button>
-            <Link href={"/signin"}>Signin</Link>
-          </Button>
-          <Button>
-            <Link href={"/signup"}>Signup</Link>
-          </Button>
-        </div>
-      )}
+    <div className="p-6 flex flex-col items-center justify-center min-h-[70vh]">
+      <div className="bg-cyan-500 text-white rounded-xl shadow-lg p-10 space-y-6 w-full max-w-xl">
+        {user ? (
+          <div className="space-y-4 text-center">
+            <h1 className="text-2xl font-bold">
+              {t("welcomeBack")}, {user.email}
+            </h1>
+            {user.avatar && (
+              <Image
+                src={user.avatar}
+                width={100}
+                height={100}
+                alt="User"
+                className="rounded-full mx-auto border-4 border-white"
+              />
+            )}
+          </div>
+        ) : (
+          <div className="space-y-4 text-center">
+            <h1 className="text-2xl font-bold">{t("welcome")}</h1>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
