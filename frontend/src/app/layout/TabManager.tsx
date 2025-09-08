@@ -5,7 +5,7 @@ import TabBar from "./TabBar";
 import HomeTab from "../components/tabs/HomeTab";
 import UsersTab from "../components/tabs/UserTab";
 import InventoryTab from "../components/tabs/InventoryTab";
-import Navbar from "./NavBar";
+import Navbar from "./default/NavBar";
 
 const TabComponents: Record<string, React.ReactNode> = {
   home: <HomeTab />,
