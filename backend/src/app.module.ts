@@ -4,6 +4,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './modules/upload/cloudinary/cloudinary.module';
 import { MongoDBModule } from './modules/databases/mongodb/mongodb.module';
 import { UserModule } from './modules/user/user.module';
+import { SliderModule } from './modules/slider/slider.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { UserModule } from './modules/user/user.module';
     MongoDBModule,
     UserModule,
     AuthModule,
+    SliderModule,
     CloudinaryModule,
   ],
 })

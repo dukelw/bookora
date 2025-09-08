@@ -22,6 +22,8 @@ import { authService } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { loginWithGithub, loginWithGoogle } from "@/lib/actions/auth";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 
 export default function SignUp() {
   const t = useTranslations("auth"); // cần key: signup, email, password, address, signUp, alreadyAccount, signIn, required, signingUp, serverError
@@ -61,11 +63,6 @@ export default function SignUp() {
     }
   }
 
-  function handleOAuth(provider: "google" | "github") {
-    // TODO: gọi API OAuth tương ứng
-    alert(`Sign up with ${provider}`);
-  }
-
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md shadow-lg">
@@ -79,23 +76,24 @@ export default function SignUp() {
           </Alert>
         )}
 
-        {/* OAuth buttons */}
-        <div className="flex flex-col gap-2 mt-4">
+        <div className="flex flex-col gap-3 mt-4">
+          {/* Google */}
           <Button
-            color="gray"
-            onClick={() => {
-              loginWithGoogle();
-            }}
+            color="white"
+            outline
+            onClick={() => loginWithGoogle()}
+            className="flex shadow items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
           >
-            Sign up with Google
+            <FcGoogle size={20} /> Sign in with Google
           </Button>
+
+          {/* GitHub */}
           <Button
             color="dark"
-            onClick={() => {
-              loginWithGithub();
-            }}
+            onClick={() => loginWithGithub()}
+            className="flex items-center justify-center gap-2"
           >
-            Sign up with GitHub
+            <FaGithub size={20} /> Sign in with GitHub
           </Button>
         </div>
 
