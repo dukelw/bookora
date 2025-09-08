@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 import { useTranslations } from "use-intl";
+import SliderCarousel from "../components/home/Slider";
 
 export default function HomePage() {
   const { user } = useAuthStore();
@@ -10,7 +11,8 @@ export default function HomePage() {
 
   return (
     <div className="p-6 flex flex-col items-center justify-center min-h-[70vh]">
-      <div className="bg-cyan-500 text-white rounded-xl shadow-lg p-10 space-y-6 w-full max-w-xl">
+      <SliderCarousel />
+      <div className="mt-6 bg-cyan-500 text-white rounded-xl shadow-lg p-10 space-y-6 w-full max-w-xl">
         {user ? (
           <div className="space-y-4 text-center">
             <h1 className="text-2xl font-bold">
