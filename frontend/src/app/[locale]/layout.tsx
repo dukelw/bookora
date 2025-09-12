@@ -1,4 +1,5 @@
 import AppNavbar from "../layout/default/NavBar";
+import Footer from "../layout/default/Footer";
 
 export default async function RootLayout({
   children,
@@ -9,6 +10,7 @@ export default async function RootLayout({
     <div>
       <AppNavbar />
       {children}
+      <Footer />
     </div>
   );
 }

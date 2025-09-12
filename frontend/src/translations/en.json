@@ -30,7 +30,9 @@
     "serverError": "Login fails. Please try again.",
     "address": "Address",
     "alreadyAccount": "There is an account?",
-    "signingUp": "Register ..."
+    "signingUp": "Register ...",
+    "forgotPasswordDesc": "Please enter your email address to search for your account.",
+    "sendResetLink": "Send"
   },
   "navbar": {
     "signIn": "Sign In",
@@ -45,5 +47,12 @@
     "authors": "Authors",
     "blogs": "Blogs",
     "contact": "Contact"
+  },
+  "footer": {
+    "slogan": "“Connecting knowledge, shaping the future.”",
+    "recentPosts": "Latest from our Blog",
+    "newsletterTitle": "Subscribe to our Newsletter",
+    "newsletterDesc": "Get book recommendations, news, and exclusive deals delivered straight to your inbox.",
+    "instagramTitle": "From Our Instagram"
   }
 }
