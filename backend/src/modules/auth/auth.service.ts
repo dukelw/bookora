@@ -8,6 +8,9 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/JwtPayload';
 import { randomBytes } from 'crypto';
 import { UserService } from '../user/user.service';
+import * as nodemailer from 'nodemailer';
+import { ConfigService } from '@nestjs/config';
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/forgot-reset.dto'; // optional
 
 @Injectable()
 export class AuthService {
@@ -15,6 +18,7 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(email: string, password: string, address: string) {
@@ -108,6 +112,17 @@ export class AuthService {
     }
   }
 
+  // Token cho reset password
+  generateResetToken(email: string): string {
+    return this.jwtService.sign(
+      { email, purpose: 'reset-password' },
+      {
+        secret: this.configService.get('JWT_SECRET'),
+        expiresIn: '15m', // 15 phút là hợp lý
+      },
+    );
+  }
+
   async logout(userId: string, refreshToken: string) {
     const user = await this.userModel.findById(userId);
     if (!user) return false;
@@ -117,6 +132,146 @@ export class AuthService {
       user.usedRefreshTokens.push(refreshToken);
     }
 
+    await user.save();
+    return true;
+  }
+
+  private generateOtp(): string {
+    // 6-digit numeric OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    return otp;
+  }
+
+  private getTransporter() {
+    const host = this.configService.get('SMTP_HOST');
+    const port = parseInt(this.configService.get('SMTP_PORT') || '587', 10);
+    const user = this.configService.get('SMTP_USER');
+    const pass = this.configService.get('SMTP_PASS');
+
+    return nodemailer.createTransport({
+      host,
+      port,
+      secure: false,
+      auth: { user, pass },
+    });
+  }
+
+  async sendResetOtp(email: string) {
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      // Đừng reveal email không tồn tại → trả success để tránh lộ thông tin
+      return true;
+    }
+
+    const otp = this.generateOtp();
+    const expires = new Date(Date.now() + 1000 * 60 * 10); // 10 phút
+
+    user.otp = otp;
+    user.otpExpiresAt = expires;
+    user.otpAttempts = 0;
+
+    await user.save();
+
+    try {
+      const transporter = this.getTransporter();
+      await transporter.sendMail({
+        from: this.configService.get('SMTP_FROM') || 'no-reply@example.com',
+        to: email,
+        subject: 'OTP khôi phục mật khẩu',
+        text: `Mã OTP của bạn là ${otp}. Mã sẽ hết hạn sau 10 phút.`,
+        html: `<p>Mã OTP của bạn là <b>${otp}</b>. Mã sẽ hết hạn sau 10 phút.</p>`,
+      });
+      console.log('>>> Sending mail to', email);
+    } catch (err) {
+      console.error('Mail send error', err);
+    }
+    return true;
+  }
+
+  async verifyOtp(email: string, otp: string): Promise<boolean> {
+    const user = await this.userModel.findOne({ email });
+    if (!user) return false;
+
+    if (!user.otp || !user.otpExpiresAt) return false;
+    if (user.otpExpiresAt.getTime() < Date.now()) {
+      // expired: clear otp
+      user.otp = undefined;
+      user.otpExpiresAt = undefined;
+      await user.save();
+      return false;
+    }
+    user.otpAttempts = (user.otpAttempts || 0) + 1;
+    if (user.otpAttempts > 5) {
+      user.otp = undefined;
+      user.otpExpiresAt = undefined;
+      user.otpAttempts = 0;
+      await user.save();
+      return false;
+    }
+
+    const match = user.otp === otp;
+    if (match) {
+      user.otp = undefined;
+      user.otpExpiresAt = undefined;
+      user.otpAttempts = 0;
+      await user.save();
+      return true;
+    } else {
+      await user.save();
+      return false;
+    }
+  }
+
+  // async resetPasswordWithOtp(email: string, otp: string, newPassword: string): Promise<boolean> {
+  //   const user = await this.userModel.findOne({ email });
+  //   if (!user) return false;
+  //
+  //   const ok = await this.verifyOtp(email, otp);
+  //   if (!ok) return false;
+  //
+  //   const hash = await bcrypt.hash(newPassword, 10);
+  //   user.password = hash;
+  //
+  //   user.usedRefreshTokens = [];
+  //   await user.save();
+  //   return true;
+  // }
+
+  async resetPasswordWithToken(
+    resetPasswordToken: string,
+    newPassword: string,
+  ): Promise<boolean> {
+    try {
+      const payload = this.jwtService.verify(resetPasswordToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+
+      if (payload.purpose !== 'reset-password') return false;
+
+      const user = await this.userModel.findOne({ email: payload.email });
+      if (!user) return false;
+
+      const hash = await bcrypt.hash(newPassword, 10);
+      user.password = hash;
+      user.usedRefreshTokens = []; // optional: logout all sessions
+      await user.save();
+
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+    const user = await this.userModel.findById(userId);
+    if (!user) return false;
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) return false;
+
+    const hash = await bcrypt.hash(newPassword, 10);
+    user.password = hash;
+
+    user.usedRefreshTokens = [];
     await user.save();
     return true;
   }

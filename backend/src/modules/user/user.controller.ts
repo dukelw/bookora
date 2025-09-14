@@ -1,6 +1,7 @@
-import { Controller, Get, Patch, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Put, Body, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { UpdateUserDto } from '../auth/dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -13,8 +14,11 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('profile')
-  async updateProfile(@Req() req: any, @Body() body: any) {
-    return this.userService.updateProfile(req.user._id, body);
+  @Put('me')
+  async updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const userId = req.user._id; // lấy từ JWT payload
+    const user = await this.userService.updateUser(userId, updateUserDto);
+    if (!user) return { message: 'User not found' };
+    return { message: 'Profile updated successfully', user };
   }
 }
