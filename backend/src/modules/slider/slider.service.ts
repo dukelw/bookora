@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateSliderDto } from './dto/create-slider.dto';
@@ -7,6 +7,7 @@ import {
   SliderCollection,
   SliderCollectionDocument,
 } from 'src/schemas/slider-collection.schema';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 @Injectable()
 export class SliderService {
@@ -16,6 +17,7 @@ export class SliderService {
     private collectionModel: Model<SliderCollectionDocument>,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   async create(dto: CreateSliderDto) {
     const collection = await this.collectionModel.findById(dto.collection);
     if (!collection) throw new NotFoundException('Collection not found');
@@ -46,6 +48,7 @@ export class SliderService {
     return slider;
   }
 
+  @UseGuards(JwtAuthGuard)
   async remove(id: string) {
     const slider = await this.sliderModel.findById(id);
     if (!slider) throw new NotFoundException('Slider not found');
@@ -58,6 +61,7 @@ export class SliderService {
     return { deleted: true };
   }
 
+  @UseGuards(JwtAuthGuard)
   async setActive(id: string, active: boolean) {
     const slider = await this.sliderModel.findById(id);
     if (!slider) throw new NotFoundException('Slider not found');

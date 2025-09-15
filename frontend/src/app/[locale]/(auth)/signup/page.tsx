@@ -15,7 +15,6 @@ import {
 import {
   EnvelopeIcon,
   LockClosedIcon,
-  UserIcon,
   MapPinIcon,
 } from "@heroicons/react/24/outline";
 import { authService } from "@/services/authService";
@@ -24,9 +23,10 @@ import { toast } from "react-toastify";
 import { loginWithGithub, loginWithGoogle } from "@/lib/actions/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { FiHome } from "react-icons/fi";
 
 export default function SignUp() {
-  const t = useTranslations("auth"); // cần key: signup, email, password, address, signUp, alreadyAccount, signIn, required, signingUp, serverError
+  const t = useTranslations("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
@@ -49,12 +49,7 @@ export default function SignUp() {
     setSubmitting(true);
     try {
       const data = await authService.signUp(email, password, address);
-      console.log(data);
-
-      if (data) {
-        router.push("/signin");
-      } else {
-      }
+      if (data) router.push("/signin");
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || t("serverError"));
@@ -66,40 +61,44 @@ export default function SignUp() {
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md shadow-lg">
+        {/* Back Home */}
+        <div className="mb-4">
+          <Link href="/" className="flex items-center gap-1">
+            <FiHome size={14} /> {t("home")}
+          </Link>
+        </div>
+
+        {/* Title */}
         <div className="text-center">
           <h1 className="text-2xl font-bold">{t("signUp")}</h1>
         </div>
 
-        {errorMsg && (
-          <Alert color="failure" className="mt-2">
-            {errorMsg}
-          </Alert>
-        )}
+        {/* Error */}
+        {errorMsg && <Alert color="failure">{errorMsg}</Alert>}
 
+        {/* Social buttons */}
         <div className="flex flex-col gap-3 mt-4">
-          {/* Google */}
           <Button
             color="white"
             outline
             onClick={() => loginWithGoogle()}
             className="flex shadow items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
           >
-            <FcGoogle size={20} /> Sign in with Google
+            <FcGoogle size={20} /> {t("signInWithGoogle")}
           </Button>
-
-          {/* GitHub */}
           <Button
             color="dark"
             onClick={() => loginWithGithub()}
             className="flex items-center justify-center gap-2"
           >
-            <FaGithub size={20} /> Sign in with GitHub
+            <FaGithub size={20} /> {t("signInWithGithub")}
           </Button>
         </div>
 
+        {/* OR divider */}
         <div className="flex items-center my-4">
           <hr className="flex-grow border-gray-300" />
-          <span className="px-2 text-gray-500">or</span>
+          <span className="px-2 text-gray-500">{t("or")}</span>
           <hr className="flex-grow border-gray-300" />
         </div>
 
@@ -111,7 +110,7 @@ export default function SignUp() {
             <TextInput
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("emailPlaceholder")}
               icon={EnvelopeIcon}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -129,7 +128,7 @@ export default function SignUp() {
             <TextInput
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder={t("passwordPlaceholder")}
               icon={LockClosedIcon}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -149,7 +148,7 @@ export default function SignUp() {
             <TextInput
               id="address"
               type="text"
-              placeholder="Your address"
+              placeholder={t("addressPlaceholder")}
               icon={MapPinIcon}
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -170,7 +169,7 @@ export default function SignUp() {
               checked={agree}
               onChange={(e) => setAgree(e.target.checked)}
             />
-            <Label htmlFor="agree">I agree to terms</Label>
+            <Label htmlFor="agree">{t("agreeTerms")}</Label>
           </div>
 
           {/* Submit */}

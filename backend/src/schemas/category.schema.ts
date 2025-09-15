@@ -1,24 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-
-export type CategoryDocument = Category & Document;
+import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Category {
+export class Category extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Category', default: null })
-  parent: Types.ObjectId;
-
-  @Prop({ required: true, unique: true })
-  slug: string;
+  @Prop()
+  description: string;
 
   @Prop()
-  icon: string;
-
-  @Prop()
-  order: number;
+  ageRange: string; // ví dụ "6-12", "18+"
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
