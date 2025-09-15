@@ -137,7 +137,6 @@ export class AuthService {
   }
 
   private generateOtp(): string {
-    // 6-digit numeric OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     return otp;
   }
@@ -159,7 +158,6 @@ export class AuthService {
   async sendResetOtp(email: string) {
     const user = await this.userModel.findOne({ email });
     if (!user) {
-      // Đừng reveal email không tồn tại → trả success để tránh lộ thông tin
       return true;
     }
 
@@ -222,21 +220,6 @@ export class AuthService {
     }
   }
 
-  // async resetPasswordWithOtp(email: string, otp: string, newPassword: string): Promise<boolean> {
-  //   const user = await this.userModel.findOne({ email });
-  //   if (!user) return false;
-  //
-  //   const ok = await this.verifyOtp(email, otp);
-  //   if (!ok) return false;
-  //
-  //   const hash = await bcrypt.hash(newPassword, 10);
-  //   user.password = hash;
-  //
-  //   user.usedRefreshTokens = [];
-  //   await user.save();
-  //   return true;
-  // }
-
   async resetPasswordWithToken(
     resetPasswordToken: string,
     newPassword: string,
@@ -253,7 +236,7 @@ export class AuthService {
 
       const hash = await bcrypt.hash(newPassword, 10);
       user.password = hash;
-      user.usedRefreshTokens = []; // optional: logout all sessions
+      user.usedRefreshTokens = []; // logout all sessions
       await user.save();
 
       return true;

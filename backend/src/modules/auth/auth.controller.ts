@@ -116,12 +116,6 @@ export class AuthController {
     return { message: 'OTP sent' };
   }
 
-  // @Post('verify-otp')
-  // @ApiOperation({ summary: 'Xác nhận OTP (tùy chọn)' })
-  // async verifyOtp(@Body() body: VerifyOtpDto) {
-  //   const ok = await this.authService.verifyOtp(body.email, body.otp);
-  //   return { valid: ok };
-  // }
   @Post('verify-otp')
   @ApiOperation({ summary: 'Xác nhận OTP và nhận token tạm để đổi mật khẩu' })
   async verifyOtp(@Body() body: VerifyOtpDto) {
@@ -132,17 +126,6 @@ export class AuthController {
     return { valid: true, resetPasswordToken };
   }
 
-  // @Post('reset-password')
-  // @ApiOperation({ summary: 'Reset mật khẩu bằng OTP' })
-  // async resetPassword(@Body() body: ResetPasswordDto) {
-  //   const ok = await this.authService.resetPasswordWithOtp(
-  //     body.email,
-  //     body.otp,
-  //     body.newPassword,
-  //   );
-  //   if (!ok) return { error: 'Invalid OTP or expired' };
-  //   return { message: 'Password reset successfully' };
-  // }
   @Post('reset-password')
   @ApiOperation({ summary: 'Reset mật khẩu bằng token tạm' })
   async resetPassword(@Body() body: ResetPasswordDto) {
