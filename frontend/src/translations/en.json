@@ -53,5 +53,14 @@
     "authors": "Authors",
     "blogs": "Blogs",
     "contact": "Contact"
+  },
+  "sidebar": {
+    "statistic": "Statistic",
+    "productManagement": "Product management",
+    "userManagement": "User management",
+    "orderManagement": "Order management",
+    "categoryManagement": "Category",
+    "book": "Product",
+    "discountManagement": "Discount management"
   }
 }

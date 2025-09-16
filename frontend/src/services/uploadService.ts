@@ -14,4 +14,19 @@ export const uploadService = {
 
     return res.data.url;
   },
+
+  async uploadMultipleFile(files: File[]): Promise<string[]> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files", file));
+
+    const res: AxiosResponse = await api.post(
+      `${API_URL}/upload-multiple`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
+    return res.data.map((img: { url: string }) => img.url);
+  },
 };

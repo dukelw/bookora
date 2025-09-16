@@ -98,6 +98,7 @@ export class CreateBookDto {
     description: 'Danh sách ảnh (ít nhất 5 ảnh)',
   })
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => BookImageDto)
   images: BookImageDto[];
@@ -107,6 +108,7 @@ export class CreateBookDto {
     description: 'Danh sách biến thể sách',
   })
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => BookVariantDto)
   variants: BookVariantDto[];

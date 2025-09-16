@@ -6,10 +6,17 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -26,8 +33,16 @@ export class CategoryController {
   @Get()
   @ApiOperation({ summary: 'Lấy danh sách tất cả danh mục' })
   @ApiResponse({ status: 200, description: 'Danh sách danh mục trả về' })
-  findAll() {
-    return this.categoryService.findAll();
+  @ApiQuery({
+    name: 'keySearch',
+    required: false,
+    type: String,
+    description:
+      'Từ khóa tìm kiếm theo tên danh mục (không phân biệt hoa thường)',
+    example: 'Truyện tranh',
+  })
+  async findAll(@Query('keySearch') keySearch?: string) {
+    return this.categoryService.findAll(keySearch);
   }
 
   @Get(':id')

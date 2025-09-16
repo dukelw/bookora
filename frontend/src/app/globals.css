@@ -143,5 +143,6 @@ body {
 a:hover,
 button:hover,
 .nav-hover:hover {
-  color: var(--color-cyan-shadow) !important;
+  cursor: pointer;
+  /* color: var(--color-cyan-shadow) !important; */
 }

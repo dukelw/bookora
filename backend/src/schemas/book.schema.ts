@@ -47,6 +47,9 @@ export class Book extends Document {
   description: string;
 
   @Prop()
+  price: number; // VND
+
+  @Prop()
   releaseYear: number;
 
   // Mảng ảnh
