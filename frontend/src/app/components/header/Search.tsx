@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { TextInput } from "flowbite-react";
+import { useTranslations } from "use-intl";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const t = useTranslations("home");
 
   // debounce 500ms
   useEffect(() => {
@@ -30,7 +32,7 @@ const SearchBar = () => {
     <div className="flex gap-2 items-center w-full min-w-[280px]">
       <TextInput
         type="text"
-        placeholder="Type your search..."
+        placeholder={t("typeToSearch")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full"

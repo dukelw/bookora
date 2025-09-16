@@ -7,7 +7,22 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
+
+  console.log(process.env.CLIENT_URL);
+  const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:3000'];
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      // cho phép request từ client không có origin (Postman, server)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // nếu cần gửi cookie
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
