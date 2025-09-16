@@ -1,13 +1,23 @@
-import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { SliderCollectionService } from './slider-collection.service';
 import { CreateSliderCollectionDto } from './dto/create-slider-collection.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 @ApiTags('Slider Collection')
 @Controller('slider-collections')
 export class SliderCollectionController {
   constructor(private readonly service: SliderCollectionService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Tạo slider collection mới' })
   @ApiResponse({ status: 201, description: 'Collection created' })
@@ -34,12 +44,14 @@ export class SliderCollectionController {
     return this.service.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Xóa collection theo ID' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/active')
   @ApiOperation({ summary: 'Kích hoạt hoặc hủy kích hoạt collection' })
   setActive(@Param('id') id: string, @Body('active') active: boolean) {

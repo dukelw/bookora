@@ -17,6 +17,12 @@
     "contactSupport": "Contact Support"
   },
   "auth": {
+    "or": "Or",
+    "addressPlaceholder": "366 New York City",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "******",
+    "agreeTerms": "I agree with the policy",
+    "home": "Home",
     "email": "Email",
     "password": "Password",
     "rememberMe": "Remember me",
@@ -33,6 +39,8 @@
     "signingUp": "Register ...",
     "forgotPasswordDesc": "Please enter your email address to search for your account.",
     "sendResetLink": "Send"
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithGithub": "Sign in with Github"
   },
   "navbar": {
     "signIn": "Sign In",

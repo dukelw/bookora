@@ -16,6 +16,11 @@
   --color-white: #ffffff;
   --color-black: #000000;
   --color-red: #e11515;
+  --color-yellow: #f2a515;
+  --color-green: #00684a;
+  --color-dark-green: #023430;
+  --color-grey: #637279;
+  --color-blue: #006cfa;
 }
 
 @theme inline {
@@ -57,6 +62,46 @@
 
   .text-red {
     color: var(--color-red);
+  }
+
+  .text-yellow {
+    color: var(--color-yellow);
+  }
+
+  .text-green {
+    color: var(--color-green);
+  }
+
+  .text-dark-green {
+    color: var(--color-dark-green);
+  }
+
+  .text-grey {
+    color: var(--color-grey);
+  }
+
+  .text-blue {
+    color: var(--color-blue);
+  }
+
+  .bg-yellow {
+    background-color: var(--color-yellow);
+  }
+
+  .bg-green {
+    background-color: var(--color-green);
+  }
+
+  .bg-dark-green {
+    background-color: var(--color-dark-green);
+  }
+
+  .bg-grey {
+    background-color: var(--color-grey);
+  }
+
+  .bg-blue {
+    background-color: var(--color-blue);
   }
 
   input[type="text"] {

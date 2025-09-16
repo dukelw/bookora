@@ -17,6 +17,14 @@
     "contactSupport": "Hỗ trợ liên hệ"
   },
   "auth": {
+    "or": "Hoặc",
+    "addressPlaceholder": "366 Hồ Chí Minh City",
+    "emailPlaceholder": "toi@email.com",
+    "passwordPlaceholder": "******",
+    "agreeTerms": "Tôi đồng ý với điều khoản",
+    "home": "Trang chủ",
+    "signInWithGoogle": "Đăng nhập với Google",
+    "signInWithGithub": "Đăng nhập với Github",
     "email": "Email",
     "password": "Mật khẩu",
     "rememberMe": "Ghi nhớ tôi",
