@@ -5,7 +5,23 @@
     "typeToSearch": "Nhập để tìm kiếm ..."
   },
   "user": {
-    "users": "Nguoi dung"
+    "users": "Người dùng",
+    "info":"Thông tin cá nhân",
+    "changePassword": "Đổi mật khẩu",
+    "passwordChanged": "Đổi mật khẩu thành công!",
+    "serverError": "Lỗi máy chủ.",
+    "noImage": "Không có hình ảnh",
+    "email": "Email",
+    "name": "Tên",
+    "phone": "SĐT",
+    "address": "Địa chỉ",
+    "shippingAddress": "Địa chỉ nhận hàng",
+    "update": "Cập nhật",
+    "save": "Lưu",
+    "oldPassword": "Mật khẩu cũ",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Nhập lại mật khẩu mới",
+    "note": "Mật khẩu mới phải có ít nhất 6 ký tự, 1 chữ in hoa và 1 ký tự đặc biệt"
   },
   "inventory": {
     "inventories": "Ton kho"
@@ -40,8 +56,23 @@
     "alreadyAccount": "Đã có tài khoản?",
     "signingUp": "Đang đăng ký...",
     "forgotPasswordDesc": "Vui lòng nhập địa chỉ email của bạn để tìm kiếm tài khoản của bạn.",
-    "sendResetLink": "Gửi"
-  },
+    "sendResetLink": "Gửi",
+    "sending": "Đang gửi...",
+    "resetLinkSent": "Liên kết đặt lại đã được gửi tới email của bạn.",
+    "verifyOtp": "Xác thực OTP",
+    "otpDesc": "Nhập mã OTP được gửi tới email của bạn.",
+    "otp": "OTP",
+    "verify": "Xác nhận",
+    "otpValid": "OTP hợp lệ.",
+    "otpInvalid": "OTP không hợp lệ.",
+    "resetPassword": "Đặt lại mật khẩu",
+    "resetPasswordDesc": "Nhập mật khẩu mới của bạn.",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Nhập lại mật khẩu mới",
+    "note": "Mật khẩu mới phải có ít nhất 6 ký tự, 1 chữ in hoa và 1 ký tự đặc biệt",
+    "reset": "Đặt lại",
+    "passwordResetSuccess": "Mật khẩu của bạn đã được đặt lại thành công."
+    },
   "navbar": {
     "signIn": "Đăng nhập",
     "signUp": "Đăng ký",

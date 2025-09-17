@@ -2,7 +2,7 @@
 import { api } from "../lib/axios";
 import axios, { AxiosResponse } from "axios";
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users`;
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/user`;
 
 export const userService = {
   async getAll() {
@@ -29,15 +29,25 @@ export const userService = {
     }
   },
 
-  async updateProfile(data: {
+  async getProfile() {
+    try {
+      const response: AxiosResponse = await api.get(`${API_URL}/profile`);
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch profile");
+    }
+  },
+
+async updateProfile(data: {
     name?: string;
     phone?: string;
     avatar?: string;
-    gender?: string;
+    address?: string;
+    shippingAddress?: string;
   }) {
     try {
       const response: AxiosResponse = await api.put(
-        `${API_URL}/update-profile`,
+        `${API_URL}/me`,
         data
       );
       return response.data;
@@ -51,7 +61,8 @@ export const userService = {
     name?: string;
     phone?: string;
     avatar?: string;
-    gender?: string;
+    address?: string;
+    shippingAddress?: string;
   }) {
     try {
       const response: AxiosResponse = await api.put(
@@ -75,16 +86,5 @@ export const userService = {
       throw new Error("Failed to toggle user");
     }
   },
-
-  async changePassword(data: { currentPassword: string; newPassword: string }) {
-    try {
-      const response: AxiosResponse = await api.put(
-        `${API_URL}/change-password`,
-        data
-      );
-      return response.data;
-    } catch (error) {
-      throw new Error("Failed to change password");
-    }
-  },
+  
 };
