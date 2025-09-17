@@ -1,3 +1,6 @@
+
+import AppFooter from "@/app/layout/default/Footer";
+import AppNavbar from "@/app/layout/default/NavBar";
 export default async function RootLayout({
   children,
 }: {
@@ -5,7 +8,9 @@ export default async function RootLayout({
 }) {
   return (
     <div>
+      <AppNavbar />
       {children}
+      <AppFooter />
     </div>
   );
 }

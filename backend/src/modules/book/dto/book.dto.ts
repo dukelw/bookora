@@ -75,11 +75,12 @@ export class CreateBookDto {
   publisher?: string;
 
   @ApiProperty({
-    example: '66f17e9fa41b8b4c06cf9d21',
-    description: 'ID danh mục (Category)',
+    example: ['66f17e9fa41b8b4c06cf9d21', '66f17e9fa41b8b4c06cf9d22'],
+    description: 'Danh sách ID danh mục (Category)',
   })
-  @IsString()
-  category: string;
+  @IsArray()
+  @IsString({ each: true })
+  category: string[];
 
   @ApiPropertyOptional({
     example: 'Cuốn tiểu thuyết kỳ ảo nổi tiếng toàn thế giới',
@@ -98,6 +99,7 @@ export class CreateBookDto {
     description: 'Danh sách ảnh (ít nhất 5 ảnh)',
   })
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => BookImageDto)
   images: BookImageDto[];
@@ -107,6 +109,7 @@ export class CreateBookDto {
     description: 'Danh sách biến thể sách',
   })
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => BookVariantDto)
   variants: BookVariantDto[];

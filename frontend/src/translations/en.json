@@ -93,5 +93,15 @@
     "newsletterTitle": "Subscribe to our Newsletter",
     "newsletterDesc": "Get book recommendations, news, and exclusive deals delivered straight to your inbox.",
     "instagramTitle": "From Our Instagram"
+  },
+  "sidebar": {
+    "statistic": "Statistic",
+    "inventory": "Inventory",
+    "productManagement": "Product management",
+    "userManagement": "User management",
+    "orderManagement": "Order management",
+    "categoryManagement": "Category",
+    "book": "Product",
+    "discountManagement": "Discount management"
   }
 }

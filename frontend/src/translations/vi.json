@@ -93,5 +93,15 @@
     "newsletterTitle": "Đăng ký nhận bản tin",
     "newsletterDesc": "Nhận gợi ý sách, tin tức và ưu đãi độc quyền gửi thẳng vào hộp thư của bạn.",
     "instagramTitle": "Từ Instagram của chúng tôi"
+  },
+  "sidebar": {
+    "inventory": "Tồn kho",
+    "statistic": "Thống kê",
+    "productManagement": "Quản lý sản phẩm",
+    "userManagement": "Quản lý người dùng",
+    "orderManagement": "Quản lý đơn hàng",
+    "categoryManagement": "Danh mục",
+    "book": "Sản phẩm",
+    "discountManagement": "Quản lý giảm giá"
   }
 }
