@@ -109,9 +109,7 @@ export const authService = {
   // Gửi yêu cầu gửi mã OTP qua email
   async requestResetPassword(email: string) {
     try {
-      const res = await axios.post(`${API_URL}/request-reset-password`, {
-        email,
-      });
+      const res = await axios.post(`${API_URL}/forgot`, { email });
       return res.data;
     } catch (error: any) {
       throw new Error(
@@ -120,13 +118,22 @@ export const authService = {
     }
   },
 
-  // Xác thực mã OTP và đổi mật khẩu mới
-  async verifyResetPassword(email: string, token: string, newPassword: string) {
+  // Xác thực mã OTP và lấy resetPasswordToken
+  async verifyOtp(email: string, otp: string) {
     try {
-      const res = await axios.post(`${API_URL}/verify-reset-password`, {
-        email,
-        token,
-        password: newPassword,
+      const res = await axios.post(`${API_URL}/verify-otp`, { email, otp });
+      return res.data;
+    } catch (error: any) {
+      throw new Error(
+        error?.response?.data?.message || "Failed to verify OTP"
+      );
+    }
+  },
+
+  // Đặt lại mật khẩu bằng resetPasswordToken
+  async resetPassword(resetPasswordToken: string, newPassword: string) {
+    try {
+      const res = await axios.post(`${API_URL}/reset-password`, {resetPasswordToken, newPassword,
       });
       return res.data;
     } catch (error: any) {
@@ -135,4 +142,18 @@ export const authService = {
       );
     }
   },
+
+// Đổi mật khẩu khi đang đăng nhập
+async changePassword(oldPassword: string, newPassword: string) {
+  try {
+    const res = await api.post(`/auth/change-password`, {
+      oldPassword,
+      newPassword,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to change password");
+  }
+},
+
 };
