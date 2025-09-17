@@ -53,5 +53,15 @@
     "authors": "Tác giả",
     "blogs": "Blog",
     "contact": "Liên hệ"
+  },
+  "sidebar": {
+    "inventory": "Tồn kho",
+    "statistic": "Thống kê",
+    "productManagement": "Quản lý sản phẩm",
+    "userManagement": "Quản lý người dùng",
+    "orderManagement": "Quản lý đơn hàng",
+    "categoryManagement": "Danh mục",
+    "book": "Sản phẩm",
+    "discountManagement": "Quản lý giảm giá"
   }
 }

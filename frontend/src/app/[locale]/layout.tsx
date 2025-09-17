@@ -3,5 +3,5 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div>{children}</div>;
+  return <div suppressHydrationWarning={true}>{children}</div>;
 }
