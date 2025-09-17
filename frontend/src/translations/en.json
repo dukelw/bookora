@@ -38,7 +38,7 @@
     "alreadyAccount": "There is an account?",
     "signingUp": "Register ...",
     "forgotPasswordDesc": "Please enter your email address to search for your account.",
-    "sendResetLink": "Send"
+    "sendResetLink": "Send",
     "signInWithGoogle": "Sign in with Google",
     "signInWithGithub": "Sign in with Github"
   },
