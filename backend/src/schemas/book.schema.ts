@@ -16,11 +16,14 @@ export class BookImage {
 
 @Schema()
 export class BookVariant {
-  @Prop({ required: true, enum: RarityType })
-  rarity: RarityType;
+  @Prop({ required: true })
+  rarity: string;
 
   @Prop({ required: true })
   price: number;
+
+  @Prop()
+  image: string;
 
   @Prop({ required: true, default: 0 })
   stock: number;

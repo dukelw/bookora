@@ -32,15 +32,10 @@ export interface Book {
   __v?: number;
 }
 
-export enum RarityType {
-  COMMON = "common",
-  RARE = "rare",
-  LIMITED = "limited",
-}
-
 export interface BookVariant {
-  _id: string,
-  rarity: RarityType;
+  _id: string;
+  rarity: string;
+  image: string;
   price: number;
   stock: number;
   isbn: string;

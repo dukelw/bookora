@@ -30,6 +30,7 @@ export default function BookManagementPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedBook, setSelectedBook] = useState<Partial<Book> | null>(null);
+  const [isVariant, setIsVariant] = useState<boolean>(false);
 
   const fetchData = async () => {
     const res = await bookService.getBooks();
@@ -185,6 +186,18 @@ export default function BookManagementPage() {
                     </Button>
                     <Button
                       onClick={() => {
+                        setIsVariant(true);
+                        setSelectedBook(book);
+                        setModalOpen(true);
+                      }}
+                      size="xs"
+                      color="purple"
+                    >
+                      Biến thể
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsVariant(false);
                         setSelectedBook(book);
                         setModalOpen(true);
                       }}
@@ -209,6 +222,7 @@ export default function BookManagementPage() {
           </TableBody>
         </Table>
         <ActionModal
+          variantMode={isVariant}
           key={selectedBook?._id ?? "create"}
           isOpen={modalOpen}
           defaultValues={selectedBook ?? undefined}

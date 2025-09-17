@@ -22,22 +22,27 @@ import { uploadService } from "@/services/uploadService";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import MultiSelect from "@/components/MultiSelect";
+import { formatCurrency } from "@/utils/format";
 
 interface ActionModalProps {
+  variantMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   defaultValues?: Partial<BookInterface>;
 }
 
 export default function BookCreationForm({
+  variantMode = false,
   isOpen,
   onClose,
   defaultValues,
 }: ActionModalProps) {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(variantMode ? 2 : 1);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [createdBookId, setCreatedBookId] = useState("");
+  const [createdBookId, setCreatedBookId] = useState(
+    defaultValues ? defaultValues._id : ""
+  );
   const [selected, setSelected] = useState<typeof categories>([]);
 
   // Step 1 - Book form data
@@ -58,32 +63,12 @@ export default function BookCreationForm({
     price: "",
     stock: "",
     isbn: "",
+    image: "", // link ảnh sau khi upload
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   const [previewUrls, setPreviewUrls] = useState([]);
-
-  // useEffect(() => {
-  //   if (defaultValues) {
-  //     setBookData({
-  //       title: defaultValues.title || "",
-  //       author: defaultValues.author || "",
-  //       publisher: defaultValues.publisher || "",
-  //       category: Array.isArray(defaultValues.category)
-  //         ? defaultValues.category.map((c) => c._id)
-  //         : defaultValues.category
-  //         ? [defaultValues.category._id]
-  //         : [],
-  //       description: defaultValues.description || "",
-  //       releaseYear: defaultValues.releaseYear || new Date().getFullYear(),
-  //       images: (defaultValues.images as any) || [],
-  //     });
-  //     setVariants(defaultValues.variants);
-
-  //     // Set preview URLs nếu defaultValues.images có sẵn
-  //     const urls = defaultValues.images?.map((img) => img.url) || [];
-  //     setPreviewUrls(urls as any);
-  //   }
-  // }, [defaultValues]);
 
   useEffect(() => {
     if (defaultValues && categories.length > 0) {
@@ -173,7 +158,6 @@ export default function BookCreationForm({
       } else {
         const result = await bookService.updateBook(defaultValues._id, payload);
         if (result) {
-          setCreatedBookId(result._id);
           setStep(2);
         } else {
           toast.error("Cập nhật sách thất bại");
@@ -187,7 +171,7 @@ export default function BookCreationForm({
     }
   };
 
-  const addVariantToList = () => {
+  const addVariantToList = async () => {
     if (
       !currentVariant.rarity ||
       !currentVariant.price ||
@@ -197,15 +181,35 @@ export default function BookCreationForm({
       return;
     }
 
+    let imageUrl = "";
+    console.log(imageFile);
+    if (imageFile) {
+      try {
+        const res = await uploadService.uploadFile(imageFile);
+        imageUrl = res;
+      } catch (error) {
+        toast.error("Upload ảnh thất bại");
+        return;
+      }
+    }
+
     const newVariant = {
       ...currentVariant,
       price: parseFloat(currentVariant.price),
       stock: parseInt(currentVariant.stock),
       id: Date.now(),
+      image: imageUrl,
     };
 
     setVariants((prev) => [...prev, newVariant]);
-    setCurrentVariant({ rarity: "", price: "", stock: "", isbn: "" });
+    setCurrentVariant({
+      rarity: "",
+      price: "",
+      stock: "",
+      isbn: "",
+      image: "",
+    });
+    setImageFile(null);
   };
 
   const removeVariant = (id: number) => {
@@ -220,13 +224,6 @@ export default function BookCreationForm({
   const handleVariantsSubmit = async () => {
     if (variants.length === 0) {
       toast.warn("Phải tạo ít nhất 1 biến thể");
-      return;
-    }
-
-    // Kiểm tra có ít nhất 1 variant là common
-    const hasCommon = variants.some((v) => v.rarity === "common");
-    if (!hasCommon) {
-      toast.warn("Phải có ít nhất 1 biến thể có rarity là 'common'");
       return;
     }
 
@@ -498,9 +495,10 @@ export default function BookCreationForm({
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Độ hiếm *
+                    Phiên bản *
                   </label>
-                  <select
+                  <input
+                    type="text"
                     value={currentVariant.rarity}
                     onChange={(e) =>
                       setCurrentVariant((prev) => ({
@@ -509,12 +507,8 @@ export default function BookCreationForm({
                       }))
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">-- Chọn --</option>
-                    <option value="common">Common</option>
-                    <option value="rare">Rare</option>
-                    <option value="limited">Limited</option>
-                  </select>
+                    placeholder="Nhập phiên bản"
+                  />
                 </div>
 
                 <div>
@@ -532,6 +526,21 @@ export default function BookCreationForm({
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="0"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ảnh biến thể
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setImageFile(file);
+                    }}
+                    className="w-full text-sm text-gray-600"
                   />
                 </div>
 
@@ -598,12 +607,22 @@ export default function BookCreationForm({
                     className="flex justify-between items-center p-3 bg-white border rounded-lg"
                   >
                     <div className="flex-1">
+                      {variant.image && (
+                        <Image
+                          width={40}
+                          height={40}
+                          src={variant.image}
+                          alt="variant"
+                          className="inline-block w-12 h-12 object-cover rounded mr-4"
+                        />
+                      )}
+
                       <span className="font-medium capitalize">
                         {variant.rarity}
                       </span>
                       <span className="mx-2">•</span>
                       <span className="text-green-600 font-medium">
-                        ${variant.price}
+                        {formatCurrency(variant.price)}
                       </span>
                       <span className="mx-2">•</span>
                       <span>Số lượng: {variant.stock}</span>

@@ -55,6 +55,7 @@
     "contact": "Liên hệ"
   },
   "sidebar": {
+    "inventory": "Tồn kho",
     "statistic": "Thống kê",
     "productManagement": "Quản lý sản phẩm",
     "userManagement": "Quản lý người dùng",

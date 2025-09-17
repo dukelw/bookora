@@ -8,7 +8,7 @@ export const bookVariantService = {
   async addVariant(
     bookId: string,
     data: {
-      rarity: "common" | "rare" | "limited";
+      rarity: string;
       price: number;
       stock: number;
       isbn?: string;

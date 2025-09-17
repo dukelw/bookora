@@ -1,11 +1,10 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { RarityType } from 'src/constant';
 
 export class CreateBookVariantDto {
-  @ApiProperty({ enum: ['common', 'rare', 'limited'], example: 'rare' })
-  @IsEnum(RarityType)
-  rarity: RarityType;
+  @ApiProperty({ example: 'rare' })
+  @IsString()
+  rarity: string;
 
   @ApiProperty({ example: 150000 })
   @IsNumber()
@@ -14,6 +13,11 @@ export class CreateBookVariantDto {
   @ApiProperty({ example: 10 })
   @IsNumber()
   stock: number;
+
+  @ApiProperty({ example: 'https://abc.png', required: false })
+  @IsOptional()
+  @IsString()
+  image?: string;
 
   @ApiProperty({ example: '978-604-123-456-7', required: false })
   @IsOptional()

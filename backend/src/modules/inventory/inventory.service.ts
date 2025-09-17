@@ -45,20 +45,24 @@ export class InventoryService {
   }
 
   async findAll(): Promise<Inventory[]> {
-    return this.inventoryModel
-      .find()
-      .populate('book')
-      .populate('variant')
-      .populate('purchaseInvoice')
-      .exec();
+    return (
+      this.inventoryModel
+        .find()
+        .populate('book')
+        // .populate('variant')
+        .populate('purchaseInvoice')
+        .exec()
+    );
   }
 
   async findOne(id: string) {
-    return this.inventoryModel
-      .findById(id)
-      .populate('book')
-      .populate('variant')
-      .populate('purchaseInvoice')
-      .exec();
+    return (
+      this.inventoryModel
+        .findById(id)
+        .populate('book')
+        // .populate('variant')
+        .populate('purchaseInvoice')
+        .exec()
+    );
   }
 }

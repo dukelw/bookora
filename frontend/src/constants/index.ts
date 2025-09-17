@@ -27,9 +27,13 @@ export const DASHBOARD_SIDEBAR_ITEMS: SidebarItem[] = [
     subItems: [
       { label: "categoryManagement", path: "/dashboard/category" },
       { label: "book", path: "/dashboard/book" },
+      { label: "inventory", path: "/dashboard/inventory" },
     ],
   },
   { label: "userManagement", path: "/dashboard/user" },
   { label: "orderManagement", path: "/dashboard/order" },
   { label: "discountManagement", path: "/dashboard/discount" },
 ];
+
+export const FALLBACK_BOOK =
+  "https://res.cloudinary.com/dukelewis-workspace/image/upload/v1758102566/uploads/mhlq9eezqw8fqrtyovco.png";

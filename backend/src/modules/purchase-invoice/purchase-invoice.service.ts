@@ -59,10 +59,10 @@ export class PurchaseInvoiceService {
       if (!variant)
         throw new NotFoundException(`Variant not found: ${item.variant}`);
 
-      variant.stock = (variant.stock || 0) + item.quantity;
+      variant.stock = (Number(variant.stock) || 0) + Number(item.quantity);
       await book.save();
 
-      const totalPrice = item.quantity * item.unitPrice;
+      const totalPrice = Number(item.quantity) * Number(item.unitPrice);
       totalAmount += totalPrice;
 
       const inventory = new this.inventoryModel({
