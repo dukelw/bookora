@@ -38,7 +38,9 @@
     "serverError": "Đăng nhập thất bại. Vui lòng thử lại.",
     "address": "Địa chỉ",
     "alreadyAccount": "Đã có tài khoản?",
-    "signingUp": "Đang đăng ký..."
+    "signingUp": "Đang đăng ký...",
+    "forgotPasswordDesc": "Vui lòng nhập địa chỉ email của bạn để tìm kiếm tài khoản của bạn.",
+    "sendResetLink": "Gửi"
   },
   "navbar": {
     "signIn": "Đăng nhập",
@@ -53,6 +55,13 @@
     "authors": "Tác giả",
     "blogs": "Blog",
     "contact": "Liên hệ"
+  },
+  "footer": {
+    "slogan": "“Gắn kết tri thức, chạm tới tương lai.”",
+    "recentPosts": "Bài viết mới nhất",
+    "newsletterTitle": "Đăng ký nhận bản tin",
+    "newsletterDesc": "Nhận gợi ý sách, tin tức và ưu đãi độc quyền gửi thẳng vào hộp thư của bạn.",
+    "instagramTitle": "Từ Instagram của chúng tôi"
   },
   "sidebar": {
     "inventory": "Tồn kho",
