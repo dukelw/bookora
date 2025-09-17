@@ -25,6 +25,15 @@ export class User {
 
   @Prop({ type: [String], default: [] })
   usedRefreshTokens: string[];
+
+  @Prop()
+  otp?: string;
+
+  @Prop()
+  otpExpiresAt?: Date;
+
+  @Prop({ type: Number, default: 0 })
+  otpAttempts?: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

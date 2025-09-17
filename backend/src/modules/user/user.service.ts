@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
+import { UpdateUserDto } from '../auth/dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -19,10 +20,20 @@ export class UserService {
     return user;
   }
 
-  async updateProfile(id: string, data: Partial<User>): Promise<User | null> {
-    return this.userModel
-      .findByIdAndUpdate(id, data, { new: true })
-      .select('-password')
-      .exec();
+  // async updateProfile(id: string, data: Partial<User>): Promise<User | null> {
+  //   return this.userModel
+  //     .findByIdAndUpdate(id, data, { new: true })
+  //     .select('-password')
+  //     .exec();
+  // }
+
+  async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User | null> {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
+      { $set: updateUserDto },
+      { new: true }, // trả về bản ghi sau khi update
+    ).select('-password -usedRefreshTokens -otp -otpExpiresAt -otpAttempts'); // không trả về field nhạy cảm
+
+    return updatedUser;
   }
 }

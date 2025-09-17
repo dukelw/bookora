@@ -2,7 +2,7 @@ import {
   Controller,
   Post,
   Body,
-  UseGuards,
+  // UseGuards,
   Request,
   Res,
 } from '@nestjs/common';
@@ -16,6 +16,15 @@ import {
   LogoutDto,
   OAuthDto,
 } from './dto/auth.dto';
+
+import {
+  ForgotPasswordDto,
+  VerifyOtpDto,
+  ResetPasswordDto,
+  ChangePasswordDto,
+} from './dto/forgot-reset.dto';
+import { UseGuards, Req } from '@nestjs/common';
+
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 @ApiTags('Auth')
@@ -97,5 +106,44 @@ export class AuthController {
     const result = await this.authService.logout(authId, body.refreshToken);
     if (!result) return { error: 'Logout failed' };
     return { message: 'Logged out successfully' };
+  }
+
+  @Post('forgot')
+  @ApiOperation({ summary: 'Yêu cầu OTP khôi phục mật khẩu' })
+  async forgotPassword(@Body() body: ForgotPasswordDto) {
+    const result = await this.authService.sendResetOtp(body.email);
+    if (!result) return { message: 'If the email exists, an OTP has been sent' };
+    return { message: 'OTP sent' };
+  }
+
+  @Post('verify-otp')
+  @ApiOperation({ summary: 'Xác nhận OTP và nhận token tạm để đổi mật khẩu' })
+  async verifyOtp(@Body() body: VerifyOtpDto) {
+    const ok = await this.authService.verifyOtp(body.email, body.otp);
+    if (!ok) return { valid: false };
+
+    const resetPasswordToken = this.authService.generateResetToken(body.email);
+    return { valid: true, resetPasswordToken };
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Reset mật khẩu bằng token tạm' })
+  async resetPassword(@Body() body: ResetPasswordDto) {
+    const ok = await this.authService.resetPasswordWithToken(
+      body.resetPasswordToken,
+      body.newPassword,
+    );
+    if (!ok) return { error: 'Token không hợp lệ hoặc đã hết hạn' };
+    return { message: 'Password reset successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  @ApiOperation({ summary: 'Đổi mật khẩu (user đang đăng nhập)' })
+  async changePassword(@Req() req: any, @Body() body: ChangePasswordDto) {
+    const userId = req.user._id;
+    const ok = await this.authService.changePassword(userId, body.oldPassword, body.newPassword);
+    if (!ok) return { error: 'Old password incorrect' };
+    return { message: 'Password changed successfully' };
   }
 }
