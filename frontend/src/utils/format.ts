@@ -9,3 +9,7 @@ export function formatDuration(seconds: number) {
 
   return `${hh}${mm}:${ss}`;
 }
+
+export function formatCurrency(value: number) {
+  return new Intl.NumberFormat("vi-VN").format(value) + " đ";
+}

@@ -15,8 +15,11 @@ export class CategoryService {
     return category.save();
   }
 
-  async findAll(): Promise<Category[]> {
-    return this.categoryModel.find().exec();
+  async findAll(keySearch?: string): Promise<Category[]> {
+    const filter = keySearch
+      ? { name: { $regex: keySearch, $options: 'i' } }
+      : {};
+    return this.categoryModel.find(filter).exec();
   }
 
   async findOne(id: string): Promise<Category> {
@@ -33,8 +36,12 @@ export class CategoryService {
     return updated;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<any> {
     const result = await this.categoryModel.findByIdAndDelete(id).exec();
     if (!result) throw new NotFoundException('Category not found');
+    return {
+      message: 'Delete successfully',
+      statusCode: 200,
+    };
   }
 }

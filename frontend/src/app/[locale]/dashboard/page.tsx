@@ -1,9 +1,7 @@
-import TabManager from "../../layout/TabManager";
-
 export default function DashboardPage() {
   return (
     <div className="flex-column">
-      <TabManager />;
+      <h1>Hello</h1>
     </div>
   );
 }

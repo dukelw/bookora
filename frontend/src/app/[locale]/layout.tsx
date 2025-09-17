@@ -7,8 +7,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <AppNavbar />
+    <div suppressHydrationWarning={true}>
       {children}
       <Footer />
     </div>
