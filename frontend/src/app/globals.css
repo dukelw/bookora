@@ -104,9 +104,9 @@
     background-color: var(--color-blue);
   }
 
-  input[type="text"] {
+  /* input[type="text"] {
     @apply border-cyan focus:border-cyan focus:ring-cyan;
-  }
+  } */
 
   .navbar-link-active {
     @apply text-cyan font-semibold;
@@ -143,5 +143,6 @@ body {
 a:hover,
 button:hover,
 .nav-hover:hover {
-  color: var(--color-cyan-shadow) !important;
+  cursor: pointer;
+  /* color: var(--color-cyan-shadow) !important; */
 }

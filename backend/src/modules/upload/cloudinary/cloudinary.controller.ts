@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -30,7 +31,7 @@ export class CloudinaryController {
     },
   })
   @UseInterceptors(FileInterceptor('file'))
-  async uploadImage(@UploadedFiles() file: Express.Multer.File) {
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
     const uploaded = await this.cloudinaryService.uploadImage(file);
     return {
       url: uploaded.secure_url,

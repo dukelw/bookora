@@ -1,7 +1,18 @@
 "use client";
 
-import { Footer, FooterTitle, FooterCopyright, FooterLinkGroup } from "flowbite-react";
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaUser, FaPaperPlane } from "react-icons/fa";
+import {
+  Footer,
+  FooterTitle,
+  FooterCopyright,
+  FooterLinkGroup,
+} from "flowbite-react";
+import {
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaUser,
+  FaPaperPlane,
+} from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -9,28 +20,34 @@ import { useTranslations } from "next-intl";
 const AppFooter = () => {
   const t = useTranslations("footer");
   return (
-    <Footer className="bg-[#111] text-gray-300">
+    <Footer className="bg-[#111] text-gray-300 rounded-none">
       <div className="w-full">
         <div className="grid w-full grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-2 md:grid-cols-4 max-w-7xl mx-auto">
           <div>
             {/* Logo & Slogan */}
             <div className="flex flex-col items-center text-center mb-4">
               <Image
-                src="/images/logo/variant-rectangle-logo.jpeg"
+                src="/images/logo/rectangle-logo.png"
                 alt="Bookora Logo"
                 width={240}
                 height={60}
-                className="h-[60px] w-auto mb-3"
+                className="h-[100px] w-auto mb-3"
               />
               <p className="text-sm">{t("slogan")}</p>
             </div>
 
             {/* Contact Info */}
             <div className="flex flex-col gap-2 text-sm">
-              <a href="mailto:bookora@gmail.com" className="flex items-center gap-2 hover:text-cyan transition-colors">
+              <a
+                href="mailto:bookora@gmail.com"
+                className="flex items-center gap-2 hover:text-cyan transition-colors"
+              >
                 <FaEnvelope className="text-cyan" /> bookora@gmail.com
               </a>
-              <a href="tel:0324782904" className="flex items-center gap-2 hover:text-cyan transition-colors">
+              <a
+                href="tel:0324782904"
+                className="flex items-center gap-2 hover:text-cyan transition-colors"
+              >
                 <FaPhone className="text-cyan" /> +84 324 782 904
               </a>
               <a
@@ -60,16 +77,13 @@ const AppFooter = () => {
             </FooterLinkGroup>
           </div>
 
-
           {/* Newsletter */}
           <div>
             <FooterTitle
               title={t("newsletterTitle")}
               className="text-white mb-4"
             />
-            <p className="text-sm text-gray-400 mb-4">
-              {t("newsletterDesc")}
-            </p>
+            <p className="text-sm text-gray-400 mb-4">{t("newsletterDesc")}</p>
             <form className="space-y-3">
               {/* Name input */}
               <div className="relative">
@@ -103,12 +117,15 @@ const AppFooter = () => {
 
           {/* Instagram */}
           <div>
-            <FooterTitle title={t("instagramTitle")} className="text-white mb-4" />
+            <FooterTitle
+              title={t("instagramTitle")}
+              className="text-white mb-4"
+            />
             <p className="text-sm text-gray-400 mb-4">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </p>
-            <div className="grid grid-cols-3 gap-2">
-              {Array.from({ length: 6 }).map((_, i) => (
+            <div className="grid grid-cols-5 gap-2">
+              {Array.from({ length: 10 }).map((_, i) => (
                 <Image
                   key={i}
                   src={`/images/insta/insta-${i + 1}.jpg`}
@@ -124,7 +141,10 @@ const AppFooter = () => {
 
         {/* Bottom bar */}
         <div className="text-center text-gray-500 text-sm border-t border-gray-800 py-4">
-          <FooterCopyright by="Bookora Bookstore. All rights reserved." year={2025} />
+          <FooterCopyright
+            by="Bookora Bookstore. All rights reserved."
+            year={2025}
+          />
         </div>
       </div>
     </Footer>
