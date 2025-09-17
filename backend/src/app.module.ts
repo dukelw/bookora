@@ -9,6 +9,8 @@ import { CategoryModule } from './modules/category/category.module';
 import { BookModule } from './modules/book/book.module';
 import { BookVariantModule } from './modules/book-variant/book-variant.module';
 import { BookImageModule } from './modules/book-image/book-image.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
+import { PurchaseInvoiceModule } from './modules/purchase-invoice/purchase-invoice.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { BookImageModule } from './modules/book-image/book-image.module';
     BookModule,
     BookVariantModule,
     BookImageModule,
+    InventoryModule,
+    PurchaseInvoiceModule,
   ],
 })
 export class AppModule {}

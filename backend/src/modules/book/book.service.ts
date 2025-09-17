@@ -1,12 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Book } from 'src/schemas/book.schema';
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
 
 @Injectable()
 export class BookService {
-  constructor(@InjectModel(Book.name) private bookModel: Model<Book>) {}
+  constructor(
+    @InjectModel(Book.name) private readonly bookModel: Model<Book>,
+  ) {}
 
   async create(dto: CreateBookDto): Promise<Book> {
     const book = new this.bookModel(dto);
@@ -31,8 +37,13 @@ export class BookService {
     return updated;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Invalid ID');
+    }
+
     const result = await this.bookModel.findByIdAndDelete(id).exec();
     if (!result) throw new NotFoundException('Book not found');
+    return result;
   }
 }

@@ -16,11 +16,14 @@ export class BookImage {
 
 @Schema()
 export class BookVariant {
-  @Prop({ required: true, enum: RarityType })
-  rarity: RarityType;
+  @Prop({ required: true })
+  rarity: string;
 
   @Prop({ required: true })
   price: number;
+
+  @Prop()
+  image: string;
 
   @Prop({ required: true, default: 0 })
   stock: number;
@@ -40,11 +43,14 @@ export class Book extends Document {
   @Prop()
   publisher: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
-  category: Types.ObjectId;
+  @Prop({ type: [Types.ObjectId], ref: 'Category', required: true })
+  category: Types.ObjectId[];
 
   @Prop()
   description: string;
+
+  @Prop()
+  price: number; // VND
 
   @Prop()
   releaseYear: number;

@@ -15,7 +15,8 @@ export class BookVariantService {
     const book = await this.bookModel.findById(bookId);
     if (!book) throw new NotFoundException('Book not found');
 
-    book.variants.push(dto as any);
+    const exists = book.variants.some((v: any) => v.rarity === dto.rarity);
+    if (!exists) book.variants.push(dto as any);
     await book.save();
     return book;
   }
