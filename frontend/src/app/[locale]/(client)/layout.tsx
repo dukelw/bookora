@@ -1,5 +1,3 @@
-import AppNavbar from "@/app/layout/default/NavBar";
-
 export default async function RootLayout({
   children,
 }: {
@@ -7,7 +5,6 @@ export default async function RootLayout({
 }) {
   return (
     <div>
-      <AppNavbar />
       {children}
     </div>
   );

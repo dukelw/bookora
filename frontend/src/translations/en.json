@@ -1,6 +1,22 @@
 {
   "user": {
-    "users": "Users"
+    "users": "User",
+    "info": "Personal Information",
+    "changePassword": "Change Password",
+    "passwordChanged": "Password changed successfully!",
+    "serverError": "Server Error",
+    "noImage": "No Image",
+    "email": "Email",
+    "name": "Name",
+    "phone": "Phone Number",
+    "address": "Address",
+    "shippingAddress": "Shipping Address",
+    "update": "Update",
+    "save": "Save",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "note": "New password must have at least 6 characters, 1 uppercase letter and 1 special character"
   },
   "inventory": {
     "inventories": "Inventories"
@@ -38,9 +54,24 @@
     "alreadyAccount": "There is an account?",
     "signingUp": "Register ...",
     "forgotPasswordDesc": "Please enter your email address to search for your account.",
-    "sendResetLink": "Send"
+    "sendResetLink": "Send",
     "signInWithGoogle": "Sign in with Google",
-    "signInWithGithub": "Sign in with Github"
+    "signInWithGithub": "Sign in with Github",
+    "sending": "Sending...",
+    "resetLinkSent": "Reset link sent to your email.",
+    "verifyOtp": "Verify OTP",
+    "otpDesc": "Enter the OTP sent to your email.",
+    "otp": "OTP",
+    "verify": "Verify",
+    "otpValid": "OTP is valid.",
+    "otpInvalid": "OTP is invalid.",
+    "resetPassword": "Reset Password",
+    "resetPasswordDesc": "Enter your new password.",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "note": "New password must have at least 6 characters, 1 uppercase letter and 1 special character",
+    "reset": "Reset",
+    "passwordResetSuccess": "Your password has been reset successfully."
   },
   "navbar": {
     "signIn": "Sign In",
