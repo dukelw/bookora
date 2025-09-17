@@ -40,8 +40,8 @@ export class Book extends Document {
   @Prop()
   publisher: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
-  category: Types.ObjectId;
+  @Prop({ type: [Types.ObjectId], ref: 'Category', required: true })
+  category: Types.ObjectId[];
 
   @Prop()
   description: string;

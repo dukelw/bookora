@@ -9,7 +9,7 @@ export const bookService = {
     title: string;
     author?: string;
     publisher?: string;
-    category: string;
+    category: string[];
     description?: string;
     releaseYear?: number;
     images?: { url: string; isMain?: boolean; order?: number }[];
@@ -42,7 +42,7 @@ export const bookService = {
       title?: string;
       author?: string;
       publisher?: string;
-      category?: string;
+      category?: string[];
       description?: string;
       releaseYear?: number;
       images?: { url: string; isMain?: boolean; order?: number }[];

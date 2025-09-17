@@ -20,7 +20,7 @@ export interface Book {
   title: string;
   author: string;
   publisher: string;
-  category: Category | Category[]; 
+  category: Category[];
   price: number;
   releaseYear: number;
   stock: number;
@@ -30,4 +30,18 @@ export interface Book {
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
+}
+
+export enum RarityType {
+  COMMON = "common",
+  RARE = "rare",
+  LIMITED = "limited",
+}
+
+export interface BookVariant {
+  _id: string,
+  rarity: RarityType;
+  price: number;
+  stock: number;
+  isbn: string;
 }

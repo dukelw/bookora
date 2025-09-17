@@ -17,10 +17,8 @@ import {
 } from "flowbite-react";
 import { FaSearch, FaPlus } from "react-icons/fa";
 import { formatCurrency } from "@/utils/format";
-import Modal from "./components/Modal";
 import ActionModal from "./components/ActionModal";
 import { bookService } from "@/services/bookService";
-import Image from "next/image";
 import { Book } from "@/interfaces/Book";
 import { toast } from "react-toastify";
 
@@ -192,6 +190,7 @@ export default function BookManagementPage() {
                       }}
                       size="xs"
                       color="yellow"
+                      className="text-black"
                     >
                       Sửa
                     </Button>

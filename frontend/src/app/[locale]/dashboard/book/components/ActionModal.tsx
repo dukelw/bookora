@@ -11,11 +11,17 @@ import {
 import { categoryService } from "@/services/categoryService";
 import { bookVariantService } from "@/services/bookVariantService";
 import { bookService } from "@/services/bookService";
-import { BookImage, Book as BookInterface } from "@/interfaces/Book";
+import {
+  BookImage,
+  Book as BookInterface,
+  BookVariant,
+  Category,
+} from "@/interfaces/Book";
 import { Button, Modal, ModalHeader } from "flowbite-react";
 import { uploadService } from "@/services/uploadService";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import MultiSelect from "@/components/MultiSelect";
 
 interface ActionModalProps {
   isOpen: boolean;
@@ -30,17 +36,16 @@ export default function BookCreationForm({
 }: ActionModalProps) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [createdBookId, setCreatedBookId] = useState("");
-
-  console.log(defaultValues);
+  const [selected, setSelected] = useState<typeof categories>([]);
 
   // Step 1 - Book form data
-  const [bookData, setBookData] = useState<BookInterface[]>({
+  const [bookData, setBookData] = useState({
     title: "",
     author: "",
     publisher: "",
-    category: "",
+    category: [],
     description: "",
     releaseYear: new Date().getFullYear(),
     images: [],
@@ -57,23 +62,57 @@ export default function BookCreationForm({
 
   const [previewUrls, setPreviewUrls] = useState([]);
 
+  // useEffect(() => {
+  //   if (defaultValues) {
+  //     setBookData({
+  //       title: defaultValues.title || "",
+  //       author: defaultValues.author || "",
+  //       publisher: defaultValues.publisher || "",
+  //       category: Array.isArray(defaultValues.category)
+  //         ? defaultValues.category.map((c) => c._id)
+  //         : defaultValues.category
+  //         ? [defaultValues.category._id]
+  //         : [],
+  //       description: defaultValues.description || "",
+  //       releaseYear: defaultValues.releaseYear || new Date().getFullYear(),
+  //       images: (defaultValues.images as any) || [],
+  //     });
+  //     setVariants(defaultValues.variants);
+
+  //     // Set preview URLs nếu defaultValues.images có sẵn
+  //     const urls = defaultValues.images?.map((img) => img.url) || [];
+  //     setPreviewUrls(urls as any);
+  //   }
+  // }, [defaultValues]);
+
   useEffect(() => {
-    if (defaultValues) {
+    if (defaultValues && categories.length > 0) {
+      // Map category ids hoặc objects sang object đầy đủ từ categories
+      const selectedCategories = (defaultValues.category || [])
+        .map((c) => {
+          const id = typeof c === "string" ? c : c._id;
+          return categories.find((cat) => cat._id === id);
+        })
+        .filter(Boolean) as Category[];
+
+      setSelected(selectedCategories); // set cho MultiSelect
       setBookData({
         title: defaultValues.title || "",
         author: defaultValues.author || "",
         publisher: defaultValues.publisher || "",
-        category: defaultValues.category?._id || "",
+        category: selectedCategories, // giữ object đầy đủ, có thể map sang _id khi submit
         description: defaultValues.description || "",
         releaseYear: defaultValues.releaseYear || new Date().getFullYear(),
-        images: defaultValues.images || [],
+        images: (defaultValues.images as any) || [],
       });
+
+      setVariants(defaultValues.variants || []);
 
       // Set preview URLs nếu defaultValues.images có sẵn
       const urls = defaultValues.images?.map((img) => img.url) || [];
-      setPreviewUrls(urls);
+      setPreviewUrls(urls as any);
     }
-  }, [defaultValues]);
+  }, [defaultValues, categories]);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -93,7 +132,7 @@ export default function BookCreationForm({
 
     // Create preview URLs
     const urls = files.map((file) => URL.createObjectURL(file));
-    setPreviewUrls(urls);
+    setPreviewUrls(urls as any);
   };
 
   const removeImage = (index: number) => {
@@ -110,13 +149,16 @@ export default function BookCreationForm({
       return;
     }
 
+    const categoryIds = selected.map((c) => c._id);
+    const payload = { ...bookData, category: categoryIds };
+
     setLoading(true);
     try {
       const imageResult = await uploadService.uploadMultipleFile(
-        bookData.images ?? []
+        payload.images ?? []
       );
       if (imageResult?.length) {
-        bookData.images = imageResult.map((image, index) => ({
+        payload.images = imageResult.map((image, index) => ({
           url: image,
           isMain: index === 0,
           order: index + 1,
@@ -124,21 +166,18 @@ export default function BookCreationForm({
       }
 
       if (!defaultValues) {
-        const result = await bookService.createBook(bookData);
+        const result = await bookService.createBook(payload);
         setCreatedBookId(result._id);
         setStep(2);
         toast.success("Tạo sách thành công! Mời thêm biến thể.");
       } else {
-        const result = await bookService.updateBook(
-          defaultValues._id,
-          bookData
-        );
+        const result = await bookService.updateBook(defaultValues._id, payload);
         if (result) {
-          toast.success("Cập nhật sách thành công");
+          setCreatedBookId(result._id);
+          setStep(2);
         } else {
           toast.error("Cập nhật sách thất bại");
         }
-        onClose();
       }
     } catch (error) {
       console.error("Error creating book:", error);
@@ -169,8 +208,13 @@ export default function BookCreationForm({
     setCurrentVariant({ rarity: "", price: "", stock: "", isbn: "" });
   };
 
-  const removeVariant = (id) => {
-    setVariants((prev) => prev.filter((v) => v.id !== id));
+  const removeVariant = (id: number) => {
+    if (!defaultValues) {
+      setVariants((prev) => prev.filter((v, i) => i !== id));
+    } else {
+      bookVariantService.removeVariant(defaultValues._id ?? "", Number(id));
+      setVariants((prev) => prev.filter((v, i) => i !== id));
+    }
   };
 
   const handleVariantsSubmit = async () => {
@@ -199,7 +243,7 @@ export default function BookCreationForm({
         title: "",
         author: "",
         publisher: "",
-        category: "",
+        category: [],
         description: "",
         releaseYear: new Date().getFullYear(),
         images: [],
@@ -324,23 +368,14 @@ export default function BookCreationForm({
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Danh mục
                   </label>
-                  <select
-                    value={bookData.category}
-                    onChange={(e) =>
-                      setBookData((prev) => ({
-                        ...prev,
-                        category: e.target.value,
-                      }))
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">-- Chọn danh mục --</option>
-                    {categories.map((cat) => (
-                      <option key={cat._id} value={cat._id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+                  <MultiSelect
+                    options={categories}
+                    value={selected}
+                    onChange={setSelected}
+                    getId={(c) => c._id}
+                    getLabel={(c) => c.name}
+                    placeholder="Chọn danh mục"
+                  />
                 </div>
               </div>
 
@@ -557,9 +592,9 @@ export default function BookCreationForm({
                   Chưa có biến thể nào
                 </p>
               ) : (
-                variants.map((variant) => (
+                variants.map((variant: BookVariant, index: number) => (
                   <div
-                    key={variant.id}
+                    key={variant._id}
                     className="flex justify-between items-center p-3 bg-white border rounded-lg"
                   >
                     <div className="flex-1">
@@ -582,7 +617,7 @@ export default function BookCreationForm({
                       )}
                     </div>
                     <button
-                      onClick={() => removeVariant(variant.id)}
+                      onClick={() => removeVariant(index)}
                       className="p-1 text-red-600 hover:bg-red-100 rounded"
                     >
                       <X size={16} />
