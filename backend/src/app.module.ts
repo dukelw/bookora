@@ -11,6 +11,7 @@ import { BookVariantModule } from './modules/book-variant/book-variant.module';
 import { BookImageModule } from './modules/book-image/book-image.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { PurchaseInvoiceModule } from './modules/purchase-invoice/purchase-invoice.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PurchaseInvoiceModule } from './modules/purchase-invoice/purchase-invoi
     BookImageModule,
     InventoryModule,
     PurchaseInvoiceModule,
+    CartModule,
   ],
 })
 export class AppModule {}

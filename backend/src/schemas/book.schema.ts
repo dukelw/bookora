@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { RarityType } from 'src/constant';
 
 @Schema()
 export class BookImage {
@@ -16,6 +15,9 @@ export class BookImage {
 
 @Schema()
 export class BookVariant {
+  @Prop({ auto: true })
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   rarity: string;
 
