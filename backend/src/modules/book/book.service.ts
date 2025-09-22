@@ -19,8 +19,18 @@ export class BookService {
     return book.save();
   }
 
-  async findAll(): Promise<Book[]> {
-    return this.bookModel.find().populate('category').exec();
+  async findAll(searchKey?: string): Promise<Book[]> {
+    const filter: any = {};
+
+    if (searchKey) {
+      // Tìm theo tên sách hoặc tác giả, dùng regex case-insensitive
+      filter.$or = [
+        { title: { $regex: searchKey, $options: 'i' } },
+        { author: { $regex: searchKey, $options: 'i' } },
+      ];
+    }
+
+    return this.bookModel.find(filter).populate('category').exec();
   }
 
   async findOne(id: string): Promise<Book> {

@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
@@ -26,8 +27,8 @@ export class BookController {
   @Get()
   @ApiOperation({ summary: 'Lấy danh sách tất cả sách' })
   @ApiResponse({ status: 200, description: 'Danh sách sách trả về' })
-  findAll() {
-    return this.bookService.findAll();
+  findAll(@Query('keySearch') searchKey?: string) {
+    return this.bookService.findAll(searchKey);
   }
 
   @Get(':id')

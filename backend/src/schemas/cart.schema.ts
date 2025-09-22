@@ -1,25 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type CartDocument = Cart & Document;
-
 @Schema({ timestamps: true })
 export class CartItem {
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
-  product: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Book', required: true })
+  book: Types.ObjectId;
 
-  @Prop({ default: 1 })
+  @Prop({ required: true })
+  variantId: string;
+
+  @Prop({ required: true, default: 1 })
   quantity: number;
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);
 
 @Schema({ timestamps: true })
-export class Cart {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  user: Types.ObjectId;
+export class Cart extends Document {
+  @Prop({ type: String, required: true, unique: true })
+  userId: string; // có thể là userId thật hoặc guestId
 
-  @Prop({ type: [CartItemSchema], default: [] })
+  @Prop({ type: [CartItem], default: [] })
   items: CartItem[];
 }
 
