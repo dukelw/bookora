@@ -20,13 +20,6 @@ export class UserService {
     return user;
   }
 
-  // async updateProfile(id: string, data: Partial<User>): Promise<User | null> {
-  //   return this.userModel
-  //     .findByIdAndUpdate(id, data, { new: true })
-  //     .select('-password')
-  //     .exec();
-  // }
-
   async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User | null> {
     const updatedUser = await this.userModel.findByIdAndUpdate(
       userId,
