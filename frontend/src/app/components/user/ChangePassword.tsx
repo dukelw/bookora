@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "use-intl";
 import { useRouter } from "next/navigation";
 import { Label, TextInput, Button, Spinner } from "flowbite-react";
+import { FaRedoAlt, FaSave } from "react-icons/fa";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import { authService } from "@/services/authService";
@@ -104,10 +105,32 @@ export default function ChangePassword() {
           }
         />
       </div>
+<div className="flex gap-3 mt-4">
+  {/* Nút Reset */}
+  <Button
+    color="red"
+    type="button"
+    onClick={() => {
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }}
+    className="flex-1 flex justify-center items-center gap-2"
+  >
+    <FaRedoAlt />
+  </Button>
 
-      <Button color="blue" type="submit" className="w-full" disabled={!canSubmit}>
-        {submitting ? <Spinner size="sm" /> : t("update")}
-      </Button>
+  {/* Nút Save/Update */}
+  <Button
+    color="green"
+    type="submit"
+    disabled={!canSubmit}
+    className="flex-1 flex justify-center items-center gap-2"
+  >
+    {submitting ? <Spinner size="sm" /> : <FaSave />}
+  </Button>
+</div>
+
     </form>
   );
 }

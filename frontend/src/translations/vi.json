@@ -7,6 +7,7 @@
   "user": {
     "users": "Người dùng",
     "info":"Thông tin cá nhân",
+    "updateSuccess": "Cập nhật thông tin thành công!",
     "changePassword": "Đổi mật khẩu",
     "passwordChanged": "Đổi mật khẩu thành công!",
     "serverError": "Lỗi máy chủ.",
@@ -16,12 +17,14 @@
     "phone": "SĐT",
     "address": "Địa chỉ",
     "shippingAddress": "Địa chỉ nhận hàng",
+    "noChanges": "Chưa có thông tin mới cần lưu",
     "update": "Cập nhật",
     "save": "Lưu",
     "oldPassword": "Mật khẩu cũ",
     "newPassword": "Mật khẩu mới",
     "confirmPassword": "Nhập lại mật khẩu mới",
-    "note": "Mật khẩu mới phải có ít nhất 6 ký tự, 1 chữ in hoa và 1 ký tự đặc biệt"
+    "note": "Mật khẩu mới phải có ít nhất 6 ký tự, 1 chữ in hoa và 1 ký tự đặc biệt",
+    "loadError": "Không thể tải thông tin người dùng"
   },
   "inventory": {
     "inventories": "Ton kho"
@@ -56,13 +59,12 @@
     "alreadyAccount": "Đã có tài khoản?",
     "signingUp": "Đang đăng ký...",
     "forgotPasswordDesc": "Vui lòng nhập địa chỉ email của bạn để tìm kiếm tài khoản của bạn.",
-    "sendResetLink": "Gửi",
     "sending": "Đang gửi...",
-    "resetLinkSent": "Liên kết đặt lại đã được gửi tới email của bạn.",
+    "back": "Quay lại",
+    "otpSent": "Mã OTP đã được gửi đến email của bạn.",
     "verifyOtp": "Xác thực OTP",
     "otpDesc": "Nhập mã OTP được gửi tới email của bạn.",
     "otp": "OTP",
-    "verify": "Xác nhận",
     "otpValid": "OTP hợp lệ.",
     "otpInvalid": "OTP không hợp lệ.",
     "resetPassword": "Đặt lại mật khẩu",

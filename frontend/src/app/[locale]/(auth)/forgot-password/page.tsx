@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "use-intl";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Card, Label, TextInput, Button, Spinner } from "flowbite-react";
 import { EnvelopeIcon, KeyIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import { authService } from "@/services/authService";
+import { FiArrowLeftCircle, FiSend, FiChevronLeft, FiRefreshCw, FiRefreshCcw, FiCheck, FiSave } from "react-icons/fi";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("auth");
@@ -28,7 +30,7 @@ export default function ForgotPasswordPage() {
     setSubmitting(true);
     try {
       await authService.requestResetPassword(email);
-      toast.success(t("resetLinkSent"));
+      toast.success(t("otpSent"));
       setStep("otp");
     } catch (err: any) {
       console.error(err);
@@ -89,6 +91,11 @@ export default function ForgotPasswordPage() {
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <Card className="w-full max-w-lg shadow-lg">
+        <div className="mb-4">
+          <Link href="/signin" className="flex items-center gap-1">
+            <FiArrowLeftCircle size={14} /> {t("back")}
+          </Link>
+        </div>
         <div className="mb-6 flex justify-between items-center">
           {["email", "otp", "reset"].map((s) => {
             const isActive = step === s;
@@ -126,13 +133,7 @@ export default function ForgotPasswordPage() {
                 />
               </div>
               <Button color="blue" type="submit" className="w-full" disabled={submitting}>
-                {submitting ? (
-                  <span className="flex items-center gap-2">
-                    <Spinner size="sm" /> {t("sending")}
-                  </span>
-                ) : (
-                  t("sendResetLink")
-                )}
+                {submitting ? <span className="flex items-center gap-2"><Spinner size="sm" /> {t("sending")}</span> : <><FiSend /></>}
               </Button>
             </form>
           </>
@@ -158,9 +159,44 @@ export default function ForgotPasswordPage() {
                   required
                 />
               </div>
-              <Button color="green" type="submit" className="w-full" disabled={submitting}>
-                {submitting ? <Spinner size="sm" /> : t("verify")}
-              </Button>
+              <div className="flex gap-3 mt-4">
+                <Button
+                  color="gray"
+                  type="button"
+                  onClick={() => setStep("email")}
+                  className="flex-1 flex justify-center items-center gap-2"
+                >
+                  <FiChevronLeft />
+                </Button>
+                <Button
+                  color="yellow"
+                  type="button"
+                  onClick={async () => {
+                    setSubmitting(true);
+                    try {
+                      await authService.requestResetPassword(email);
+                      toast.success(t("resetLinkSent"));
+                    } catch (err: any) {
+                      console.error(err);
+                      toast.error(err.message || t("serverError"));
+                    } finally {
+                      setSubmitting(false);
+                    }
+                  }}
+                  disabled={submitting}
+                  className="flex-1 flex justify-center items-center gap-2"
+                >
+                  <FiRefreshCw />
+                </Button>
+                <Button
+                  color="green"
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 flex justify-center items-center gap-2"
+                >
+                  {submitting ? <Spinner size="sm" /> : <><FiCheck /></>}
+                </Button>
+              </div>
             </form>
           </>
         )}
@@ -190,7 +226,6 @@ export default function ForgotPasswordPage() {
                   {t("note")}
                 </p>
               </div>
-
               <div>
                 <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
                 <TextInput
@@ -210,14 +245,34 @@ export default function ForgotPasswordPage() {
                   }
                 />
               </div>
+              <div className="flex gap-3 mt-4">
+                <Button
+                  color="gray"
+                  type="button"
+                  onClick={() => setStep("otp")}
+                  className="flex-1 flex justify-center items-center gap-2"
+                >
+                  <FiChevronLeft />
+                </Button>
+                <Button
+                  color="red"
+                  type="button"
+                  onClick={() => {
+                    setNewPassword("");
+                    setConfirmPassword("");
+                  }}
+                  className="flex-1 flex justify-center items-center gap-2"
+                >
+                  <FiRefreshCcw />
+                </Button>
 
-              <Button color="blue" type="submit" className="w-full" disabled={!canSubmit}>
-                {submitting ? <Spinner size="sm" /> : t("reset")}
-              </Button>
+                <Button color="purple" type="submit" disabled={!canSubmit} className="flex-1 flex justify-center items-center gap-2">
+                  {submitting ? <Spinner size="sm" /> : <FiSave />}
+                </Button>
+              </div>
             </form>
           </>
         )}
-
       </Card>
     </main>
   );
