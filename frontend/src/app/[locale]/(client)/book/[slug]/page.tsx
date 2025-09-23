@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { bookService } from "@/services/bookService";
 import Image from "next/image";
-import { Book, BookImage, BookVariant } from "@/interfaces/Book";
+import { Book, BookImage, BookVariant, Category } from "@/interfaces/Book";
 import { FaShoppingCart, FaHeart } from "react-icons/fa";
 import Link from "next/link";
 import ReviewSlider from "./components/ReviewSlider";
 import { useBookStore } from "@/store/bookStore";
+import { useCategoryStore } from "@/store/categoryStore";
 
 export default function BookDetailPage() {
   const { bookId } = useBookStore();
+  const { setCategory } = useCategoryStore();
+  const router = useRouter();
 
   const [book, setBook] = useState<Book | null>(null);
   const [mainImage, setMainImage] = useState<string>("");
@@ -36,6 +39,11 @@ export default function BookDetailPage() {
     "border-emerald-800 text-emerald-800", // dark-green
     "border-blue-400 text-blue-500",
   ];
+
+  const handleGoToCategory = async (category: Category) => {
+    setCategory(category);
+    router.push(`/category/${category.slug}`);
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
@@ -116,10 +124,11 @@ export default function BookDetailPage() {
               <div className="flex flex-wrap gap-2 mt-2">
                 {book.category.map((c) => (
                   <span
+                    onClick={() => handleGoToCategory(c)}
                     key={c._id}
                     className="px-3 py-1 border border-cyan-500 text-cyan-600 rounded-full text-sm bg-cyan-50"
                   >
-                    <Link href={`/category/${c._id}`}>{c.name}</Link>
+                    {c.name}
                   </span>
                 ))}
               </div>

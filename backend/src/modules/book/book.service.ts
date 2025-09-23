@@ -73,4 +73,26 @@ export class BookService {
     if (!result) throw new NotFoundException('Book not found');
     return result;
   }
+
+  async findByCategory(categoryId: string, page = 1, limit = 10): Promise<any> {
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.bookModel
+        .find({ category: categoryId })
+        .populate('category')
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.bookModel.countDocuments({ category: categoryId }),
+    ]);
+
+    return {
+      items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }

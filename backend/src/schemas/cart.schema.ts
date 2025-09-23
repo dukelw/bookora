@@ -9,7 +9,10 @@ export enum CartItemStatus {
 @Schema({ timestamps: true })
 export class CartItem {
   @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
-  product: Types.ObjectId;
+  book: Types.ObjectId;
+
+  @Prop({ required: true })
+  variantId: string;
 
   @Prop({ default: 1 })
   quantity: number;
@@ -23,7 +26,7 @@ export const CartItemSchema = SchemaFactory.createForClass(CartItem);
 @Schema({ timestamps: true })
 export class Cart {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  user: Types.ObjectId;
+  userId: Types.ObjectId;
 
   @Prop({ type: [CartItemSchema], default: [] })
   items: CartItem[];

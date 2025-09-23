@@ -61,4 +61,18 @@ export class BookController {
   remove(@Param('id') id: string) {
     return this.bookService.remove(id);
   }
+
+  @Get('by-category/:categoryId')
+  @ApiOperation({
+    summary: 'Lấy danh sách sách theo Category ID (có phân trang)',
+  })
+  @ApiParam({ name: 'categoryId', description: 'ID của category' })
+  @ApiResponse({ status: 200, description: 'Danh sách sách theo category' })
+  findByCategory(
+    @Param('categoryId') categoryId: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.bookService.findByCategory(categoryId, +page, +limit);
+  }
 }

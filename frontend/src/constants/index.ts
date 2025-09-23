@@ -37,3 +37,5 @@ export const DASHBOARD_SIDEBAR_ITEMS: SidebarItem[] = [
 
 export const FALLBACK_BOOK =
   "https://res.cloudinary.com/dukelewis-workspace/image/upload/v1758102566/uploads/mhlq9eezqw8fqrtyovco.png";
+
+export const MAX_LIMIT = 1000000000

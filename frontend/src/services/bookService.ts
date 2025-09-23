@@ -31,6 +31,16 @@ export const bookService = {
     return res.data;
   },
 
+  async getBooksByCategory(categoryId?: string, page?: number, limit?: number) {
+    const res: AxiosResponse = await api.get(
+      `${API_URL}/by-category/${categoryId}`,
+      {
+        params: { page, limit },
+      }
+    );
+    return res.data;
+  },
+
   async getBook(id: string) {
     const res: AxiosResponse = await api.get(`${API_URL}/${id}`);
     return res.data;
