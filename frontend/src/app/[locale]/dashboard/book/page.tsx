@@ -221,6 +221,5 @@ export default function BookManagementPage() {
           />
         </div>
       </div>
-    </div>
   );
 }

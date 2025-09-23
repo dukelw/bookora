@@ -20,6 +20,7 @@ export default function SliderCarousel() {
   useEffect(() => {
     const handleGetActiveCollection = async () => {
       const activeCollection = await sliderService.getActiveCollection();
+      console.log(activeCollection);
       if (activeCollection) {
         setActiveSliders(activeCollection.sliders);
       }
