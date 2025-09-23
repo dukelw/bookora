@@ -31,7 +31,7 @@ export class CategoryController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lấy danh sách tất cả danh mục' })
+  @ApiOperation({ summary: 'Lấy danh sách tất cả danh mục (có phân trang)' })
   @ApiResponse({ status: 200, description: 'Danh sách danh mục trả về' })
   @ApiQuery({
     name: 'keySearch',
@@ -41,8 +41,26 @@ export class CategoryController {
       'Từ khóa tìm kiếm theo tên danh mục (không phân biệt hoa thường)',
     example: 'Truyện tranh',
   })
-  async findAll(@Query('keySearch') keySearch?: string) {
-    return this.categoryService.findAll(keySearch);
+  @ApiQuery({
+    name: 'pageNum',
+    required: false,
+    type: Number,
+    description: 'Số trang (mặc định 1)',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    type: Number,
+    description: 'Số lượng item mỗi trang (mặc định 10)',
+    example: 10,
+  })
+  async findAll(
+    @Query('keySearch') keySearch?: string,
+    @Query('pageNum') pageNum = 1,
+    @Query('pageSize') pageSize = 10,
+  ) {
+    return this.categoryService.findAll(keySearch, +pageNum, +pageSize);
   }
 
   @Get(':id')

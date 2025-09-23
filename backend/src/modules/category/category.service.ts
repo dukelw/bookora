@@ -15,11 +15,33 @@ export class CategoryService {
     return category.save();
   }
 
-  async findAll(keySearch?: string): Promise<Category[]> {
+  async findAll(
+    keySearch?: string,
+    pageNum = 1,
+    pageSize = 10,
+  ): Promise<{
+    items: Category[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const filter = keySearch
       ? { name: { $regex: keySearch, $options: 'i' } }
       : {};
-    return this.categoryModel.find(filter).exec();
+
+    const skip = (pageNum - 1) * pageSize;
+
+    const [items, total] = await Promise.all([
+      this.categoryModel.find(filter).skip(skip).limit(pageSize).exec(),
+      this.categoryModel.countDocuments(filter).exec(),
+    ]);
+
+    return {
+      items,
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 
   async findOne(id: string): Promise<Category> {

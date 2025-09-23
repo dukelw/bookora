@@ -24,9 +24,9 @@ export const bookService = {
     return res.data;
   },
 
-  async getBooks(keySearch?: string) {
+  async getBooks(keySearch?: string, page?: number, limit?: number) {
     const res: AxiosResponse = await api.get(API_URL, {
-      params: { keySearch },
+      params: { keySearch, page, limit },
     });
     return res.data;
   },

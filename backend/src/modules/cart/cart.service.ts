@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { AddToCartDto, UpdateCartItemDto } from './dto/cart.dto';
-import { Book } from 'src/schemas/book.schema';
-import { Cart } from 'src/schemas/cart.schema';
+import {
+  AddToCartDto,
+  UpdateCartItemDto,
+  UpdateCartItemStatusDto,
+} from './dto/cart.dto';
+import { Book, BookVariant } from 'src/schemas/book.schema';
+import { Cart, CartItemStatus } from 'src/schemas/cart.schema';
 import { SHIPPING_FEE } from 'src/constant';
 
 @Injectable()
@@ -14,22 +18,27 @@ export class CartService {
   ) {}
 
   async getCart(userId: string) {
-    const cart = await this.cartModel
+    let cart = await this.cartModel
       .findOne({ userId })
       .populate({ path: 'items.book', model: 'Book' })
       .exec();
-    return cart || { items: [] };
+
+    if (!cart) {
+      // tạo cart mới kiểu document để còn gọi save()
+      cart = new this.cartModel({ userId, items: [] });
+      await cart.save();
+    }
+
+    return cart;
   }
 
   async addToCart(userId: string, dto: AddToCartDto) {
     const book = await this.bookModel.findById(dto.bookId);
     if (!book) throw new NotFoundException('Book not found');
 
-    console.log(userId);
-
-    const variant = book.variants.find(
-      (v) => v._id.toString() === dto.variantId,
-    );
+    const variant = (
+      book.variants as (BookVariant & { _id: Types.ObjectId })[]
+    ).find((v) => v._id.toString() === dto.variantId);
     if (!variant) throw new NotFoundException('Book variant not found');
 
     let cart = await this.cartModel.findOne({ userId });
@@ -49,6 +58,7 @@ export class CartService {
         book: new Types.ObjectId(dto.bookId),
         variantId: dto.variantId,
         quantity: dto.quantity,
+        status: CartItemStatus.PENDING,
       });
     }
 
@@ -90,6 +100,28 @@ export class CartService {
     return cart;
   }
 
+  async updateItemStatus(userId: string, dto: UpdateCartItemStatusDto) {
+    const cart = await this.cartModel.findOne({ userId });
+    if (!cart) throw new NotFoundException('Cart not found');
+
+    const item = cart.items.find(
+      (i) => i.book.toString() === dto.bookId && i.variantId === dto.variantId,
+    );
+    if (!item) throw new NotFoundException('Item not in cart');
+
+    item.status = dto.status;
+    await cart.save();
+    return cart;
+  }
+
+  async clearCart(userId: string) {
+    const cart = await this.cartModel.findOne({ userId });
+    if (cart) {
+      cart.items = [];
+      await cart.save();
+    }
+  }
+
   async cartSummary(userId: string) {
     const cart = await this.cartModel
       .findOne({ userId })
@@ -106,9 +138,9 @@ export class CartService {
 
     let total = 0;
     cart.items.forEach((item) => {
-      const variant = item.book.variants.find(
-        (v) => v._id.toString() === item.variantId,
-      );
+      const variant = (
+        item.book.variants as (BookVariant & { _id: Types.ObjectId })[]
+      ).find((v) => v._id.toString() === item.variantId);
       total += (variant?.price || 0) * item.quantity;
     });
 

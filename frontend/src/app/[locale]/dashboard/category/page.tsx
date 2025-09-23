@@ -20,6 +20,8 @@ import { categoryService } from "@/services/categoryService";
 import ConfirmModal from "@/app/components/ui/modal/ConfirmModal";
 import { toast } from "react-toastify";
 import { isSuccessMessage } from "@/utils/check";
+import BaseTable from "@/components/table/BaseTable";
+import Pagination from "@/components/pagination/pagination";
 
 interface Category {
   _id?: string;
@@ -33,19 +35,28 @@ export default function CategoryManagementPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [openCategoryModal, setOpenCategoryModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+  const [total, setTotal] = useState(0);
 
   // Confirm state
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Gọi lại API mỗi khi search, currentPage, pageSize đổi
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [search, currentPage, pageSize]);
 
   const fetchCategories = async () => {
     try {
-      const data = await categoryService.getCategories(search);
-      setCategories(data);
+      const res = await categoryService.getCategories(
+        search,
+        currentPage,
+        pageSize
+      );
+      setCategories(res.items);
+      setTotal(res.total);
     } catch (err) {
       console.error("Error fetching categories:", err);
     }
@@ -90,6 +101,39 @@ export default function CategoryManagementPage() {
     }
   };
 
+  const columns = [
+    { key: "_id", label: "ID" },
+    { key: "name", label: "Tên danh mục" },
+    { key: "description", label: "Mô tả" },
+    { key: "ageRange", label: "Độ tuổi" },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (category: Category) => (
+        <div className="flex items-center justify-between gap-2">
+          <button
+            className="px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md text-xs transition"
+            onClick={() => {
+              setEditingCategory(category);
+              setOpenCategoryModal(true);
+            }}
+          >
+            Sửa
+          </button>
+          <button
+            className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs transition"
+            onClick={() => {
+              setSelectedId(category._id!);
+              setOpenConfirm(true);
+            }}
+          >
+            Xóa
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div>
       <Breadcrumb
@@ -129,60 +173,16 @@ export default function CategoryManagementPage() {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <Table hoverable={true}>
-            <TableHead>
-              <TableRow>
-                <TableHeadCell>ID</TableHeadCell>
-                <TableHeadCell>Tên danh mục</TableHeadCell>
-                <TableHeadCell>Mô tả</TableHeadCell>
-                <TableHeadCell>Độ tuổi</TableHeadCell>
-                <TableHeadCell>Actions</TableHeadCell>
-              </TableRow>
-            </TableHead>
-            <TableBody className="divide-y">
-              {categories
-                .filter((c) =>
-                  c.name.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((category, idx) => (
-                  <TableRow key={idx} className="bg-white">
-                    <TableCell className="font-medium text-gray-900">
-                      {category._id}
-                    </TableCell>
-                    <TableCell className="font-medium text-gray-900">
-                      {category.name}
-                    </TableCell>
-                    <TableCell>{category.description}</TableCell>
-                    <TableCell>{category.ageRange}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Button
-                          size="xs"
-                          color="yellow"
-                          onClick={() => {
-                            setEditingCategory(category);
-                            setOpenCategoryModal(true);
-                          }}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          size="xs"
-                          color="red"
-                          className="ml-2"
-                          onClick={() => {
-                            setSelectedId(category._id!);
-                            setOpenConfirm(true); // 👈 mở confirm modal
-                          }}
-                        >
-                          Xóa
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+          <BaseTable columns={columns} data={categories} />
+        </div>
+        <div className="mt-4">
+          <Pagination
+            totalItems={total}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+          />
         </div>
 
         {/* Category Modal */}

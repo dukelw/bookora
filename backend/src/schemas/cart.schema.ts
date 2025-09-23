@@ -1,6 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
+export enum CartItemStatus {
+  PENDING = 'pending', // chưa mua
+  PURCHASED = 'purchased', // đã đánh dấu để mua
+}
+
 @Schema({ timestamps: true })
 export class CartItem {
   @Prop({ type: Types.ObjectId, ref: 'Book', required: true })
@@ -11,6 +16,9 @@ export class CartItem {
 
   @Prop({ required: true, default: 1 })
   quantity: number;
+
+  @Prop({ default: CartItemStatus.PENDING, enum: CartItemStatus })
+  status: CartItemStatus;
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);

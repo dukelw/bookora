@@ -14,10 +14,7 @@ export class BookImage {
 }
 
 @Schema()
-export class BookVariant {
-  @Prop({ auto: true })
-  _id: Types.ObjectId;
-
+export class BookVariant extends Document {
   @Prop({ required: true })
   rarity: string;
 
@@ -38,6 +35,9 @@ export class BookVariant {
 export class Book extends Document {
   @Prop({ required: true })
   title: string;
+
+  @Prop()
+  slug: string;
 
   @Prop()
   author: string;
@@ -73,3 +73,23 @@ export class Book extends Document {
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);
+
+// --- Pre-save hook tự tạo slug ---
+BookSchema.pre<Book>('save', function (next) {
+  if (this.isModified('title') || !this.slug) {
+    this.slug = slugify(this.title);
+  }
+  next();
+});
+
+// --- Hàm slugify ---
+function slugify(text: string) {
+  return text
+    .toString()
+    .normalize('NFD') // tách các dấu
+    .replace(/[\u0300-\u036f]/g, '') // bỏ dấu
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-') // thay ký tự lạ thành -
+    .replace(/^-+|-+$/g, ''); // bỏ dấu - đầu cuối
+}
