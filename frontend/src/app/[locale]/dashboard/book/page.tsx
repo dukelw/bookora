@@ -14,8 +14,6 @@ import {
   TableRow,
   Dropdown,
   DropdownItem,
-  Breadcrumb,
-  BreadcrumbItem,
 } from "flowbite-react";
 import { FaSearch, FaPlus } from "react-icons/fa";
 import { formatCurrency } from "@/utils/format";
@@ -131,86 +129,73 @@ export default function BookManagementPage() {
   ];
 
   return (
-    <div>
-      <Breadcrumb
-        aria-label="Solid background breadcrumb example"
-        className="px-5 py-3"
-      >
-        <BreadcrumbItem href="#" icon={HomeIcon}>
-          Dashboard
-        </BreadcrumbItem>
-        <BreadcrumbItem href="#">Book Management</BreadcrumbItem>
-        <BreadcrumbItem>Book</BreadcrumbItem>
-      </Breadcrumb>
-      <div className="p-6">
-        {/* Header filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
-          {/* Search */}
-          <TextInput
-            type="text"
-            placeholder="Tìm kiếm theo tên..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            icon={FaSearch}
-            className="w-60"
-          />
+    <div className="p-6">
+      {/* Header filters */}
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        {/* Search */}
+        <TextInput
+          type="text"
+          placeholder="Tìm kiếm theo tên..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          icon={FaSearch}
+          className="w-60"
+        />
 
-          {/* Filter release year */}
-          <Datepicker
-            placeholder="Năm phát hành"
-            // onSelectedDateChanged={(date) =>
-            //   setReleaseYear(date.getFullYear().toString())
-            // }
-          />
+        {/* Filter release year */}
+        <Datepicker
+          placeholder="Năm phát hành"
+          // onSelectedDateChanged={(date) =>
+          //   setReleaseYear(date.getFullYear().toString())
+          // }
+        />
 
-          {/* Category */}
-          <Dropdown
-            label={category ? category : "Tất cả danh mục"}
-            dismissOnClick={true}
+        {/* Category */}
+        <Dropdown
+          label={category ? category : "Tất cả danh mục"}
+          dismissOnClick={true}
+        >
+          <DropdownItem onClick={() => setCategory("")}>
+            Tất cả danh mục
+          </DropdownItem>
+          <DropdownItem onClick={() => setCategory("Fantasy")}>
+            Fantasy
+          </DropdownItem>
+          <DropdownItem onClick={() => setCategory("Thiếu nhi")}>
+            Thiếu nhi
+          </DropdownItem>
+        </Dropdown>
+
+        {/* Price */}
+        <Dropdown
+          label={priceRange ? priceRange : "Khoảng giá"}
+          dismissOnClick={true}
+        >
+          <DropdownItem onClick={() => setPriceRange("")}>Tất cả</DropdownItem>
+          <DropdownItem onClick={() => setPriceRange("0-50000")}>
+            0 - 50.000
+          </DropdownItem>
+          <DropdownItem onClick={() => setPriceRange("50000-100000")}>
+            50.000 - 100.000
+          </DropdownItem>
+          <DropdownItem onClick={() => setPriceRange("100000-200000")}>
+            100.000 - 200.000
+          </DropdownItem>
+        </Dropdown>
+
+        {/* Action buttons */}
+        <div className="ml-auto flex gap-2">
+          <Button
+            color="green"
+            onClick={() => {
+              setSelectedBook(null);
+              setModalOpen(true);
+            }}
           >
-            <DropdownItem onClick={() => setCategory("")}>
-              Tất cả danh mục
-            </DropdownItem>
-            <DropdownItem onClick={() => setCategory("Fantasy")}>
-              Fantasy
-            </DropdownItem>
-            <DropdownItem onClick={() => setCategory("Thiếu nhi")}>
-              Thiếu nhi
-            </DropdownItem>
-          </Dropdown>
-
-          {/* Price */}
-          <Dropdown
-            label={priceRange ? priceRange : "Khoảng giá"}
-            dismissOnClick={true}
-          >
-            <DropdownItem onClick={() => setPriceRange("")}>
-              Tất cả
-            </DropdownItem>
-            <DropdownItem onClick={() => setPriceRange("0-50000")}>
-              0 - 50.000
-            </DropdownItem>
-            <DropdownItem onClick={() => setPriceRange("50000-100000")}>
-              50.000 - 100.000
-            </DropdownItem>
-            <DropdownItem onClick={() => setPriceRange("100000-200000")}>
-              100.000 - 200.000
-            </DropdownItem>
-          </Dropdown>
-
-          {/* Action buttons */}
-          <div className="ml-auto flex gap-2">
-            <Button
-              color="green"
-              onClick={() => {
-                setSelectedBook(null);
-                setModalOpen(true);
-              }}
-            >
-              <FaPlus className="mr-2" /> Tạo sách
-            </Button>
-          </div>
+            <FaPlus className="mr-2" /> Tạo sách
+          </Button>
         </div>
+      </div>
 
         {/* Table */}
         <div className="overflow-x-auto max-w-[calc(100vw-300px) rounded">

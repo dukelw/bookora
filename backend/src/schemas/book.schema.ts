@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { RarityType } from 'src/constant';
 
 @Schema()
 export class BookImage {

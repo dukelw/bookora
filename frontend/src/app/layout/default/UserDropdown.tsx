@@ -37,11 +37,11 @@ const UserDropdown = () => {
         </>
       ) : (
         <>
-          <DropdownItem onClick={() => router.push("/profile")}>
-            {t("profile")}
+          <DropdownItem>
+            <Link href={`/profile`}>{t("profile")}</Link>
           </DropdownItem>
-          <DropdownItem onClick={() => router.push("orders")}>
-            {t("orderHistory")}
+          <DropdownItem>
+            <Link href={`/orders`}>{t("orderHistory")}</Link>
           </DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={handleLogout}>{t("logout")}</DropdownItem>

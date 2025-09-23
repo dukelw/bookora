@@ -23,9 +23,9 @@ export default function ProfilePageWithTabs() {
       <Card className="w-full max-w-4xl p-4">
         <div className="flex border-b border-gray-200 mb-4">
           <button
-            className={`px-4 py-2 -mb-px font-semibold transition-colors ${
+            className={`px-4 py-2 -mb-px font-semibold ${
               activeTab === "profile"
-                ? "border-b-2 border-green-500 text-green-600 hover:text-green-700"
+                ? "border-b-2 border-blue-500 text-blue-600"
                 : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => setActiveTab("profile")}
@@ -33,9 +33,9 @@ export default function ProfilePageWithTabs() {
             {t("info")}
           </button>
           <button
-            className={`px-4 py-2 -mb-px font-semibold transition-colors ${
+            className={`px-4 py-2 -mb-px font-semibold ${
               activeTab === "password"
-                ? "border-b-2 border-green-500 text-green-600 hover:text-green-700"
+                ? "border-b-2 border-blue-500 text-blue-600"
                 : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => setActiveTab("password")}

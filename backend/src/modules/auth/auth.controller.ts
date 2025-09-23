@@ -110,7 +110,9 @@ export class AuthController {
 
   @Post('forgot')
   @ApiOperation({ summary: 'Yêu cầu OTP khôi phục mật khẩu' })
+  @ApiBody({ type: ForgotPasswordDto })
   async forgotPassword(@Body() body: ForgotPasswordDto) {
+    console.log('Swagger Body:', body);
     const result = await this.authService.sendResetOtp(body.email);
     if (!result) return { message: 'If the email exists, an OTP has been sent' };
     return { message: 'OTP sent' };
@@ -118,6 +120,7 @@ export class AuthController {
 
   @Post('verify-otp')
   @ApiOperation({ summary: 'Xác nhận OTP và nhận token tạm để đổi mật khẩu' })
+  @ApiBody({ type: VerifyOtpDto })
   async verifyOtp(@Body() body: VerifyOtpDto) {
     const ok = await this.authService.verifyOtp(body.email, body.otp);
     if (!ok) return { valid: false };
@@ -128,6 +131,7 @@ export class AuthController {
 
   @Post('reset-password')
   @ApiOperation({ summary: 'Reset mật khẩu bằng token tạm' })
+  @ApiBody({ type: ResetPasswordDto })
   async resetPassword(@Body() body: ResetPasswordDto) {
     const ok = await this.authService.resetPasswordWithToken(
       body.resetPasswordToken,
@@ -140,9 +144,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
   @ApiOperation({ summary: 'Đổi mật khẩu (user đang đăng nhập)' })
+  @ApiBody({ type: ChangePasswordDto })
   async changePassword(@Req() req: any, @Body() body: ChangePasswordDto) {
     const userId = req.user._id;
-    const ok = await this.authService.changePassword(userId, body.oldPassword, body.newPassword);
+    const ok = await this.authService.changePassword(
+      userId,
+      body.oldPassword,
+      body.newPassword,
+    );
     if (!ok) return { error: 'Old password incorrect' };
     return { message: 'Password changed successfully' };
   }

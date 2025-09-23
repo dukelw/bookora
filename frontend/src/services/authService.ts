@@ -133,7 +133,8 @@ export const authService = {
   // Đặt lại mật khẩu bằng resetPasswordToken
   async resetPassword(resetPasswordToken: string, newPassword: string) {
     try {
-      const res = await axios.post(`${API_URL}/reset-password`, {resetPasswordToken, newPassword,});
+      const res = await axios.post(`${API_URL}/reset-password`, {resetPasswordToken, newPassword,
+      });
       return res.data;
     } catch (error: any) {
       throw new Error(
@@ -142,13 +143,17 @@ export const authService = {
     }
   },
 
-  // Đổi mật khẩu khi đang đăng nhập
-  async changePassword(oldPassword: string, newPassword: string) {
-    try {
-      const res = await api.post(`/auth/change-password`, {oldPassword, newPassword,});
-      return res.data;
-    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Failed to change password");
-    }
-  },
+// Đổi mật khẩu khi đang đăng nhập
+async changePassword(oldPassword: string, newPassword: string) {
+  try {
+    const res = await api.post(`/auth/change-password`, {
+      oldPassword,
+      newPassword,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to change password");
+  }
+},
+
 };

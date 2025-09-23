@@ -8,13 +8,10 @@ export enum CartItemStatus {
 
 @Schema({ timestamps: true })
 export class CartItem {
-  @Prop({ type: Types.ObjectId, ref: 'Book', required: true })
-  book: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
+  product: Types.ObjectId;
 
-  @Prop({ required: true })
-  variantId: string;
-
-  @Prop({ required: true, default: 1 })
+  @Prop({ default: 1 })
   quantity: number;
 
   @Prop({ default: CartItemStatus.PENDING, enum: CartItemStatus })
@@ -24,11 +21,11 @@ export class CartItem {
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);
 
 @Schema({ timestamps: true })
-export class Cart extends Document {
-  @Prop({ type: String, required: true, unique: true })
-  userId: string; // có thể là userId thật hoặc guestId
+export class Cart {
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  user: Types.ObjectId;
 
-  @Prop({ type: [CartItem], default: [] })
+  @Prop({ type: [CartItemSchema], default: [] })
   items: CartItem[];
 }
 

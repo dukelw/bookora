@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "use-intl";
-import { Label, TextInput, Button, Spinner } from "flowbite-react";
-import { FaUser, FaCamera, FaEdit, FaSave } from "react-icons/fa";
+import { Card, Label, TextInput, Button, Spinner, Select } from "flowbite-react";
 import { toast } from "react-toastify";
 import { userService } from "@/services/userService";
 
@@ -59,16 +58,6 @@ export default function ProfileForm() {
     if (!isEditing) {
       setIsEditing(true);
     } else {
-      const hasChanged =
-        profile.name !== originalProfile.name ||
-        profile.phone !== originalProfile.phone ||
-        profile.avatar !== originalProfile.avatar ||
-        profile.address !== originalProfile.address ||
-        profile.shippingAddress !== originalProfile.shippingAddress;
-      if (!hasChanged) {
-        toast.info(t("noChanges"));
-        return;
-      }
       setSaving(true);
       try {
         await userService.updateProfile({
@@ -99,8 +88,8 @@ export default function ProfileForm() {
   }
 
   return (
-    <div className="flex-shrink-0 w-full md:w-1/3 flex flex-col items-center space-y-2 relative">
-      <div className="relative w-48 h-48">
+    <div>
+      <div className="flex-shrink-0 w-full md:w-1/3 flex flex-col items-center md:items-start space-y-2">
         {profile.avatar ? (
           <img
             src={profile.avatar}
@@ -108,33 +97,26 @@ export default function ProfileForm() {
             className="w-48 h-48 rounded-full object-cover border border-gray-300"
           />
         ) : (
-          <div className="w-48 h-48 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 border border-gray-300">
-            <FaUser className="w-30 h-30" />
+          <div className="w-48 h-48 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm border border-gray-300 text-center p-2">
+            {t("noImage") || "Không có hình ảnh"}
           </div>
         )}
         {isEditing && (
-          <>
-            <label
-              htmlFor="avatarUpload"
-              className="absolute bottom-0 right-0 bg-gray-500 text-white rounded-full p-2 cursor-pointer border-2 border-white hover:bg-gray-500 flex items-center justify-center"
-            >
-              <FaCamera className="h-5 w-5" />
-            </label>
-            <input
-              id="avatarUpload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onloadend = () =>
-                  setProfile({ ...profile, avatar: reader.result as string });
-                reader.readAsDataURL(file);
-              }}
-            />
-          </>
+          <input
+            type="file"
+            accept="image/*"
+            className="mt-2"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setProfile({ ...profile, avatar: reader.result as string });
+              };
+              reader.readAsDataURL(file);
+            }}
+          />
         )}
       </div>
 
@@ -182,20 +164,12 @@ export default function ProfileForm() {
         </div>
         <Button
           type="button"
-          color="green"
-          className="w-full mt-8 flex items-center justify-center space-x-2"
+          color="blue"
+          className="w-full mt-4"
           onClick={handleButtonClick}
           disabled={saving}
         >
-          {isEditing ? (
-            saving ? (
-              <Spinner size="sm" />
-            ) : (
-              <FaSave className="h-5 w-5" />
-            )
-          ) : (
-            <FaEdit className="h-5 w-5" />
-          )}
+          {isEditing ? (saving ? <Spinner size="sm" /> : t("save")) : t("update")}
         </Button>
       </div>
     </div>

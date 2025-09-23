@@ -10,7 +10,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   console.log(process.env.CLIENT_URL);
-  const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:3000'];
+  const allowedOrigins = [
+    process.env.CLIENT_URL,
+    'http://localhost:3000',
+    'http://localhost:4000', // Swagger UI
+  ];
 
   app.enableCors({
     origin: (origin, callback) => {
