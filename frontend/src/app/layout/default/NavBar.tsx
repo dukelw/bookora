@@ -125,7 +125,9 @@ const AppNavbar = () => {
                 href={`/${locale}${item.path}`}
                 active={isActive}
                 className={
-                  isActive ? "navbar-link-active" : "hover-cyan-underline"
+                  isActive
+                    ? "navbar-link-active"
+                    : "hover-cyan-underline navbar-link"
                 }
               >
                 {t(item.label)}

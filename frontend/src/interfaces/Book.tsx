@@ -18,6 +18,7 @@ export interface BookImage {
 export interface Book {
   _id: string;
   title: string;
+  slug: string;
   author: string;
   publisher: string;
   category: Category[];

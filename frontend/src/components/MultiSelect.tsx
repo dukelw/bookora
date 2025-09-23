@@ -48,7 +48,7 @@ export default function MultiSelect<T>({
   return (
     <div className="relative w-full" ref={ref}>
       <div
-        className="border rounded-md px-3 py-2 flex flex-wrap items-center gap-1 cursor-pointer"
+        className="border border-gray-300 rounded-md px-3 py-2 flex flex-wrap items-center gap-1 cursor-pointer"
         onClick={() => setOpen(!open)}
       >
         {value.length === 0 && (
@@ -74,7 +74,7 @@ export default function MultiSelect<T>({
       </div>
 
       {open && (
-        <div className="absolute z-10 mt-1 w-full bg-white border rounded-md max-h-60 overflow-auto shadow-lg">
+        <div className="border border-gray-200 absolute z-10 mt-1 w-full bg-white rounded-md max-h-60 overflow-auto shadow-lg">
           {options.map((option) => (
             <div
               key={getId(option)}

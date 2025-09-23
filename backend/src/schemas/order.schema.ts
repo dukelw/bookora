@@ -1,38 +1,55 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type OrderDocument = Order & Document;
+export enum OrderStatus {
+  PENDING = 'pending',
+  PAID = 'paid',
+  SHIPPED = 'shipped',
+  CANCELLED = 'cancelled',
+}
 
 @Schema({ timestamps: true })
 export class OrderItem {
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
-  product: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Book', required: true })
+  book: Types.ObjectId;
+
+  @Prop({ required: true })
+  variantId: string;
 
   @Prop({ required: true })
   quantity: number;
 
   @Prop({ required: true })
-  price: number;
+  price: number; // giá gốc
+
+  @Prop({ required: true })
+  finalPrice: number; // giá sau giảm
 }
 
 export const OrderItemSchema = SchemaFactory.createForClass(OrderItem);
 
 @Schema({ timestamps: true })
-export class Order {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  user: Types.ObjectId;
-
+export class Order extends Document {
   @Prop({ type: [OrderItemSchema], default: [] })
   items: OrderItem[];
 
-  @Prop()
-  total: number;
+  @Prop({ default: 0 })
+  totalAmount: number;
 
-  @Prop({ default: 'pending' })
-  status: string; // pending, confirmed, shipped, delivered, cancelled
+  @Prop({ default: 0 })
+  discountAmount: number;
 
-  @Prop()
-  shippingAddress: string;
+  @Prop({ default: 0 })
+  finalAmount: number;
+
+  @Prop({ default: OrderStatus.PENDING, enum: OrderStatus })
+  status: OrderStatus;
+
+  @Prop({ type: String, required: false })
+  discountCode?: string;
+
+  @Prop({ type: String, required: true })
+  user: string; // optional, vẫn lưu để link với user nếu muốn
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

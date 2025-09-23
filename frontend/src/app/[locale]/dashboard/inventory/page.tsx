@@ -33,8 +33,8 @@ export default function BookSearchInventory() {
 
   const handleGetBook = async () => {
     const res = await bookService.getBooks(searchKey);
-    setBooks(res);
-    setFilteredBooks(res);
+    setBooks(res.items);
+    setFilteredBooks(res.items);
   };
 
   // Filter books based on search key

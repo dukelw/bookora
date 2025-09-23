@@ -24,6 +24,8 @@ import { bookService } from "@/services/bookService";
 import { Book } from "@/interfaces/Book";
 import { toast } from "react-toastify";
 import { HomeIcon } from "lucide-react";
+import BaseTable, { Column } from "@/components/table/BaseTable";
+import Pagination from "@/components/pagination/pagination";
 
 export default function BookManagementPage() {
   const [search, setSearch] = useState("");
@@ -34,10 +36,17 @@ export default function BookManagementPage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedBook, setSelectedBook] = useState<Partial<Book> | null>(null);
   const [isVariant, setIsVariant] = useState<boolean>(false);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [total, setTotal] = useState(0);
   const fetchData = async () => {
-    const res = await bookService.getBooks();
-    setBooks(res);
+    try {
+      const res = await bookService.getBooks(search, currentPage, pageSize);
+      setBooks(res.items);
+      setTotal(res.total);
+    } catch (err) {
+      toast.error("Lỗi khi tải dữ liệu sách");
+    }
   };
 
   const handleDeleteBook = async (bookId: string) => {
@@ -52,7 +61,74 @@ export default function BookManagementPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [search, currentPage, pageSize]);
+
+  const columns: Column<Book>[] = [
+    { key: "title", label: "Tên sách" },
+    { key: "author", label: "Tác giả" },
+    { key: "publisher", label: "NXB" },
+    {
+      key: "category",
+      label: "Danh mục",
+      render: (book) =>
+        Array.isArray(book.category)
+          ? book.category.map((c) => c.name).join(", ")
+          : "",
+    },
+    {
+      key: "price",
+      label: "Giá",
+      render: (book) =>
+        formatCurrency(
+          book.variants?.find((v) => v.rarity === "common")?.price ?? 0
+        ),
+    },
+    { key: "releaseYear", label: "Năm" },
+    { key: "stock", label: "Tồn kho" },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (book: Book) => (
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="h-8 px-2 text-white bg-blue-600 rounded text-xs hover:bg-blue-700 transition"
+          >
+            Chi tiết
+          </button>
+
+          <button
+            onClick={() => {
+              setIsVariant(true);
+              setSelectedBook(book);
+              setModalOpen(true);
+            }}
+            className="h-8 px-2 text-white bg-purple-600 rounded text-xs hover:bg-purple-700 transition"
+          >
+            Biến thể
+          </button>
+
+          <button
+            onClick={() => {
+              setIsVariant(false);
+              setSelectedBook(book);
+              setModalOpen(true);
+            }}
+            className="h-8 px-2 text-black bg-yellow-300 rounded text-xs hover:bg-yellow-400 transition"
+          >
+            Sửa
+          </button>
+
+          <button
+            onClick={() => handleDeleteBook(book._id!)}
+            className="h-8 px-2 text-white bg-red-600 rounded text-xs hover:bg-red-700 transition"
+          >
+            Xóa
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div>
@@ -138,105 +214,7 @@ export default function BookManagementPage() {
 
         {/* Table */}
         <div className="overflow-x-auto max-w-[calc(100vw-300px) rounded">
-          <Table hoverable={true}>
-            <TableHead>
-              <TableRow>
-                <TableHeadCell>Tên sách</TableHeadCell>
-                <TableHeadCell>Tác giả</TableHeadCell>
-                <TableHeadCell>NXB</TableHeadCell>
-                <TableHeadCell>Danh mục</TableHeadCell>
-                <TableHeadCell>Giá</TableHeadCell>
-                <TableHeadCell>Năm</TableHeadCell>
-                <TableHeadCell>Tồn kho</TableHeadCell>
-                <TableHeadCell>Actions</TableHeadCell>
-              </TableRow>
-            </TableHead>
-            <TableBody className="divide-y">
-              {books.map((book, idx) => (
-                <TableRow key={idx} className="bg-white">
-                  <TableCell className="font-medium text-gray-900">
-                    {book.title}
-                  </TableCell>
-                  <TableCell>{book.author}</TableCell>
-                  <TableCell>{book.publisher}</TableCell>
-
-                  {/* Category */}
-                  <TableCell>
-                    {Array.isArray(book.category)
-                      ? book.category.map((c) => c.name).join(", ")
-                      : book.category?.name}
-                  </TableCell>
-
-                  {/* Price */}
-                  <TableCell>
-                    {formatCurrency(
-                      book.variants?.find((v) => v.rarity === "common")
-                        ?.price ?? 0
-                    )}
-                  </TableCell>
-                  <TableCell>{book.releaseYear}</TableCell>
-                  <TableCell>{book.stock}</TableCell>
-
-                  {/* Images */}
-                  {/* <TableCell className="flex gap-1">
-                  {book.images?.map((img) => (
-                    <Image
-                      width={20}
-                      height={20}
-                      key={img._id}
-                      src={img.url}
-                      alt={book.title}
-                      className="w-12 h-12 object-cover rounded"
-                    />
-                  ))}
-                </TableCell> */}
-
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        onClick={() => setModalOpen(true)}
-                        size="xs"
-                        color="blue"
-                      >
-                        Chi tiết
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setIsVariant(true);
-                          setSelectedBook(book);
-                          setModalOpen(true);
-                        }}
-                        size="xs"
-                        color="purple"
-                      >
-                        Biến thể
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setIsVariant(false);
-                          setSelectedBook(book);
-                          setModalOpen(true);
-                        }}
-                        size="xs"
-                        color="yellow"
-                        className="text-black"
-                      >
-                        Sửa
-                      </Button>
-
-                      <Button
-                        onClick={() => handleDeleteBook(book._id)}
-                        size="xs"
-                        color="red"
-                      >
-                        Xóa
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <BaseTable columns={columns} data={books} />
           <ActionModal
             variantMode={isVariant}
             key={selectedBook?._id ?? "create"}
@@ -247,7 +225,15 @@ export default function BookManagementPage() {
               setModalOpen(false);
               setSelectedBook(null);
             }}
-          ></ActionModal>
+          />
+
+          <Pagination
+            currentPage={currentPage}
+            totalItems={total}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+          />
         </div>
       </div>
     </div>

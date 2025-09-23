@@ -54,12 +54,12 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
   } = useForm<{ invoiceNumber: string; supplier: string; note?: string }>();
 
   const selectedBookId = watch("book");
-  const selectedBook = books.find((b) => b._id === selectedBookId);
+  const selectedBook = books?.find((b) => b._id === selectedBookId);
 
   // Lấy danh sách sách
   const handleGetBook = async () => {
     const res = await bookService.getBooks(searchKey);
-    setBooks(res);
+    setBooks(res.items);
   };
 
   useEffect(() => {
@@ -276,7 +276,7 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                   >
                     <div>
                       <span className="font-medium">
-                        {books.find((b) => b._id === item.book)?.title}
+                        {books?.find((b) => b._id === item.book)?.title}
                       </span>
                       <span className="mx-2"></span>
                       <span>

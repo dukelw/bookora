@@ -103,7 +103,7 @@ export default function BookCreationForm({
     const loadCategories = async () => {
       try {
         const cats = await categoryService.getCategories();
-        setCategories(cats);
+        setCategories(cats.items);
       } catch (error) {
         console.error("Failed to load categories:", error);
       }

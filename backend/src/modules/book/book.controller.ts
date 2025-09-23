@@ -25,10 +25,14 @@ export class BookController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lấy danh sách tất cả sách' })
+  @ApiOperation({ summary: 'Lấy danh sách tất cả sách (có phân trang)' })
   @ApiResponse({ status: 200, description: 'Danh sách sách trả về' })
-  findAll(@Query('keySearch') searchKey?: string) {
-    return this.bookService.findAll(searchKey);
+  findAll(
+    @Query('keySearch') searchKey?: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.bookService.findAll(searchKey, +page, +limit);
   }
 
   @Get(':id')

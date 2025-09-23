@@ -14,9 +14,9 @@ export const categoryService = {
     return res.data;
   },
 
-  async getCategories(keySearch?: string) {
+  async getCategories(keySearch?: string, pageNum?: number, pageSize?: number) {
     const res: AxiosResponse = await api.get(API_URL, {
-      params: { keySearch },
+      params: { keySearch, pageNum, pageSize },
     });
     return res.data;
   },

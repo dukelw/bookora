@@ -4,35 +4,38 @@ import SliderCarousel from "@/app/components/home/Slider";
 import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 import { useTranslations } from "use-intl";
+import { useEffect, useState } from "react";
+import { Book } from "@/interfaces/Book";
+import { bookService } from "@/services/bookService";
+import BookList from "@/app/components/book/BookList";
 
 export default function HomePage() {
+  const [books, setBooks] = useState<Book[]>([]);
   const { user } = useAuthStore();
   const t = useTranslations("home");
 
+  useEffect(() => {
+    const fetchBooks = async () => {
+      const res = await bookService.getBooks();
+      setBooks(res.items || []);
+    };
+    fetchBooks();
+  }, []);
+
   return (
     <div className="p-6 flex flex-col items-center justify-center min-h-[70vh]">
-      <SliderCarousel />
-      <div className="mt-6 bg-cyan-500 text-white rounded-xl shadow-lg p-10 space-y-6 w-full max-w-xl">
-        {user ? (
-          <div className="space-y-4 text-center">
-            <h1 className="text-2xl font-bold">
-              {t("welcomeBack")}, {user.email}
-            </h1>
-            {user.avatar && (
-              <Image
-                src={user.avatar}
-                width={100}
-                height={100}
-                alt="User"
-                className="rounded-full mx-auto border-4 border-white"
-              />
-            )}
-          </div>
-        ) : (
-          <div className="space-y-4 text-center">
-            <h1 className="text-2xl font-bold">{t("welcome")}</h1>
-          </div>
-        )}
+      {/* Slider nằm ngoài shadow */}
+      <div className="w-full mb-6">
+        <SliderCarousel />
+      </div>
+
+      {/* Các BookList nằm trong khung shadow */}
+      <div className="flex flex-col items-center justify-center w-full">
+        <div className="rounded-xl shadow-lg p-10 w-full">
+          <BookList title="New Products" books={books} />
+          <BookList title="Best Seller" books={books} />
+          <BookList title="Recommend" books={books} />
+        </div>
       </div>
     </div>
   );
