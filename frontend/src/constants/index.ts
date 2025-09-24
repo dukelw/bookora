@@ -11,7 +11,7 @@ export interface SidebarItem {
 
 export const navItems: NavItem[] = [
   { label: "home", path: "/" },
-  { label: "categories", path: "/categories" },
+  { label: "categories", path: "/category" },
   { label: "bestsellers", path: "/bestsellers" },
   { label: "newarrivals", path: "/new-arrivals" },
   { label: "authors", path: "/authors" },
@@ -38,4 +38,14 @@ export const DASHBOARD_SIDEBAR_ITEMS: SidebarItem[] = [
 export const FALLBACK_BOOK =
   "https://res.cloudinary.com/dukelewis-workspace/image/upload/v1758102566/uploads/mhlq9eezqw8fqrtyovco.png";
 
-export const MAX_LIMIT = 1000000000
+export const MAX_LIMIT = 1000000000;
+
+export const PAYMENT_OPTIONS = [
+  {
+    value: "cod",
+    label: "Thanh toán khi nhận hàng",
+    icon: "/images/payment/cod.png",
+  },
+  { value: "momo", label: "Ví MoMo", icon: "/images/payment/momo.png" },
+  { value: "vnpay", label: "Ví VNPay", icon: "/images/payment/vnpay.jpg" },
+];
