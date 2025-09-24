@@ -27,13 +27,18 @@ import { usePathname } from "next/navigation";
 import { navItems } from "@/constants";
 import UserDropdown from "./UserDropdown";
 import { useTranslations } from "use-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchModal from "@/app/components/header/SearchModal";
 import MenuDrawer from "@/app/components/header/MenuDrawer";
+import CartDropdown from "@/app/components/header/CartDropdown";
+import { cartService } from "@/services/cartService";
+import { useAuthStore } from "@/store/authStore";
+import { useCartStore } from "@/store/cartStore";
 
 const AppNavbar = () => {
+  const { user } = useAuthStore();
+  const { cart, setCart } = useCartStore();
   const wishlistCount = 2;
-  const cartCount = 3;
 
   const pathname = usePathname();
   const t = useTranslations("navbar");
@@ -43,9 +48,21 @@ const AppNavbar = () => {
   const currentPath = "/" + (segments[1] ?? "");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+
+  const handleGetCart = async () => {
+    const res = await cartService.getCart(user?._id);
+    setCart(res);
+  };
+
+  useEffect(() => {
+    if (user?._id) {
+      handleGetCart();
+    }
+  }, [user]);
 
   return (
     <div className="w-full">
@@ -157,13 +174,24 @@ const AppNavbar = () => {
           </div>
 
           {/* Cart */}
-          <div className="relative cursor-pointer">
-            <FaShoppingCart className="text-xl hover:text-cyan transition-colors" />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                {cartCount}
-              </span>
-            )}
+          <div className="relative">
+            <div
+              className="relative cursor-pointer"
+              onClick={() => setIsCartOpen(!isCartOpen)}
+            >
+              <FaShoppingCart className="text-xl hover:text-cyan transition-colors" />
+              {(cart?.items?.length ?? 0) > 0 && (
+                <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full select-none pointer-events-none">
+                  {cart?.items?.length ?? 0}
+                </span>
+              )}
+            </div>
+
+            <CartDropdown
+              cart={cart}
+              isOpen={isCartOpen}
+              onClose={() => setIsCartOpen(false)}
+            />
           </div>
 
           {/* Hamburger for drawer */}

@@ -12,6 +12,8 @@ import { MAX_LIMIT } from "@/constants";
 export default function CategoryPage() {
   const { category, setCategory } = useCategoryStore();
   const [books, setBooks] = useState<Book[]>([]);
+  const [searchKey, setSearchKey] = useState("");
+  const [showAll, setShowAll] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +21,11 @@ export default function CategoryPage() {
 
   const fetchBooks = async (page = 1, limit = 10) => {
     if (!category?._id) return;
-    const res = await bookService.getBooksByCategory(category._id, page, limit);
+    const res = await bookService.getBooksByCategory(
+      category ? category._id : categories[0]._id,
+      page,
+      limit
+    );
     setBooks(res.items);
     setTotalItems(res.total);
     setCurrentPage(res.page);
@@ -27,7 +33,7 @@ export default function CategoryPage() {
   };
 
   const fetchCategory = async () => {
-    const res = await categoryService.getCategories("", 1, MAX_LIMIT);
+    const res = await categoryService.getCategories(searchKey, 1, MAX_LIMIT);
     setCategories(res.items);
   };
 
@@ -37,7 +43,7 @@ export default function CategoryPage() {
 
   useEffect(() => {
     fetchCategory();
-  }, []);
+  }, [searchKey]);
 
   const handleSetNewCategory = (newCategory: Category) => {
     setCategory(newCategory);
@@ -53,20 +59,46 @@ export default function CategoryPage() {
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Thể loại
             </h2>
-            <div className="space-y-2">
-              {categories.map((cat) => (
+
+            {/* Ô search */}
+            <input
+              type="text"
+              value={searchKey}
+              onChange={(e) => setSearchKey(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") fetchCategory();
+              }}
+              placeholder="Tìm thể loại..."
+              className="w-full border-gray-300 px-3 py-2 mb-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-shadow"
+            />
+
+            {/* Danh sách category */}
+            <div className="flex flex-col space-y-1">
+              {(showAll ? categories : categories.slice(0, 10)).map((cat) => (
                 <button
                   key={cat._id}
                   onClick={() => handleSetNewCategory(cat)}
-                  className={`w-full text-left px-4 py-2 rounded-lg transition ${
+                  className={`flex items-center px-4 py-2 rounded-lg text-left transition group ${
                     category?._id === cat._id
-                      ? "bg-blue-600 text-white font-medium"
-                      : "bg-gray-100 hover:bg-gray-200"
+                      ? "bg-blue-50 text-cyan-shadow border-l-4 border-cyan-shadow font-medium"
+                      : "hover:bg-gray-100 text-gray-700"
                   }`}
                 >
-                  {cat.name}
+                  <span className="truncate">{cat.name}</span>
                 </button>
               ))}
+
+              {/* Nút xem thêm */}
+              {categories.length > 10 && (
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="text-sm text-cyan-shadow hover:underline mt-2"
+                >
+                  {showAll
+                    ? "Ẩn bớt"
+                    : `Xem thêm (còn ${categories.length - 10} thể loại)`}
+                </button>
+              )}
             </div>
           </div>
         </div>

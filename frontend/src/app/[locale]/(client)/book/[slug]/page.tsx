@@ -10,14 +10,22 @@ import Link from "next/link";
 import ReviewSlider from "./components/ReviewSlider";
 import { useBookStore } from "@/store/bookStore";
 import { useCategoryStore } from "@/store/categoryStore";
+import CartModal from "./components/CartModal";
+import { cartService } from "@/services/cartService";
+import { useAuthStore } from "@/store/authStore";
+import { toast } from "react-toastify";
+import { useCartStore } from "@/store/cartStore";
 
 export default function BookDetailPage() {
   const { bookId } = useBookStore();
+  const { user } = useAuthStore();
   const { setCategory } = useCategoryStore();
   const router = useRouter();
 
   const [book, setBook] = useState<Book | null>(null);
   const [mainImage, setMainImage] = useState<string>("");
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const { setCart } = useCartStore();
 
   useEffect(() => {
     if (!bookId) return;
@@ -43,6 +51,30 @@ export default function BookDetailPage() {
   const handleGoToCategory = async (category: Category) => {
     setCategory(category);
     router.push(`/category/${category.slug}`);
+  };
+
+  const handleAddToCart = async (
+    items: { variant: BookVariant; quantity: number }[]
+  ) => {
+    try {
+      await Promise.all(
+        items.map((item) =>
+          cartService.addToCart({
+            userId: user._id,
+            bookId: bookId ?? "",
+            variantId: item.variant._id,
+            quantity: item.quantity,
+          })
+        )
+      );
+
+      // 🚀 Sau khi thêm, fetch lại giỏ hàng để store cập nhật
+      const updatedCart = await cartService.getCart(user._id);
+      setCart(updatedCart);
+    } catch (err) {
+      console.error(err);
+      toast.error("Có lỗi khi thêm giỏ hàng");
+    }
   };
 
   return (
@@ -126,7 +158,7 @@ export default function BookDetailPage() {
                   <span
                     onClick={() => handleGoToCategory(c)}
                     key={c._id}
-                    className="px-3 py-1 border border-cyan-500 text-cyan-600 rounded-full text-sm bg-cyan-50"
+                    className="cursor-pointer px-3 py-1 border border-cyan-500 text-cyan-600 rounded-full text-sm bg-cyan-50"
                   >
                     {c.name}
                   </span>
@@ -136,12 +168,25 @@ export default function BookDetailPage() {
 
             {/* Nút hành động */}
             <div className="flex gap-4 mt-6">
-              <button className="p-2 border rounded-lg text-red-500 hover:bg-red-50 transition">
-                <FaHeart />
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white rounded-lg shadow hover:bg-cyan-700 transition">
-                <FaShoppingCart /> Thêm vào giỏ
-              </button>
+              <div className="flex gap-4 mt-6">
+                <button className="p-2 border rounded-lg text-red-500 hover:bg-red-50 transition">
+                  <FaHeart />
+                </button>
+                <button
+                  onClick={() => setIsCartModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white rounded-lg shadow hover:bg-cyan-700 transition"
+                >
+                  <FaShoppingCart /> Thêm vào giỏ
+                </button>
+              </div>
+
+              <CartModal
+                bookId={bookId ?? ""}
+                isOpen={isCartModalOpen}
+                onClose={() => setIsCartModalOpen(false)}
+                variants={book?.variants ?? []}
+                onConfirm={handleAddToCart}
+              />
             </div>
           </div>
         </div>
@@ -149,7 +194,7 @@ export default function BookDetailPage() {
 
       {/* Đánh giá (Review Cards) */}
       <div className="mt-10">
-        <ReviewSlider bookId={bookId} />
+        <ReviewSlider bookId={bookId ?? ""} />
       </div>
 
       {/* Bình luận */}
