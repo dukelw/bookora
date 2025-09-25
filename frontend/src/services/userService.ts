@@ -1,16 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { api } from "@/lib/axios"; // axios đã config sẵn token
+import { api } from "@/lib/axios";
 import axios, { AxiosResponse } from "axios";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/user`;
 
 export const userService = {
-  // ==================== GET PROFILE ====================
+  // Lấy thông tin người dùng
   async getProfile() {
     try {
-      // gọi API /user/profile (JWT token đã có trong api instance)
       const res: AxiosResponse = await api.get(`${API_URL}/profile`);
-      return res.data; // trả về user info
+      return res.data;
     } catch (error: any) {
       throw new Error(
         error?.response?.data?.message || "Failed to get profile"
@@ -18,17 +16,16 @@ export const userService = {
     }
   },
 
-  // ==================== UPDATE PROFILE ====================
+  // Cập nhật thông tin người dùng
   async updateProfile(updateUserDto: {
-    fullName?: string;
-    phone?: string;
+    name?: string;
     address?: string;
     avatar?: string;
-    // thêm các trường khác nếu có
+    shippingAddress?: string;
   }) {
     try {
       const res: AxiosResponse = await api.put(`${API_URL}/me`, updateUserDto);
-      return res.data; // { message: string, user: object }
+      return res.data;
     } catch (error: any) {
       throw new Error(
         error?.response?.data?.message || "Failed to update profile"
