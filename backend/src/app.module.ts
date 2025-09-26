@@ -15,6 +15,7 @@ import { PurchaseInvoiceModule } from './modules/purchase-invoice/purchase-invoi
 import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
 import { DiscountModule } from './modules/discount/discount.module';
+import { FooterImageModule } from './modules/footer-image/footer-image.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { DiscountModule } from './modules/discount/discount.module';
     OrderModule,
     RatingModule,
     DiscountModule,
+    FooterImageModule,
   ],
 })
 export class AppModule {}
