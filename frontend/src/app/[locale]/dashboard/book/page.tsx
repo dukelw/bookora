@@ -1,127 +1,168 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeadCell,
-  TableCell,
   TextInput,
-  Select,
   Button,
   Datepicker,
-  TableRow,
   Dropdown,
   DropdownItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  HomeIcon,
 } from "flowbite-react";
 import { FaSearch, FaPlus } from "react-icons/fa";
 import { formatCurrency } from "@/utils/format";
 import ActionModal from "./components/ActionModal";
 import { bookService } from "@/services/bookService";
+import { categoryService } from "@/services/categoryService";
 import { Book } from "@/interfaces/Book";
 import { toast } from "react-toastify";
-import { HomeIcon } from "lucide-react";
 import BaseTable, { Column } from "@/components/table/BaseTable";
 import Pagination from "@/components/pagination/pagination";
+import ConfirmModal from "@/app/components/ui/modal/ConfirmModal";
+import { useTranslations } from "use-intl";
 
 export default function BookManagementPage() {
+  const t = useTranslations("dashboard");
+  const m = useTranslations("sidebar");
+
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState<{ _id: string; name: string }[]>([]);
   const [releaseYear, setReleaseYear] = useState("");
   const [priceRange, setPriceRange] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedBook, setSelectedBook] = useState<Partial<Book> | null>(null);
-  const [isVariant, setIsVariant] = useState<boolean>(false);
+  const [isVariant, setIsVariant] = useState(false);
+  const [detailMode, setDetailMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
-  const fetchData = async () => {
+
+  const [categoryId, setCategoryId] = useState<string | "">("");
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const fetchBooks = useCallback(async () => {
     try {
-      const res = await bookService.getBooks(search, currentPage, pageSize);
+      let res;
+      if (categoryId) {
+        res = await bookService.getBooksByCategory(categoryId, currentPage, pageSize);
+      } else {
+        res = await bookService.getBooks(search, currentPage, pageSize);
+      }
       setBooks(res.items);
       setTotal(res.total);
     } catch (err) {
-      toast.error("Lỗi khi tải dữ liệu sách");
+      console.error(err);
+      toast.error(t("errorLoad"));
     }
-  };
+  }, [search, categoryId, currentPage, pageSize, t]);
 
-  const handleDeleteBook = async (bookId: string) => {
-    const res = await bookService.removeBook(bookId);
-    if (res) {
-      toast.success("Xóa sách thành công");
-    } else {
-      toast.error("Có lỗi khi xóa sách");
+  const fetchCategory = useCallback(async () => {
+    try {
+      const res = await categoryService.getCategories("", 1, 1000);
+      setCategory(res.items);
+    } catch (err) {
+      console.error(err);
     }
-    fetchData();
-  };
+  }, []);
+
 
   useEffect(() => {
-    fetchData();
-  }, [search, currentPage, pageSize]);
+    fetchBooks();
+    fetchCategory();
+  }, [fetchBooks, fetchCategory]);
+
+
+  const handleDeleteBook = async () => {
+    if (!selectedId) return;
+    try {
+      await bookService.removeBook(selectedId);
+      toast.success(t("p.deleteSuccess"));
+      fetchBooks();
+    } catch (err) {
+      console.error(err);
+      toast.error(t("p.deleteError"));
+    } finally {
+      setOpenConfirm(false);
+      setSelectedId(null);
+    }
+  };
 
   const columns: Column<Book>[] = [
-    { key: "title", label: "Tên sách" },
-    { key: "author", label: "Tác giả" },
-    { key: "publisher", label: "NXB" },
+    { key: "title", label: t("p.title") },
+    { key: "author", label: t("p.author") },
+    { key: "publisher", label: t("p.publisher") },
     {
       key: "category",
-      label: "Danh mục",
+      label: t("p.category"),
       render: (book) =>
         Array.isArray(book.category)
-          ? book.category.map((c) => c.name).join(", ")
-          : "",
+        ? book.category.map((c) => c.name).join(", ")
+        : "",
     },
     {
       key: "price",
-      label: "Giá",
+      label: t("p.price"),
       render: (book) =>
         formatCurrency(
           book.variants?.find((v) => v.rarity === "common")?.price ?? 0
-        ),
+      ),
     },
-    { key: "releaseYear", label: "Năm" },
-    { key: "stock", label: "Tồn kho" },
+    { key: "releaseYear", label: t("p.releaseYear") },
+    { key: "stock", label: t("p.stock") },
     {
       key: "actions",
-      label: "Actions",
+      label: t("actions"),
       render: (book: Book) => (
         <div className="flex items-center gap-1">
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={() => {
+              setIsVariant(false);
+              setSelectedBook(book);
+              setDetailMode(true);
+              setModalOpen(true)
+            }}
             className="h-8 px-2 text-white bg-blue-600 rounded text-xs hover:bg-blue-700 transition"
           >
-            Chi tiết
+            {t("detail")}
           </button>
 
           <button
             onClick={() => {
               setIsVariant(true);
               setSelectedBook(book);
+              setDetailMode(false);
               setModalOpen(true);
             }}
             className="h-8 px-2 text-white bg-purple-600 rounded text-xs hover:bg-purple-700 transition"
           >
-            Biến thể
+            {t("p.variant")}
           </button>
 
           <button
             onClick={() => {
               setIsVariant(false);
               setSelectedBook(book);
+              setDetailMode(false);
               setModalOpen(true);
             }}
             className="h-8 px-2 text-black bg-yellow-300 rounded text-xs hover:bg-yellow-400 transition"
           >
-            Sửa
+          {t("edit")}
           </button>
 
           <button
-            onClick={() => handleDeleteBook(book._id!)}
+            onClick={() => {
+              setSelectedId(book._id!);
+              setOpenConfirm(true);
+            }}
             className="h-8 px-2 text-white bg-red-600 rounded text-xs hover:bg-red-700 transition"
           >
-            Xóa
+            {t("delete")}
           </button>
         </div>
       ),
@@ -129,76 +170,70 @@ export default function BookManagementPage() {
   ];
 
   return (
-    <div className="p-6">
-      {/* Header filters */}
-      <div className="flex flex-wrap items-center gap-3 mb-6">
-        {/* Search */}
-        <TextInput
-          type="text"
-          placeholder="Tìm kiếm theo tên..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          icon={FaSearch}
-          className="w-60"
-        />
+    <div>
+      <Breadcrumb aria-label="breadcrumb" className="px-5 py-3">
+        <BreadcrumbItem href="#" icon={HomeIcon}>Dashboard</BreadcrumbItem>
+        <BreadcrumbItem href="#">{m("productManagement")}</BreadcrumbItem>
+        <BreadcrumbItem>{m("book")}</BreadcrumbItem>
+      </Breadcrumb>
 
-        {/* Filter release year */}
-        <Datepicker
-          placeholder="Năm phát hành"
-          // onSelectedDateChanged={(date) =>
-          //   setReleaseYear(date.getFullYear().toString())
-          // }
-        />
+      <div className="p-6 shadow rounded-2xl">
+        {/* Header filters */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <TextInput
+            type="text"
+            placeholder={t("p.searchPlaceholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            icon={FaSearch}
+            className="w-60"
+          />
 
-        {/* Category */}
-        <Dropdown
-          label={category ? category : "Tất cả danh mục"}
-          dismissOnClick={true}
-        >
-          <DropdownItem onClick={() => setCategory("")}>
-            Tất cả danh mục
-          </DropdownItem>
-          <DropdownItem onClick={() => setCategory("Fantasy")}>
-            Fantasy
-          </DropdownItem>
-          <DropdownItem onClick={() => setCategory("Thiếu nhi")}>
-            Thiếu nhi
-          </DropdownItem>
-        </Dropdown>
+          {/* Filter release year */}
+          <Datepicker
+            placeholder={t("p.releaseYearPlaceholder")}
+            // onSelectedDateChanged={(date) =>
+            //   setReleaseYear(date.getFullYear().toString())
+            // }
+          />
 
-        {/* Price */}
-        <Dropdown
-          label={priceRange ? priceRange : "Khoảng giá"}
-          dismissOnClick={true}
-        >
-          <DropdownItem onClick={() => setPriceRange("")}>Tất cả</DropdownItem>
-          <DropdownItem onClick={() => setPriceRange("0-50000")}>
-            0 - 50.000
-          </DropdownItem>
-          <DropdownItem onClick={() => setPriceRange("50000-100000")}>
-            50.000 - 100.000
-          </DropdownItem>
-          <DropdownItem onClick={() => setPriceRange("100000-200000")}>
-            100.000 - 200.000
-          </DropdownItem>
-        </Dropdown>
-
-        {/* Action buttons */}
-        <div className="ml-auto flex gap-2">
-          <Button
-            color="green"
-            onClick={() => {
-              setSelectedBook(null);
-              setModalOpen(true);
-            }}
+          {/* Category */}
+          <Dropdown
+            label={category.find(c => c._id === categoryId)?.name || t("p.allCategories")}
+            dismissOnClick
           >
-            <FaPlus className="mr-2" /> Tạo sách
-          </Button>
-        </div>
-      </div>
+            <DropdownItem onClick={() => setCategoryId("")}>
+              {t("p.allCategories")}
+            </DropdownItem>
+            {category.map((c) => (
+              <DropdownItem key={c._id} onClick={() => setCategoryId(c._id)}>
+                {c.name}
+              </DropdownItem>
+            ))}
+          </Dropdown>
 
-        {/* Table */}
-        <div className="overflow-x-auto max-w-[calc(100vw-300px) rounded">
+          <Dropdown label={priceRange || t("p.priceRange")} dismissOnClick>
+            <DropdownItem onClick={() => setPriceRange("")}>{t("p.all")}</DropdownItem>
+            <DropdownItem onClick={() => setPriceRange("0-50000")}>0 - 50.000</DropdownItem>
+            <DropdownItem onClick={() => setPriceRange("50000-100000")}>50.000 - 100.000</DropdownItem>
+            <DropdownItem onClick={() => setPriceRange("100000-200000")}>100.000 - 200.000</DropdownItem>
+          </Dropdown>
+
+          <div className="ml-auto flex gap-2">
+            <Button
+              color="green"
+              onClick={() => {
+                setSelectedBook(null);
+                setDetailMode(false);
+                setModalOpen(true);
+              }}
+            >
+              <FaPlus className="mr-2" /> {t("p.createBook")}
+            </Button>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto max-w-[calc(100vw-300px)] rounded">
           <BaseTable columns={columns} data={books} />
           <ActionModal
             variantMode={isVariant}
@@ -206,12 +241,12 @@ export default function BookManagementPage() {
             isOpen={modalOpen}
             defaultValues={selectedBook ?? undefined}
             onClose={() => {
-              fetchData();
+              fetchBooks();
               setModalOpen(false);
               setSelectedBook(null);
             }}
+            mode={detailMode ? "detail" : selectedBook ? "edit" : "create"} 
           />
-
           <Pagination
             currentPage={currentPage}
             totalItems={total}
@@ -220,6 +255,17 @@ export default function BookManagementPage() {
             onPageSizeChange={setPageSize}
           />
         </div>
+
+        {/* Confirm Modal */}
+        <ConfirmModal
+          show={openConfirm}
+          onClose={() => setOpenConfirm(false)}
+          type="error"
+          title={t("p.deleteConfirmTitle")}
+          message={t("p.deleteConfirmMessage")}
+          onConfirm={handleDeleteBook}
+        />
       </div>
+    </div>
   );
 }

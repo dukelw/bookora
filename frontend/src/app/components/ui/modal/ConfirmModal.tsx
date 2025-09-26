@@ -8,6 +8,7 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 import { JSX, useEffect } from "react";
+import { useTranslations } from "use-intl";
 
 type ConfirmType = "success" | "error" | "info" | "warning";
 
@@ -42,6 +43,7 @@ export default function ConfirmModal({
   onClose,
   onConfirm,
 }: ConfirmModalProps) {
+  const t = useTranslations("dashboard");
   useEffect(() => {
     // reset scroll khi mở modal
     if (show) document.body.style.overflow = "hidden";
@@ -61,9 +63,9 @@ export default function ConfirmModal({
             color={type === "error" ? "red" : "green"}
             onClick={onConfirm}
           >
-            Xác nhận
+            {t("confirm")}
           </Button>
-          <Button onClick={onClose}>Hủy</Button>
+          <Button onClick={onClose}>{t("cancel")}</Button>
         </div>
       </div>
     </Modal>

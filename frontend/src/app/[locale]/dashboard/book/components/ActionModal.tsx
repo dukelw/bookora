@@ -17,14 +17,16 @@ import {
   BookVariant,
   Category,
 } from "@/interfaces/Book";
-import { Button, Modal, ModalHeader } from "flowbite-react";
+import { Modal, ModalHeader } from "flowbite-react";
 import { uploadService } from "@/services/uploadService";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import MultiSelect from "@/components/MultiSelect";
 import { formatCurrency } from "@/utils/format";
+import { useTranslations } from "use-intl";
 
-interface ActionModalProps {
+interface BookModalProps {
+  mode?: "create" | "edit" | "detail";
   variantMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
@@ -32,11 +34,15 @@ interface ActionModalProps {
 }
 
 export default function BookCreationForm({
+  mode = "create",
   variantMode = false,
   isOpen,
   onClose,
   defaultValues,
-}: ActionModalProps) {
+}: BookModalProps) {
+  const t = useTranslations("dashboard");
+  const isDetail = mode === "detail";
+
   const [step, setStep] = useState(variantMode ? 2 : 1);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -129,8 +135,13 @@ export default function BookCreationForm({
   };
 
   const handleBookSubmit = async () => {
+    if (isDetail) {
+      setStep(2);
+      return;
+    }
+
     if (bookData.images.length < 5) {
-      toast.warn("Phải upload ít nhất 5 ảnh");
+      toast.warn(t("p.uploadAtLeast5Images"));
       return;
     }
 
@@ -150,22 +161,19 @@ export default function BookCreationForm({
         })) as any;
       }
 
-      if (!defaultValues) {
+      if (mode === "create") {
         const result = await bookService.createBook(payload);
         setCreatedBookId(result._id);
         setStep(2);
-        toast.success("Tạo sách thành công! Mời thêm biến thể.");
-      } else {
-        const result = await bookService.updateBook(defaultValues._id, payload);
-        if (result) {
-          setStep(2);
-        } else {
-          toast.error("Cập nhật sách thất bại");
-        }
+        toast.success(t("p.createBookSuccess"));
+      } else if (mode === "edit") {
+        await bookService.updateBook(defaultValues!._id, payload);
+        setStep(2);
+        toast.success(t("p.updateBookSuccess"));
       }
     } catch (error) {
-      console.error("Error creating book:", error);
-      toast.error("Có lỗi xảy ra khi tạo sách");
+      console.error(t("p.bookError"), error);
+      toast.error(t("p.bookError"));
     } finally {
       setLoading(false);
     }
@@ -177,7 +185,7 @@ export default function BookCreationForm({
       !currentVariant.price ||
       !currentVariant.stock
     ) {
-      toast.warn("Vui lòng nhập đầy đủ rarity, price, stock");
+      toast.warn(t("p.fillVariantRequired"));
       return;
     }
 
@@ -188,7 +196,7 @@ export default function BookCreationForm({
         const res = await uploadService.uploadFile(imageFile);
         imageUrl = res;
       } catch (error) {
-        toast.error("Upload ảnh thất bại");
+        toast.error(t("p.uploadImageFail"));
         return;
       }
     }
@@ -223,34 +231,17 @@ export default function BookCreationForm({
 
   const handleVariantsSubmit = async () => {
     if (variants.length === 0) {
-      toast.warn("Phải tạo ít nhất 1 biến thể");
+      toast.warn(t("p.atLeast1Variant"));
       return;
     }
 
     setLoading(true);
     try {
-      // Submit all variants
-      for (const variant of variants) {
-        await bookVariantService.addVariant(createdBookId, variant);
-      }
-      toast.success("Tạo biến thể thành công!");
-      // Reset form
-      setStep(1);
-      setBookData({
-        title: "",
-        author: "",
-        publisher: "",
-        category: [],
-        description: "",
-        releaseYear: new Date().getFullYear(),
-        images: [],
-      });
-      setVariants([]);
-      setPreviewUrls([]);
-      setCreatedBookId(null);
+      await Promise.all(variants.map(v => bookVariantService.addVariant(createdBookId, v)));
+      toast.success(t("p.createVariantSuccess"));
+      onClose(); // <-- tắt modal
     } catch (error) {
-      console.error("Error creating variants:", error);
-      toast.error("Có lỗi xảy ra khi tạo biến thể");
+      toast.error(t("p.variantError"));
     } finally {
       setLoading(false);
     }
@@ -263,9 +254,40 @@ export default function BookCreationForm({
     }
   };
 
+  const getModalHeader = () => {
+    if(step === 1) {
+      return variantMode ? t("p.editBook") : 
+            mode === "create" ? t("p.createBook") :
+            mode === "edit" ? t("p.editBook") :
+            t("p.detailBook");
+    }
+    if(step === 2) {
+      return variantMode ? t("p.editVariant") : 
+            mode === "create" ? t("p.createVariant") :
+            mode === "edit" ? t("p.editVariant") :
+            t("p.detailVariant");
+    }
+  };
+
+  const getStepLabe = (stepNumber: 1 | 2) => {
+    if(stepNumber === 1) {
+      return variantMode ? t("p.editBook") : 
+            mode === "create" ? t("p.createBook") :
+            mode === "edit" ? t("p.editBook") :
+            t("p.detailBook");
+    }
+    if(stepNumber === 2) {
+      return variantMode ? t("p.editVariant") : 
+            mode === "create" ? t("p.createVariant") :
+            mode === "edit" ? t("p.editVariant") :
+            t("p.detailVariant");
+    }
+    return "";
+  };
+
   return (
     <Modal show={isOpen} size="4xl" onClose={onClose}>
-      <ModalHeader className="border-none">Create Book</ModalHeader>
+      <ModalHeader className="border-none">{getModalHeader()}</ModalHeader>
       <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-lg">
         {/* Progress Indicator */}
         <div className="flex items-center justify-center mb-8">
@@ -281,7 +303,7 @@ export default function BookCreationForm({
             >
               {step > 1 ? <Check size={16} /> : <Book size={16} />}
             </div>
-            <span className="ml-2 font-medium">Tạo sách</span>
+            <span className="ml-2 font-medium">{getStepLabe(1)}</span>
           </div>
           <ChevronRight className="mx-4 text-gray-400" size={20} />
           <div
@@ -296,7 +318,7 @@ export default function BookCreationForm({
             >
               <Package size={16} />
             </div>
-            <span className="ml-2 font-medium">Tạo biến thể</span>
+            <span className="ml-2 font-medium">{getStepLabe(2)}</span>
           </div>
         </div>
 
@@ -304,14 +326,14 @@ export default function BookCreationForm({
         {step === 1 && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              Thông tin sách
+              {t("p.bookInfo")}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tiêu đề *
+                    {t("p.title")} *
                   </label>
                   <input
                     type="text"
@@ -323,13 +345,14 @@ export default function BookCreationForm({
                         title: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tác giả
+                    {t("p.author")}
                   </label>
                   <input
                     type="text"
@@ -340,13 +363,14 @@ export default function BookCreationForm({
                         author: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nhà xuất bản
+                    {t("p.publisher")}
                   </label>
                   <input
                     type="text"
@@ -357,13 +381,14 @@ export default function BookCreationForm({
                         publisher: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Danh mục
+                    {t("p.category")}
                   </label>
                   <MultiSelect
                     options={categories}
@@ -371,7 +396,8 @@ export default function BookCreationForm({
                     onChange={setSelected}
                     getId={(c) => c._id}
                     getLabel={(c) => c.name}
-                    placeholder="Chọn danh mục"
+                    placeholder={t("p.chooseCategory")}
+                    disabled={isDetail}
                   />
                 </div>
               </div>
@@ -379,7 +405,7 @@ export default function BookCreationForm({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mô tả
+                    {t("p.description")}
                   </label>
                   <textarea
                     value={bookData.description}
@@ -389,6 +415,7 @@ export default function BookCreationForm({
                         description: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -396,7 +423,7 @@ export default function BookCreationForm({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Năm xuất bản
+                    {t("p.releaseYear")}
                   </label>
                   <input
                     type="number"
@@ -407,13 +434,14 @@ export default function BookCreationForm({
                         releaseYear: parseInt(e.target.value),
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ảnh sách (ít nhất 5) *
+                    {t("p.images")} *
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-4">
                     <input
@@ -421,6 +449,7 @@ export default function BookCreationForm({
                       multiple
                       accept="image/*"
                       onChange={handleFileChange}
+                      disabled={isDetail}
                       className="hidden"
                       id="images"
                       required
@@ -431,7 +460,7 @@ export default function BookCreationForm({
                     >
                       <Upload size={32} className="text-gray-400 mb-2" />
                       <span className="text-sm text-gray-600">
-                        Click để chọn ảnh
+                        {t("p.selectImages")}
                       </span>
                     </label>
                   </div>
@@ -446,20 +475,22 @@ export default function BookCreationForm({
                             className="w-full h-full object-cover rounded border"
                             fill
                           />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(idx)}
-                            className="absolute top-0 right-0 bg-red-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs"
-                          >
-                            ×
-                          </button>
+                          {!isDetail && ( 
+                            <button
+                              type="button"
+                              onClick={() => removeImage(idx)}
+                              className="absolute top-0 right-0 bg-red-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs"
+                            >
+                              ×
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
                   )}
 
                   <p className="text-sm text-gray-500 mt-2">
-                    Đã chọn: {bookData.images.length} ảnh
+                    {t("p.selectedImages", { count: bookData.images.length })}
                   </p>
                 </div>
               </div>
@@ -472,7 +503,7 @@ export default function BookCreationForm({
                 disabled={loading}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center"
               >
-                {loading ? "Đang xử lý..." : "Tiếp tục"}
+                {loading ? t("processing") : t("continue")}
                 {!loading && <ChevronRight size={16} className="ml-2" />}
               </button>
             </div>
@@ -483,19 +514,19 @@ export default function BookCreationForm({
         {step === 2 && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              Tạo biến thể sách
+              {t("p.variantInfo")}
             </h2>
 
             {/* Variant Input Form */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-medium mb-4">Thêm biến thể mới</h3>
+              <h3 className="text-lg font-medium mb-4">{t("p.addVariant")}</h3>
               <div
                 className="grid grid-cols-1 md:grid-cols-4 gap-4"
                 onKeyDown={handleKeyPress}
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phiên bản *
+                    {t("p.rarity")} *
                   </label>
                   <input
                     type="text"
@@ -506,14 +537,15 @@ export default function BookCreationForm({
                         rarity: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập phiên bản"
+                    placeholder={t("p.inputVersion")}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Giá *
+                    {t("p.price")} *
                   </label>
                   <input
                     type="number"
@@ -524,6 +556,7 @@ export default function BookCreationForm({
                         price: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="0"
                   />
@@ -531,7 +564,7 @@ export default function BookCreationForm({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ảnh biến thể
+                    {t("p.variantImage")}
                   </label>
                   <input
                     type="file"
@@ -540,13 +573,14 @@ export default function BookCreationForm({
                       const file = e.target.files?.[0] || null;
                       setImageFile(file);
                     }}
+                    disabled={isDetail}
                     className="w-full text-sm text-gray-600"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Số lượng *
+                    {t("p.stock")} *
                   </label>
                   <input
                     type="number"
@@ -557,6 +591,7 @@ export default function BookCreationForm({
                         stock: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="0"
                   />
@@ -564,7 +599,7 @@ export default function BookCreationForm({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ISBN
+                    {t("p.isbn")}
                   </label>
                   <input
                     type="text"
@@ -575,30 +610,31 @@ export default function BookCreationForm({
                         isbn: e.target.value,
                       }))
                     }
+                    disabled={isDetail}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Optional"
                   />
                 </div>
               </div>
 
-              <button
+              {!isDetail && <button
                 type="button"
                 onClick={addVariantToList}
                 className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center"
               >
                 <Plus size={16} className="mr-2" />
-                Thêm vào danh sách
-              </button>
+                {t("p.addToList")}
+              </button>}
             </div>
 
             {/* Variants List */}
             <div className="space-y-2">
               <h3 className="text-lg font-medium">
-                Danh sách biến thể ({variants.length})
+                {t("p.variantList")} ({variants.length})
               </h3>
               {variants.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">
-                  Chưa có biến thể nào
+                  {t("p.noVariants")}
                 </p>
               ) : (
                 variants.map((variant: BookVariant, index: number) => (
@@ -625,22 +661,22 @@ export default function BookCreationForm({
                         {formatCurrency(variant.price)}
                       </span>
                       <span className="mx-2">•</span>
-                      <span>Số lượng: {variant.stock}</span>
+                      <span>{t("p.stock")} {variant.stock}</span>
                       {variant.isbn && (
                         <>
                           <span className="mx-2">•</span>
                           <span className="text-gray-600">
-                            ISBN: {variant.isbn}
+                            {t("p.isbn")} {variant.isbn}
                           </span>
                         </>
                       )}
                     </div>
-                    <button
+                    {!isDetail && <button
                       onClick={() => removeVariant(index)}
                       className="p-1 text-red-600 hover:bg-red-100 rounded"
                     >
                       <X size={16} />
-                    </button>
+                    </button>}
                   </div>
                 ))
               )}
@@ -651,17 +687,23 @@ export default function BookCreationForm({
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
-              >
-                Quay lại
+                disabled={variantMode}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50">
+                  {t("back")}
               </button>
               <button
                 type="button"
-                onClick={handleVariantsSubmit}
+                onClick={() => {
+                  if (isDetail) {
+                    onClose();
+                    return;
+                  }
+                  handleVariantsSubmit();
+                }}
                 disabled={loading || variants.length === 0}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
-                {loading ? "Đang tạo..." : "Hoàn tất"}
+                {loading ? t("creating") : t("finish")}
               </button>
             </div>
           </div>

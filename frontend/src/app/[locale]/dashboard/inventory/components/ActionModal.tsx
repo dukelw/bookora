@@ -6,6 +6,7 @@ import { Modal, ModalBody, ModalHeader } from "flowbite-react";
 import { bookService } from "@/services/bookService";
 import { purchaseInvoiceService } from "@/services/purchaseInvoiceService";
 import { toast } from "react-toastify";
+import { useTranslations } from "use-intl";
 
 interface BookVariant {
   _id: string;
@@ -41,6 +42,8 @@ interface InventoryModalProps {
 }
 
 export default function InventoryModal({ show, setShow }: InventoryModalProps) {
+  const t = useTranslations("dashboard");
+  
   const [books, setBooks] = useState<Book[]>([]);
   const [searchKey, setSearchKey] = useState("");
   const [items, setItems] = useState<InventoryItemForm[]>([]);
@@ -99,9 +102,9 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
     console.log("Invoice payload:", payload);
     const res = await purchaseInvoiceService.createLot(payload);
     if (res) {
-      toast.success("Create invoice and inventory successfully!");
+      toast.success(t("i.createSuccess"));
     } else {
-      toast.error("Create invoice and inventory failed!");
+      toast.error(t("i.createFail"));
     }
     handleGetBook();
     setItems([]);
@@ -111,7 +114,7 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
 
   return (
     <Modal show={show} size="4xl" popup onClose={() => setShow(false)}>
-      <ModalHeader className="p-6">Tạo hóa đơn nhập sách</ModalHeader>
+      <ModalHeader className="p-6">{t("i.create")}</ModalHeader>
       <ModalBody>
         {/* Form Invoice info */}
         <form
@@ -121,11 +124,11 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
           <div className="flex gap-2">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Invoice number *
+                {t("i.invoiceNumber")} *
               </label>
               <input
                 type="text"
-                placeholder="Invoice number"
+                placeholder={t("i.invoiceNumber")}
                 {...regInvoice("invoiceNumber", { required: true })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md 
       focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -134,11 +137,11 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
 
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Supplier *
+                {t("i.supplier")} *
               </label>
               <input
                 type="text"
-                placeholder="Supplier"
+                placeholder={t("i.supplier")}
                 {...regInvoice("supplier", { required: true })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md 
       focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -148,11 +151,11 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Note
+              {t("i.note")}
             </label>
             <input
               type="text"
-              placeholder="Note"
+              placeholder={t("i.note")}
               {...regInvoice("note")}
               className="w-full px-3 py-2 border border-gray-300 rounded-md 
     focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -163,11 +166,11 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
           <div className="flex flex-col gap-2">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tìm sách
+                {t("i.searchBook")}
               </label>
               <input
                 type="text"
-                placeholder="Tìm sách..."
+                placeholder={t("i.searchPlaceholder")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md 
       focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={searchKey}
@@ -178,7 +181,7 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
             <div className="flex gap-2">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Chọn sách *
+                  {t("i.selectBook")} *
                 </label>
                 <Controller
                   name="book"
@@ -189,7 +192,7 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md 
             focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="">Chọn sách</option>
+                      <option value="">{t("i.selectBook")}</option>
                       {books.map((b) => (
                         <option key={b._id} value={b._id}>
                           {b.title}
@@ -202,7 +205,7 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
 
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Chọn biến thể *
+                  {t("i.selectVariant")} *
                 </label>
                 <Controller
                   name="variant"
@@ -213,10 +216,10 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md 
             focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="">Chọn biến thể</option>
+                      <option value="">{t("i.selectVariant")}</option>
                       {selectedBook?.variants.map((v) => (
                         <option key={v._id} value={v._id}>
-                          {v.rarity} - Giá: {v.price} - Stock: {v.stock}
+                          {v.rarity} - {t("p.price")}: {v.price} - {t("p.stock")}: {v.stock}
                         </option>
                       ))}
                     </select>
@@ -228,11 +231,11 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
             <div className="flex gap-2">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Số lượng *
+                  {t("i.quantity")} *
                 </label>
                 <input
                   type="number"
-                  placeholder="Số lượng"
+                  placeholder={t("i.quantity")}
                   {...register("quantity", { required: true, min: 1 })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md 
         focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -241,11 +244,11 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
 
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Giá nhập *
+                  {t("i.unitPrice")} *
                 </label>
                 <input
                   type="number"
-                  placeholder="Giá nhập"
+                  placeholder={t("i.supplier")}
                   {...register("unitPrice", { required: true, min: 0 })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md 
         focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -255,11 +258,11 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ghi chú
+                {t("i.note")}
               </label>
               <input
                 type="text"
-                placeholder="Ghi chú"
+                placeholder={t("i.note")}
                 {...register("note")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md 
       focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -287,9 +290,9 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                         }
                       </span>
                       <span className="mx-4"></span>
-                      <span>Số lượng: {item.quantity}</span>
+                      <span>{t("i.quantity")}: {item.quantity}</span>
                       <span className="mx-4"></span>
-                      <span>Giá nhập: {item.unitPrice}</span>
+                      <span>{t("i.unitPrice")}: {item.unitPrice}</span>
                     </div>
                     <button
                       type="button"
@@ -309,14 +312,14 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                 className="px-4 py-2 bg-green-600 text-white rounded"
                 onClick={handleSubmit(addItem)}
               >
-                Thêm sách
+                {t("i.addBook")}
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
                 disabled={items.length === 0}
               >
-                Tạo hóa đơn
+                {t("i.create")}
               </button>
             </div>
           </div>

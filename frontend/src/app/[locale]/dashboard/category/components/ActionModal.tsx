@@ -9,6 +9,8 @@ import {
   Label,
   TextInput,
 } from "flowbite-react";
+import { toast } from "react-toastify";
+import { useTranslations } from "use-intl";
 
 interface Category {
   _id?: string;
@@ -30,6 +32,8 @@ export default function CategoryModal({
   onSubmit,
   initialData,
 }: CategoryModalProps) {
+  const t = useTranslations("dashboard");
+
   const [formData, setFormData] = useState<Category>({
     name: "",
     description: "",
@@ -53,7 +57,7 @@ export default function CategoryModal({
 
   const handleSubmit = () => {
     if (!formData.name.trim()) {
-      alert("Tên danh mục là bắt buộc!");
+      toast.warn(t("c.warnSubmit"));
       return;
     }
     onSubmit(formData);
@@ -64,17 +68,17 @@ export default function CategoryModal({
     <Modal show={isOpen} onClose={onClose} size="md" popup>
       <ModalHeader>
         <p className="p-3">
-          {initialData ? "Sửa danh mục" : "Tạo danh mục mới"}
+          {initialData ? t("c.edit") : t("c.create")}
         </p>
       </ModalHeader>
       <ModalBody>
         <div className="space-y-4">
           <div>
-            <Label>Tên danh mục</Label>
+            <Label>{t("c.name")}</Label>
             <TextInput
               id="name"
               name="name"
-              placeholder="Nhập tên..."
+              placeholder={t("c.enterName")}
               value={formData.name}
               onChange={handleChange}
               required
@@ -82,22 +86,22 @@ export default function CategoryModal({
           </div>
 
           <div>
-            <Label>Mô tả</Label>
+            <Label>{t("c.description")}</Label>
             <TextInput
               id="description"
               name="description"
-              placeholder="Nhập mô tả..."
+              placeholder={t("c.enterDescription")}
               value={formData.description}
               onChange={handleChange}
             />
           </div>
 
           <div>
-            <Label>Độ tuổi</Label>
+            <Label>{t("c.ageRange")}</Label>
             <TextInput
               id="ageRange"
               name="ageRange"
-              placeholder='Ví dụ: "6-12", "18+"'
+              placeholder={t("c.enterAgeRange")}
               value={formData.ageRange}
               onChange={handleChange}
             />
@@ -106,10 +110,10 @@ export default function CategoryModal({
       </ModalBody>
       <ModalFooter>
         <Button onClick={handleSubmit}>
-          {initialData ? "Cập nhật" : "Tạo mới"}
+          {initialData ? t("update") : t("create")}
         </Button>
         <Button color="gray" onClick={onClose}>
-          Hủy
+          {t("cancel")}
         </Button>
       </ModalFooter>
     </Modal>
