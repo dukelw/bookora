@@ -93,4 +93,14 @@ export class CartController {
     if (!userId) throw new BadRequestException('Missing userId');
     return this.service.removeItem(userId, bookId, variantId);
   }
+
+  @Post('apply-discount/:code')
+  @ApiOperation({ summary: 'Áp dụng mã giảm giá cho giỏ hàng' })
+  applyDiscount(
+    @Query('userId') userId: string,
+    @Param('code') code: string,
+  ) {
+    if (!userId) throw new BadRequestException('Missing userId');
+    return this.service.applyDiscountToCart(userId, code);
+  }
 }

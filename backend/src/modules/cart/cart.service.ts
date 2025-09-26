@@ -9,12 +9,14 @@ import {
 import { Book, BookVariant } from 'src/schemas/book.schema';
 import { Cart, CartItemStatus } from 'src/schemas/cart.schema';
 import { SHIPPING_FEE } from 'src/constant';
+import { DiscountService } from '../discount/discount.service';
 
 @Injectable()
 export class CartService {
   constructor(
     @InjectModel(Cart.name) private cartModel: Model<Cart>,
     @InjectModel(Book.name) private bookModel: Model<Book>,
+    private readonly discountService: DiscountService,
   ) {}
 
   async getCart(userId: string) {
@@ -150,4 +152,24 @@ export class CartService {
 
     return { total, tax, shipping, grandTotal, items: cart.items };
   }
+
+  async applyDiscountToCart(userId: string, code: string) {
+      const summary = await this.cartSummary(userId);
+
+      if (summary.total === 0) {
+        throw new NotFoundException('Cart is empty');
+      }
+
+      const { discount, discountedTotal } = await this.discountService.validateAndApply(
+        code,
+        summary.grandTotal,
+      );
+
+      return {
+        ...summary,
+        discountCode: discount.code,
+        discountValue: discount.value,
+        grandTotalAfterDiscount: discountedTotal,
+      };
+    }
 }
