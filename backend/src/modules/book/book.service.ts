@@ -7,11 +7,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Book } from 'src/schemas/book.schema';
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
+import { RatingService } from '../rating/rating.service';
 
 @Injectable()
 export class BookService {
   constructor(
     @InjectModel(Book.name) private readonly bookModel: Model<Book>,
+    private readonly ratingService: RatingService,
   ) {}
 
   async create(dto: CreateBookDto): Promise<Book> {
@@ -94,5 +96,11 @@ export class BookService {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  async getBookWithRatings(bookId: string) {
+    const book = await this.bookModel.findById(bookId).lean();
+    const avg = await this.ratingService.getAverageRating(bookId);
+    return { ...book, averageRating: avg.avgStars, totalRatings: avg.count };
   }
 }

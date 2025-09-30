@@ -4,6 +4,7 @@ import { CartService } from './cart.service';
 import { CartController } from './cart.controller';
 import { Book, BookSchema } from 'src/schemas/book.schema';
 import { Cart, CartSchema } from 'src/schemas/cart.schema';
+import { DiscountModule } from '../discount/discount.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { Cart, CartSchema } from 'src/schemas/cart.schema';
       { name: Cart.name, schema: CartSchema },
       { name: Book.name, schema: BookSchema },
     ]),
+    DiscountModule,
   ],
   controllers: [CartController],
   providers: [CartService],

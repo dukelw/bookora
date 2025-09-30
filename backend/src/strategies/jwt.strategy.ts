@@ -23,6 +23,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('User not found or unauthorized');
     }
 
+    if (foundUser.status === 'disable') {
+      throw new UnauthorizedException('User account disabled');
+    }
+
     return foundUser;
   }
 }

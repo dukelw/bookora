@@ -98,11 +98,22 @@ export class CartController {
     return this.service.removeItem(userId, bookId, variantId);
   }
 
+  @Post('apply-discount/:code')
+  @ApiOperation({ summary: 'Áp dụng mã giảm giá cho giỏ hàng' })
+  applyDiscount(
+    @Query('userId') userId: string,
+    @Param('code') code: string,
+  ) {
+    if (!userId) throw new BadRequestException('Missing userId');
+    return this.service.applyDiscountToCart(userId, code);
+  }
+  
   @Put('adjust')
   @ApiOperation({ summary: 'Tăng/Giảm số lượng sản phẩm trong giỏ hàng (±1)' })
   adjustItem(@Body() dto: AdjustCartItemDto) {
     const { userId } = dto;
     if (!userId) throw new BadRequestException('Missing userId');
     return this.service.adjustItemQuantity(userId, dto);
+
   }
 }

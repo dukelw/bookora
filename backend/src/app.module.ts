@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { RatingModule } from './modules/rating/rating.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './modules/upload/cloudinary/cloudinary.module';
@@ -13,6 +14,8 @@ import { InventoryModule } from './modules/inventory/inventory.module';
 import { PurchaseInvoiceModule } from './modules/purchase-invoice/purchase-invoice.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
+import { DiscountModule } from './modules/discount/discount.module';
+import { FooterImageModule } from './modules/footer-image/footer-image.module';
 
 @Module({
   imports: [
@@ -30,6 +33,9 @@ import { OrderModule } from './modules/order/order.module';
     PurchaseInvoiceModule,
     CartModule,
     OrderModule,
+    RatingModule,
+    DiscountModule,
+    FooterImageModule,
   ],
 })
 export class AppModule {}

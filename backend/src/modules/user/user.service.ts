@@ -29,4 +29,14 @@ export class UserService {
 
     return updatedUser;
   }
+
+  async updateStatus(userId: string, status: 'active' | 'disable') {
+    const user = await this.userModel.findByIdAndUpdate(
+      userId,
+      { status },
+      { new: true },
+    );
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 }

@@ -1,16 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { CartService } from '../cart/cart.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order, OrderItem, OrderStatus } from 'src/schemas/order.schema';
 import { CartItemStatus } from 'src/schemas/cart.schema';
+import { DiscountService } from '../discount/discount.service';
+import { Types } from 'mongoose'
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
     private cartService: CartService,
+    private discountService: DiscountService,
   ) {}
 
   async createOrder(dto: CreateOrderDto) {
@@ -35,7 +38,7 @@ export class OrderService {
           variantId: i.variantId,
           quantity: i.quantity,
           price,
-          finalPrice: price, // tạm thời, sau này áp dụng discount
+          finalPrice: price, // sẽ điều chỉnh nếu có discount
         };
       });
 
@@ -43,15 +46,22 @@ export class OrderService {
       throw new NotFoundException('No items marked for purchase');
     }
 
-    const totalAmount = orderItems.reduce(
+    let totalAmount = orderItems.reduce(
       (sum, i) => sum + i.price * i.quantity,
       0,
     );
-    const finalAmount = orderItems.reduce(
-      (sum, i) => sum + i.finalPrice * i.quantity,
-      0,
-    );
-    const discountAmount = totalAmount - finalAmount;
+    let finalAmount = totalAmount;
+    let discountAmount = 0;
+
+    // Nếu có discountCode
+    if (discountCode) {
+      const result = await this.discountService.validateAndApply(
+        discountCode,
+        totalAmount,
+      );
+      finalAmount = result.discountedTotal;
+      discountAmount = totalAmount - finalAmount;
+    }
 
     const order = new this.orderModel({
       user,
@@ -65,6 +75,14 @@ export class OrderService {
     });
 
     await order.save();
+
+    // markAsUsed sau khi order thành công
+    if (discountCode) {
+      await this.discountService.markAsUsed(
+        discountCode,
+        (order._id as Types.ObjectId).toString(),
+      );
+    }
 
     // Sau khi tạo order, xóa những item PURCHASED khỏi giỏ
     cart.items = cart.items.filter(

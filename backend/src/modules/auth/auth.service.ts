@@ -11,6 +11,7 @@ import { UserService } from '../user/user.service';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/forgot-reset.dto'; // optional
+import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -57,6 +58,10 @@ export class AuthService {
         'Failed to create user during OAuth sign-in',
       );
     }
+
+    if (user.status === 'disable') {
+          throw new UnauthorizedException('Account disabled, contact admin');
+        }
 
     const tokens = this.generateTokens(user);
 

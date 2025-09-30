@@ -23,7 +23,7 @@ export class OrderItem {
   price: number; // giá gốc
 
   @Prop({ required: true })
-  finalPrice: number; // giá sau giảm
+  finalPrice: number; // giá sau khi áp dụng discount (nếu có)
 }
 
 export const OrderItemSchema = SchemaFactory.createForClass(OrderItem);
@@ -34,22 +34,25 @@ export class Order extends Document {
   items: OrderItem[];
 
   @Prop({ default: 0 })
-  totalAmount: number;
+  totalAmount: number; // tổng tiền trước giảm
 
   @Prop({ default: 0 })
-  discountAmount: number;
+  discountAmount: number; // số tiền được giảm
 
   @Prop({ default: 0 })
-  finalAmount: number;
+  finalAmount: number; // tổng tiền sau khi giảm
 
   @Prop({ default: OrderStatus.PENDING, enum: OrderStatus })
   status: OrderStatus;
 
   @Prop({ type: String, required: false })
-  discountCode?: string;
+  discountCode?: string; // mã giảm giá (nếu có)
 
   @Prop({ type: String, required: true })
-  user: string; // optional, vẫn lưu để link với user nếu muốn
+  user: string; // ID user đặt đơn
+
+  @Prop({ type: String, required: true })
+  shippingAddress: string; // địa chỉ giao hàng
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
