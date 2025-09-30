@@ -12,13 +12,16 @@ import {
 import { CartService } from './cart.service';
 import {
   AddToCartDto,
+  AdjustCartItemDto,
   UpdateCartItemDto,
   UpdateCartItemStatusDto,
 } from './dto/cart.dto';
 import { ApiTags, ApiOperation, ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 class UserIdDto {
   @ApiProperty({ description: 'ID của user hoặc guest', example: '4444' })
+  @IsString()
   userId: string;
 }
 
@@ -90,6 +93,7 @@ export class CartController {
     @Body() body: UserIdDto,
   ) {
     const { userId } = body;
+    console.log(userId);
     if (!userId) throw new BadRequestException('Missing userId');
     return this.service.removeItem(userId, bookId, variantId);
   }
@@ -102,5 +106,14 @@ export class CartController {
   ) {
     if (!userId) throw new BadRequestException('Missing userId');
     return this.service.applyDiscountToCart(userId, code);
+  }
+  
+  @Put('adjust')
+  @ApiOperation({ summary: 'Tăng/Giảm số lượng sản phẩm trong giỏ hàng (±1)' })
+  adjustItem(@Body() dto: AdjustCartItemDto) {
+    const { userId } = dto;
+    if (!userId) throw new BadRequestException('Missing userId');
+    return this.service.adjustItemQuantity(userId, dto);
+
   }
 }

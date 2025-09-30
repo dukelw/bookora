@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.8",
     "@heroicons/react": "^2.2.0",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.11.0",

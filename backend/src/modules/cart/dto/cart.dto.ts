@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsIn,
   IsMongoId,
   IsNotEmpty,
   IsNumber,
@@ -95,4 +96,22 @@ export class UpdateCartItemStatusDto {
 
   @ApiProperty({ enum: CartItemStatus })
   status: CartItemStatus;
+}
+
+export class AdjustCartItemDto {
+  @ApiProperty({ description: 'ID của user', example: '4444' })
+  @IsString()
+  userId: string;
+
+  @ApiProperty({ description: 'ID sách', example: 'book123' })
+  @IsString()
+  bookId: string;
+
+  @ApiProperty({ description: 'ID variant', example: 'variant123' })
+  @IsString()
+  variantId: string;
+
+  @ApiProperty({ description: 'Hành động tăng hay giảm', example: 'increment' })
+  @IsIn(['increment', 'decrement'])
+  action: 'increment' | 'decrement';
 }

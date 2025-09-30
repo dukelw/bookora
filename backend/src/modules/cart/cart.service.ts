@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
   AddToCartDto,
+  AdjustCartItemDto,
   UpdateCartItemDto,
   UpdateCartItemStatusDto,
 } from './dto/cart.dto';
@@ -172,4 +173,32 @@ export class CartService {
         grandTotalAfterDiscount: discountedTotal,
       };
     }
+
+  async adjustItemQuantity(userId: string, dto: AdjustCartItemDto) {
+    const cart = await this.cartModel.findOne({ userId });
+    if (!cart) throw new NotFoundException('Cart not found');
+
+    const item = cart.items.find(
+      (i) => i.book.toString() === dto.bookId && i.variantId === dto.variantId,
+    );
+    if (!item) throw new NotFoundException('Item not in cart');
+
+    if (dto.action === 'increment') {
+      item.quantity += 1;
+    } else if (dto.action === 'decrement') {
+      item.quantity -= 1;
+      if (item.quantity <= 0) {
+        // xoá luôn nếu về 0
+        cart.items = cart.items.filter(
+          (i) =>
+            !(
+              i.book.toString() === dto.bookId && i.variantId === dto.variantId
+            ),
+        );
+      }
+    }
+
+    await cart.save();
+    return cart;
+  }
 }
