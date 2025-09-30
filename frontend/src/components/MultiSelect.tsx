@@ -8,6 +8,7 @@ interface MultiSelectProps<T> {
   getId: (item: T) => string | number; // cách lấy id
   getLabel: (item: T) => string; // cách lấy label hiển thị
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export default function MultiSelect<T>({
@@ -17,6 +18,7 @@ export default function MultiSelect<T>({
   getId,
   getLabel,
   placeholder = "Chọn...",
+  disabled,
 }: MultiSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -48,8 +50,8 @@ export default function MultiSelect<T>({
   return (
     <div className="relative w-full" ref={ref}>
       <div
-        className="border border-gray-300 rounded-md px-3 py-2 flex flex-wrap items-center gap-1 cursor-pointer"
-        onClick={() => setOpen(!open)}
+        className="border border-gray-300 rounded-md px-3 py-2 flex flex-wrap items-center gap-1"
+        onClick={() => !disabled && setOpen(!open)}
       >
         {value.length === 0 && (
           <span className="text-gray-400">{placeholder}</span>
@@ -60,20 +62,20 @@ export default function MultiSelect<T>({
             className="bg-blue-100 text-blue-800 px-2 py-1 rounded flex items-center gap-1 text-sm"
           >
             {getLabel(v)}
-            <button
+            {!disabled && ( <button
               onClick={(e) => {
                 e.stopPropagation();
                 removeItem(getId(v));
               }}
             >
               ×
-            </button>
+            </button>)}
           </span>
         ))}
         <span className="flex-1"></span>
       </div>
 
-      {open && (
+      {open && !disabled && (
         <div className="border border-gray-200 absolute z-10 mt-1 w-full bg-white rounded-md max-h-60 overflow-auto shadow-lg">
           {options.map((option) => (
             <div

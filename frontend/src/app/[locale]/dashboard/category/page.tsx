@@ -1,15 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeadCell,
-  TableCell,
   TextInput,
   Button,
-  TableRow,
   Breadcrumb,
   BreadcrumbItem,
   HomeIcon,
@@ -19,9 +13,9 @@ import CategoryModal from "./components/ActionModal";
 import { categoryService } from "@/services/categoryService";
 import ConfirmModal from "@/app/components/ui/modal/ConfirmModal";
 import { toast } from "react-toastify";
-import { isSuccessMessage } from "@/utils/check";
 import BaseTable from "@/components/table/BaseTable";
 import Pagination from "@/components/pagination/pagination";
+import { useTranslations } from "use-intl";
 
 interface Category {
   _id?: string;
@@ -31,6 +25,9 @@ interface Category {
 }
 
 export default function CategoryManagementPage() {
+  const t = useTranslations("dashboard");
+  const m = useTranslations("sidebar");
+
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [openCategoryModal, setOpenCategoryModal] = useState(false);
@@ -39,43 +36,36 @@ export default function CategoryManagementPage() {
   const [pageSize, setPageSize] = useState(8);
   const [total, setTotal] = useState(0);
 
-  // Confirm state
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Gọi lại API mỗi khi search, currentPage, pageSize đổi
-  useEffect(() => {
-    fetchCategories();
-  }, [search, currentPage, pageSize]);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
-      const res = await categoryService.getCategories(
-        search,
-        currentPage,
-        pageSize
-      );
+      const res = await categoryService.getCategories(search, currentPage, pageSize);
       setCategories(res.items);
       setTotal(res.total);
     } catch (err) {
       console.error("Error fetching categories:", err);
     }
-  };
+  }, [search, currentPage, pageSize]);
 
   useEffect(() => {
     fetchCategories();
-  }, [search]);
+  }, [fetchCategories]);
 
   const handleSaveCategory = async (data: Category) => {
     try {
       if (editingCategory) {
         await categoryService.updateCategory(editingCategory._id!, data);
+        toast.success(t("c.updateSuccess"));
       } else {
         await categoryService.createCategory(data);
+        toast.success(t("c.createSuccess"));
       }
       await fetchCategories();
     } catch (err) {
       console.error("Error saving category:", err);
+      toast.error(t("c.actionFailed"));
     } finally {
       setOpenCategoryModal(false);
       setEditingCategory(null);
@@ -85,16 +75,12 @@ export default function CategoryManagementPage() {
   const handleDeleteCategory = async () => {
     if (!selectedId) return;
     try {
-      const res = await categoryService.removeCategory(selectedId);
-      if (isSuccessMessage(res.message)) {
-        toast.success(res.message);
-      } else {
-        toast.error(res.message);
-      }
-
-      setCategories(categories.filter((c) => c._id !== selectedId));
+      await categoryService.removeCategory(selectedId);
+      toast.success(t("c.deleteSuccess"));
+      setCategories(prev => prev.filter(c => c._id !== selectedId));
     } catch (err) {
       console.error("Error deleting category:", err);
+      toast.error(t("c.deleteFailed"));
     } finally {
       setOpenConfirm(false);
       setSelectedId(null);
@@ -103,12 +89,12 @@ export default function CategoryManagementPage() {
 
   const columns = [
     { key: "_id", label: "ID" },
-    { key: "name", label: "Tên danh mục" },
-    { key: "description", label: "Mô tả" },
-    { key: "ageRange", label: "Độ tuổi" },
+    { key: "name", label: t("c.name") },
+    { key: "description", label: t("c.description") },
+    { key: "ageRange", label: t("c.ageRange") },
     {
       key: "actions",
-      label: "Actions",
+      label: t("actions"),
       render: (category: Category) => (
         <div className="flex items-center justify-between gap-2">
           <button
@@ -118,7 +104,7 @@ export default function CategoryManagementPage() {
               setOpenCategoryModal(true);
             }}
           >
-            Sửa
+            {t("edit")}
           </button>
           <button
             className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs transition"
@@ -127,7 +113,7 @@ export default function CategoryManagementPage() {
               setOpenConfirm(true);
             }}
           >
-            Xóa
+            {t("delete")}
           </button>
         </div>
       ),
@@ -136,37 +122,32 @@ export default function CategoryManagementPage() {
 
   return (
     <div>
-      <Breadcrumb
-        aria-label="Solid background breadcrumb example"
-        className="px-5 py-3"
-      >
-        <BreadcrumbItem href="#" icon={HomeIcon}>
-          Dashboard
-        </BreadcrumbItem>
-        <BreadcrumbItem href="#">Book Management</BreadcrumbItem>
-        <BreadcrumbItem>Category</BreadcrumbItem>
+      <Breadcrumb aria-label="Solid background breadcrumb example" className="px-5 py-3">
+        <BreadcrumbItem href="#" icon={HomeIcon}>Dashboard</BreadcrumbItem>
+        <BreadcrumbItem href="#">{m("productManagement")}</BreadcrumbItem>
+        <BreadcrumbItem>{m("categoryManagement")}</BreadcrumbItem>
       </Breadcrumb>
+
       <div className="p-6 shadow rounded-2xl">
         {/* Header filters */}
         <div className="flex flex-wrap items-center gap-3 mb-6">
           <TextInput
             type="text"
-            placeholder="Tìm kiếm danh mục..."
+            placeholder={t("c.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             icon={FaSearch}
             className="w-60"
           />
-
           <div className="ml-auto flex gap-2">
             <Button
-              color="purple"
+              color="green"
               onClick={() => {
                 setEditingCategory(null);
                 setOpenCategoryModal(true);
               }}
             >
-              <FaPlus className="mr-2" /> Tạo danh mục
+              <FaPlus className="mr-2" /> {t("c.create")}
             </Button>
           </div>
         </div>
@@ -201,8 +182,8 @@ export default function CategoryManagementPage() {
           show={openConfirm}
           onClose={() => setOpenConfirm(false)}
           type="error"
-          title="Xác nhận xóa"
-          message="Bạn có chắc chắn muốn xóa danh mục này không?"
+          title={t("c.deleteConfirmTitle")}
+          message={t("c.deleteConfirmMessage")}
           onConfirm={handleDeleteCategory}
         />
       </div>
