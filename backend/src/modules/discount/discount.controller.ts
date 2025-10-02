@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Patch, Param, Post, UseGuards } from '@nestjs/common';
 import { DiscountService } from './discount.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
@@ -7,8 +7,8 @@ import { AdminGuard } from 'src/guards/admin.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@ApiTags('discounts')
-@Controller('discounts')
+@ApiTags('Discounts')
+@Controller('Discounts')
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
@@ -38,5 +38,12 @@ export class DiscountController {
   @Post('apply/:code')
   async applyDiscount(@Param('code') code: string, @Body('orderTotal') orderTotal: number) {
     return this.discountService.validateAndApply(code, orderTotal);
+  }
+
+//   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Patch(':id/status')
+  toggle(@Param('id') id: string) {
+    return this.discountService.toggleActive(id);
   }
 }

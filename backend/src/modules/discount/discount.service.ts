@@ -45,5 +45,15 @@ export class DiscountService {
 
     return discount;
   }
+
+  async toggleActive(id: string) {
+    const discount = await this.discountModel.findById(id);
+    if (!discount) throw new NotFoundException('Discount not found');
+
+    discount.active = !discount.active;
+    await discount.save();
+    return discount;
+  }
+
 }
 
