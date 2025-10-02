@@ -16,7 +16,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
 import { DiscountModule } from './modules/discount/discount.module';
 import { FooterImageModule } from './modules/footer-image/footer-image.module';
-
+import { MailModule } from './modules/mail/mail.module'
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -36,6 +36,7 @@ import { FooterImageModule } from './modules/footer-image/footer-image.module';
     RatingModule,
     DiscountModule,
     FooterImageModule,
+    MailModule,
   ],
 })
 export class AppModule {}
