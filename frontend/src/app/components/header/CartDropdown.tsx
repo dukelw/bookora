@@ -11,6 +11,7 @@ import { cartService } from "@/services/cartService";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "react-toastify";
 import { useCartStore } from "@/store/cartStore";
+import { useTranslations } from "use-intl";
 
 interface CartDropdownProps {
   cart: Cart | null;
@@ -23,6 +24,7 @@ export default function CartDropdown({
   isOpen,
   onClose,
 }: CartDropdownProps) {
+  const c = useTranslations("cart");
   const items = cart?.items || [];
   const panelRef = useRef<HTMLDivElement>(null);
   const { user } = useAuthStore();
@@ -45,10 +47,10 @@ export default function CartDropdown({
       await cartService.removeItem(user._id, bookId, variantId);
       const updatedCart = await cartService.getCart(user._id);
       setCart(updatedCart);
-      toast.success("Đã xoá sản phẩm khỏi giỏ hàng");
+      toast.success(c("removeSuccess"));
     } catch (err) {
       console.error(err);
-      toast.error("Có lỗi khi xoá sản phẩm");
+      toast.error(c("removeError"));
     }
   };
 
@@ -73,18 +75,18 @@ export default function CartDropdown({
         >
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-lg">Giỏ hàng</h3>
+              <h3 className="font-semibold text-lg">{c("title")}</h3>
               <Link
                 href="/cart"
                 className="text-sm text-cyan-400 hover:underline"
                 onClick={onClose}
               >
-                Xem tất cả
+                {c("viewCart")}
               </Link>
             </div>
 
             {items.length === 0 && (
-              <p className="text-gray-400 text-sm">Giỏ hàng của bạn trống</p>
+              <p className="text-gray-400 text-sm">{c("empty")}</p>
             )}
 
             <div className="space-y-3">
@@ -119,7 +121,7 @@ export default function CartDropdown({
                       </p>
                       <p className="text-xs text-gray-400">{variant.rarity}</p>
                       <p className="text-xs text-gray-400">
-                        SL: {item.quantity}
+                        {c("quantity")}: {item.quantity}
                       </p>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-white">
@@ -166,7 +168,7 @@ export default function CartDropdown({
               className="block w-full text-center bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-700 transition"
               onClick={onClose}
             >
-              Đi đến giỏ hàng
+              {c("checkout")}
             </Link>
           </div>
         </Popover.Panel>
