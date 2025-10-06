@@ -100,17 +100,16 @@
     "orderManagement": "Quản lý đơn hàng",
     "categoryManagement": "Danh mục",
     "book": "Sản phẩm",
-    "discountManagement": "Quản lý giảm giá"
+    "discountManagement": "Quản lý giảm giá",
+    "footerImageManagement": "Quản lý chân trang"
   },
   "dashboard": {
-    "detail": "Chi tiết",
     "create": "Tạo mới",
     "update": "Cập nhật",
-    "edit": "Sửa",
+    "close": "Đóng",
     "cancel": "Hủy",
     "confirm": "Xác nhận",
     "actions": "Hành động",
-    "delete": "Xóa",
     "back": "Quay lại",
     "finish": "Hoàn tất",
     "creating": "Đang tạo...",
@@ -145,7 +144,6 @@
       "price": "Giá",
       "releaseYear": "Năm phát hành",
       "stock": "Tồn kho",
-      "variant": "Biến thể",
       "searchPlaceholder": "Tìm kiếm theo tiêu đề...",
       "releaseYearPlaceholder": "Năm phát hành",
       "allCategories": "Tất cả danh mục",
@@ -204,6 +202,29 @@
       "addBook": "Thêm sản phẩm",
       "availableVariants": "Các biến thể có sẵn",
       "image": "Ảnh"
+    },
+    "f": {
+      "list": "Danh sách ảnh chân trang",
+      "create": "Tạo ảnh chân trang",
+      "edit": "Chỉnh sửa ảnh chân trang",
+      "detail": "Chi tiết ảnh chân trang",
+      "title": "Tiêu đề",
+      "description": "Mô tả",
+      "image": "Ảnh",
+      "link": "Liên kết",
+      "isActive": "Kích hoạt",
+      "order": "Thứ tự",
+      "active": "Cập nhật trạng thái kích hoạt thành công!",
+      "errorActive": "Cập nhật trạng thái kích hoạt thất bại.",
+      "createSuccess": "Tạo ảnh chân trang thành công",
+      "updateSuccess": "Cập nhật ảnh chân trang thành công",
+      "deleteSuccess": "Xóa ảnh chân trang thành công",
+      "deleteFailed": "Xóa ảnh chân trang thất bại",
+      "actionFailed": "Thao tác thất bại, vui lòng thử lại",
+      "warnTitleRequired": "Tiêu đề là bắt buộc!",
+      "warnImageRequired": "Ảnh là bắt buộc!",
+      "deleteConfirmTitle": "Xác nhận xóa",
+      "deleteConfirmMessage": "Bạn có chắc muốn xóa ảnh chân trang này không?"
     }
   }
 }

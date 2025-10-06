@@ -100,17 +100,16 @@
     "orderManagement": "Order management",
     "categoryManagement": "Category",
     "book": "Product",
-    "discountManagement": "Discount management"
+    "discountManagement": "Discount management",
+    "footerImageManagement": "Footer management"
   },
   "dashboard": {
-    "detail": "Detail",
     "create": "Create",
     "update": "Update",
-    "edit": "Edit",
+    "close": "Close",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "actions": "Actions",
-    "delete": "Delete",
     "back": "Back",
     "finish": "Finish",
     "creating": "Creating...",
@@ -145,7 +144,6 @@
       "price": "Price",
       "releaseYear": "Release Year",
       "stock": "Stock",
-      "variant": "Variant",
       "searchPlaceholder": "Search by title...",
       "releaseYearPlaceholder": "Release Year",
       "allCategories": "All categories",
@@ -204,6 +202,29 @@
       "addBook": "Add Product",
       "availableVariants": "Variants Available",
       "image": "Image"
+    },
+    "f": {
+      "list": "List Footer Images",
+      "create": "Create Image Footer",
+      "edit": "Edit Image Footer",
+      "detail": "Detail Footer Images",
+      "title": "Title",
+      "description": "Description",
+      "image": "Image",
+      "link": "Link",
+      "isActive": "Active",
+      "order": "Order",
+      "active": "Updated status active successfully!",
+      "errorActive": "Failed to update status active.",
+      "createSuccess": "Image footer created successfully",
+      "updateSuccess": "Image footer updated successfully",
+      "deleteSuccess": "Image footer deleted successfully",
+      "deleteFailed": "Failed to delete image footer",
+      "actionFailed": "Action failed, please try again",
+      "warnTitleRequired": "Title is required!",
+      "warnImageRequired": "Image is required!",
+      "deleteConfirmTitle": "Delete Confirmation",
+      "deleteConfirmMessage": "Are you sure you want to delete this image footer?"
     }
   }
 }

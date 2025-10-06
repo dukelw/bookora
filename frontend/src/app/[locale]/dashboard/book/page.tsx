@@ -11,7 +11,7 @@ import {
   BreadcrumbItem,
   HomeIcon,
 } from "flowbite-react";
-import { FaSearch, FaPlus } from "react-icons/fa";
+import { FaSearch, FaPlus, FaEye, FaPen, FaTrash, FaCube, FaChevronDown } from "react-icons/fa";
 import { formatCurrency } from "@/utils/format";
 import ActionModal from "./components/ActionModal";
 import { bookService } from "@/services/bookService";
@@ -118,52 +118,48 @@ export default function BookManagementPage() {
       key: "actions",
       label: t("actions"),
       render: (book: Book) => (
-        <div className="flex items-center gap-1">
-          <button
+        <div className="flex gap-1 sm:gap-2">
+          <Button size="sm" color="blue" className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setIsVariant(false);
               setSelectedBook(book);
               setDetailMode(true);
               setModalOpen(true)
             }}
-            className="h-8 px-2 text-white bg-blue-600 rounded text-xs hover:bg-blue-700 transition"
           >
-            {t("detail")}
-          </button>
+            <FaEye />
+          </Button>
 
-          <button
+          <Button size="sm" color="purple" className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setIsVariant(true);
               setSelectedBook(book);
               setDetailMode(false);
               setModalOpen(true);
             }}
-            className="h-8 px-2 text-white bg-purple-600 rounded text-xs hover:bg-purple-700 transition"
           >
-            {t("p.variant")}
-          </button>
+            <FaCube />
+          </Button>
 
-          <button
+          <Button size="sm" color="yellow" className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setIsVariant(false);
               setSelectedBook(book);
               setDetailMode(false);
               setModalOpen(true);
             }}
-            className="h-8 px-2 text-black bg-yellow-300 rounded text-xs hover:bg-yellow-400 transition"
           >
-          {t("edit")}
-          </button>
+            <FaPen />
+          </Button>
 
-          <button
+          <Button size="sm" color="red" className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setSelectedId(book._id!);
               setOpenConfirm(true);
             }}
-            className="h-8 px-2 text-white bg-red-600 rounded text-xs hover:bg-red-700 transition"
           >
-            {t("delete")}
-          </button>
+            <FaTrash />
+          </Button>
         </div>
       ),
     },
@@ -199,7 +195,13 @@ export default function BookManagementPage() {
 
           {/* Category */}
           <Dropdown
-            label={category.find(c => c._id === categoryId)?.name || t("p.allCategories")}
+            inline={true} arrowIcon={false}
+            label={
+              <button className="w-60 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center">
+                {category.find(c => c._id === categoryId)?.name || t("p.allCategories")}
+                  <FaChevronDown className="ml-2" />
+              </button>
+            }
             dismissOnClick
           >
             <DropdownItem onClick={() => setCategoryId("")}>
@@ -212,7 +214,17 @@ export default function BookManagementPage() {
             ))}
           </Dropdown>
 
-          <Dropdown label={priceRange || t("p.priceRange")} dismissOnClick>
+          <Dropdown
+            inline={true}
+            arrowIcon={false}
+            label={
+              <button className="w-48 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center">
+                {priceRange || t("p.priceRange")}
+                <FaChevronDown className="ml-2" />
+              </button>
+            }
+            dismissOnClick
+          >
             <DropdownItem onClick={() => setPriceRange("")}>{t("p.all")}</DropdownItem>
             <DropdownItem onClick={() => setPriceRange("0-50000")}>0 - 50.000</DropdownItem>
             <DropdownItem onClick={() => setPriceRange("50000-100000")}>50.000 - 100.000</DropdownItem>
@@ -221,14 +233,14 @@ export default function BookManagementPage() {
 
           <div className="ml-auto flex gap-2">
             <Button
-              color="green"
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
               onClick={() => {
                 setSelectedBook(null);
                 setDetailMode(false);
                 setModalOpen(true);
               }}
             >
-              <FaPlus className="mr-2" /> {t("p.createBook")}
+              <FaPlus />
             </Button>
           </div>
         </div>

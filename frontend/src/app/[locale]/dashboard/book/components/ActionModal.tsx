@@ -287,7 +287,7 @@ export default function BookCreationForm({
 
   return (
     <Modal show={isOpen} size="4xl" onClose={onClose}>
-      <ModalHeader className="border-none">{getModalHeader()}</ModalHeader>
+      <ModalHeader className="border-gray-200">{getModalHeader()}</ModalHeader>
       <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-lg">
         {/* Progress Indicator */}
         <div className="flex items-center justify-center mb-8">
@@ -325,14 +325,14 @@ export default function BookCreationForm({
         {/* Step 1: Book Creation */}
         {step === 1 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-7">
               {t("p.bookInfo")}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
+              <div className="flex flex-col gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.title")} *
                   </label>
                   <input
@@ -351,7 +351,7 @@ export default function BookCreationForm({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.author")}
                   </label>
                   <input
@@ -369,7 +369,7 @@ export default function BookCreationForm({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.publisher")}
                   </label>
                   <input
@@ -387,7 +387,7 @@ export default function BookCreationForm({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.category")}
                   </label>
                   <MultiSelect
@@ -402,9 +402,9 @@ export default function BookCreationForm({
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="flex flex-col gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.description")}
                   </label>
                   <textarea
@@ -417,12 +417,12 @@ export default function BookCreationForm({
                     }
                     disabled={isDetail}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full py-7.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.releaseYear")}
                   </label>
                   <input
@@ -440,7 +440,7 @@ export default function BookCreationForm({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.images")} *
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-4">
@@ -459,7 +459,7 @@ export default function BookCreationForm({
                       className="flex flex-col items-center justify-center cursor-pointer"
                     >
                       <Upload size={32} className="text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-600">
+                      <span className="text-md text-gray-600">
                         {t("p.selectImages")}
                       </span>
                     </label>
@@ -489,23 +489,26 @@ export default function BookCreationForm({
                     </div>
                   )}
 
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-md text-gray-500 mt-2">
                     {t("p.selectedImages", { count: bookData.images.length })}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleBookSubmit}
-                disabled={loading}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center"
-              >
-                {loading ? t("processing") : t("continue")}
-                {!loading && <ChevronRight size={16} className="ml-2" />}
-              </button>
+            <div className="mt-4 flex flex-col gap-4 w-full">
+              <div className="-mx-6 border-t border-gray-200 w-full-2xl" />
+              <div className="flex justify-end mt-3 mb-2">
+                <button
+                  type="button"
+                  onClick={handleBookSubmit}
+                  disabled={loading}
+                  className="px-4 py-2 bg-blue-700 text-white text-md rounded-lg hover:bg-blue-800 disabled:opacity-50 flex items-center"
+                >
+                  {loading ? t("processing") : t("continue")}
+                  {!loading && <ChevronRight size={20} className="ml-1" />}
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -519,13 +522,10 @@ export default function BookCreationForm({
 
             {/* Variant Input Form */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-medium mb-4">{t("p.addVariant")}</h3>
-              <div
-                className="grid grid-cols-1 md:grid-cols-4 gap-4"
-                onKeyDown={handleKeyPress}
-              >
+              <h3 className="text-lg font-medium mb-5">{t("p.addVariant")}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6" onKeyDown={handleKeyPress}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.rarity")} *
                   </label>
                   <input
@@ -544,7 +544,7 @@ export default function BookCreationForm({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.price")} *
                   </label>
                   <input
@@ -563,7 +563,7 @@ export default function BookCreationForm({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.variantImage")}
                   </label>
                   <input
@@ -574,12 +574,12 @@ export default function BookCreationForm({
                       setImageFile(file);
                     }}
                     disabled={isDetail}
-                    className="w-full text-sm text-gray-600"
+                    className="w-full text-md text-gray-600"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.stock")} *
                   </label>
                   <input
@@ -598,7 +598,7 @@ export default function BookCreationForm({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.isbn")}
                   </label>
                   <input
@@ -620,9 +620,9 @@ export default function BookCreationForm({
               {!isDetail && <button
                 type="button"
                 onClick={addVariantToList}
-                className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center"
+                className="mt-8 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center"
               >
-                <Plus size={16} className="mr-2" />
+                <Plus size={20} className="mr-3" />
                 {t("p.addToList")}
               </button>}
             </div>
@@ -683,28 +683,31 @@ export default function BookCreationForm({
             </div>
 
             {/* Submit Buttons */}
-            <div className="flex justify-between">
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                disabled={variantMode}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50">
-                  {t("back")}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (isDetail) {
-                    onClose();
-                    return;
-                  }
-                  handleVariantsSubmit();
-                }}
-                disabled={loading || variants.length === 0}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                {loading ? t("creating") : t("finish")}
-              </button>
+            <div className="mt-9 flex flex-col gap-4 w-full">
+              <div className="-mx-6 border-t border-gray-200 w-full-2xl" />
+              <div className="flex justify-between gap-4 mt-3 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  disabled={variantMode}
+                  className="px-6 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50">
+                    {t("back")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isDetail) {
+                      onClose();
+                      return;
+                    }
+                    handleVariantsSubmit();
+                  }}
+                  disabled={loading || variants.length === 0}
+                  className="px-6 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 disabled:opacity-50"
+                >
+                  {loading ? t("creating") : t("finish")}
+                </button>
+              </div>
             </div>
           </div>
         )}

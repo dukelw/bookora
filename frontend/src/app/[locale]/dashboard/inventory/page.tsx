@@ -78,7 +78,7 @@ export default function BookSearchInventory() {
   return (
     <div>
       {/* Breadcrumb */}
-      <Breadcrumb aria-label="breadcrumb" className="mb-6">
+      <Breadcrumb aria-label="breadcrumb" className="px-5 py-3">
         <BreadcrumbItem href="#" icon={HomeIcon}>Dashboard</BreadcrumbItem>
         <BreadcrumbItem href="#">{m("productManagement")}</BreadcrumbItem>
         <BreadcrumbItem>{m("inventory")}</BreadcrumbItem>
@@ -102,8 +102,8 @@ export default function BookSearchInventory() {
               <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             </div>
 
-            <Button color="green" className="flex items-center gap-2" onClick={() => setShowModal(true)}>
-              <FaPlus /> {t("i.create")}
+            <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700" onClick={() => setShowModal(true)}>
+              <FaPlus />
             </Button>
           </div>
 
