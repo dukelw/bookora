@@ -50,3 +50,5 @@ export const PAYMENT_OPTIONS = [
   { value: "momo", label: "payWithMomo", icon: "/images/payment/momo.png" },
   { value: "vnpay", label: "payWithVNPay", icon: "/images/payment/vnpay.jpg" },
 ];
+
+export const REDIRECT_URL = `${process.env.NEXT_PUBLIC_CLIENT_URL}/payment/success`;

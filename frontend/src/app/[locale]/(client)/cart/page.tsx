@@ -10,6 +10,9 @@ import { cartService } from "@/services/cartService";
 import VoucherList from "./components/VoucherList";
 import { orderService } from "@/services/orderService";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useCheckoutStore } from "@/store/checkoutStore";
+import { eventBus } from "@/utils/eventBus";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
@@ -17,6 +20,8 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<any>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
+  const router = useRouter();
+  const { setCheckout } = useCheckoutStore();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -65,7 +70,6 @@ export default function CheckoutPage() {
 
   const handleSubmit = async () => {
     try {
-      // ⚡ Kiểm tra điều kiện cơ bản
       if (!cart || !user?._id) {
         toast.error("Không tìm thấy giỏ hàng hoặc thông tin người dùng!");
         return;
@@ -81,9 +85,6 @@ export default function CheckoutPage() {
         return;
       }
 
-      // setIsSubmitting(true);
-
-      // 🧮 Chuẩn bị danh sách sản phẩm
       const items = cart.items
         .filter((i: any) => selectedItems.includes(i._id))
         .map((i: any) => {
@@ -99,7 +100,6 @@ export default function CheckoutPage() {
           };
         });
 
-      // 📦 Chuẩn bị payload gửi backend
       const payload = {
         items,
         selectedItems,
@@ -115,29 +115,29 @@ export default function CheckoutPage() {
 
       console.log("📦 Sending order:", payload);
 
-      // 🛒 Gọi API tạo đơn hàng
-      const order = await orderService.createOrder(payload);
-
-      // ✅ Thành công
-      toast.success("Đặt hàng thành công!");
-      console.log("✅ Order created:", order);
-
-      // Làm mới giỏ hàng
-      handleGetCart();
-
-      // Điều hướng sang trang chi tiết đơn hàng nếu muốn
-      // router.push(`/orders/${order._id}`);
+      // ⚡ Xử lý theo phương thức thanh toán
+      if (paymentMethod === "cod") {
+        const order = await orderService.createOrder(payload);
+        if (order) {
+          setTimeout(() => {
+            eventBus.emit("cart:refresh");
+          }, 1000);
+          toast.success("Tạo đơn hàng thành công!");
+          handleGetCart();
+        }
+      } else if (paymentMethod === "momo") {
+        setCheckout(payload);
+        router.push("/payment/momo");
+      } else if (paymentMethod === "vnpay") {
+        toast.info("Tính năng thanh toán VNPAY đang được phát triển!");
+      }
     } catch (error: any) {
       console.error("❌ Lỗi khi tạo đơn hàng:", error);
-
-      // Nếu server có message cụ thể, hiển thị message đó
       const msg =
         error?.response?.data?.message ||
         error?.message ||
         "Đã xảy ra lỗi khi tạo đơn hàng!";
       toast.error(msg);
-    } finally {
-      // setIsSubmitting(false);
     }
   };
 

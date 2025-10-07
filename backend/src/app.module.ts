@@ -16,7 +16,8 @@ import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
 import { DiscountModule } from './modules/discount/discount.module';
 import { FooterImageModule } from './modules/footer-image/footer-image.module';
-import { MailModule } from './modules/mail/mail.module'
+import { MailModule } from './modules/mail/mail.module';
+import { MomoModule } from './modules/payment/momo/momo.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -37,6 +38,7 @@ import { MailModule } from './modules/mail/mail.module'
     DiscountModule,
     FooterImageModule,
     MailModule,
+    MomoModule,
   ],
 })
 export class AppModule {}
