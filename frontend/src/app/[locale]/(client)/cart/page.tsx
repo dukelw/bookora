@@ -10,8 +10,10 @@ import { useCartStore } from "@/store/cartStore";
 import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
 import { PAYMENT_OPTIONS } from "@/constants";
+import { useTranslations } from "use-intl";
 
 export default function CheckoutPage() {
+  const c = useTranslations("cart");
   const { user } = useAuthStore();
   const [cart, setCart] = useState<Cart | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>(
@@ -35,10 +37,10 @@ export default function CheckoutPage() {
       const updatedCart = await cartService.getCart(user._id);
       setCart(updatedCart);
       setCart(updatedCart); // cập nhật state cục bộ
-      toast.success("Đã xoá sản phẩm khỏi giỏ hàng");
+      toast.success(c("removeSuccess"));
     } catch (err) {
       console.error(err);
-      toast.error("Có lỗi khi xoá sản phẩm");
+      toast.error(c("removeError"));
     }
   };
 
@@ -81,7 +83,7 @@ export default function CheckoutPage() {
       setCart(updatedCart);
     } catch (err) {
       console.error(err);
-      toast.error("Có lỗi khi cập nhật số lượng");
+      toast.error(c("updateError"));
     }
   };
 
@@ -101,12 +103,12 @@ export default function CheckoutPage() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Form thông tin vận chuyển */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">Thông tin vận chuyển</h2>
+          <h2 className="text-2xl font-bold mb-6">{c("shippingInformation")}</h2>
           <form className="space-y-4">
             <div className="flex gap-4">
               <input
                 type="text"
-                placeholder="Nhập họ tên của bạn"
+                placeholder={c("placeholderName")}
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -115,7 +117,7 @@ export default function CheckoutPage() {
               />
               <input
                 type="text"
-                placeholder="Nhập số điện thoại"
+                placeholder={c("placeholderPhone")}
                 value={formData.phone}
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
@@ -125,7 +127,7 @@ export default function CheckoutPage() {
             </div>
             <input
               type="email"
-              placeholder="Nhập email của bạn"
+              placeholder={c("placeholderEmail")}
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -134,7 +136,7 @@ export default function CheckoutPage() {
             />
             <input
               type="text"
-              placeholder="Nhập địa chỉ"
+              placeholder={c("placeholderAddress")}
               value={formData.address}
               onChange={(e) =>
                 setFormData({ ...formData, address: e.target.value })
@@ -143,7 +145,7 @@ export default function CheckoutPage() {
             />
             <input
               type="text"
-              placeholder="Chọn tỉnh/thành phố"
+              placeholder={c("placeholderCity")}
               value={formData.city}
               onChange={(e) =>
                 setFormData({ ...formData, city: e.target.value })
@@ -151,7 +153,7 @@ export default function CheckoutPage() {
               className="bg-neutral-900 border border-neutral-700 rounded-lg p-3 w-full"
             />
             <textarea
-              placeholder="Nhập ghi chú"
+              placeholder={c("placeholderNote")}
               value={formData.note}
               onChange={(e) =>
                 setFormData({ ...formData, note: e.target.value })
@@ -162,7 +164,7 @@ export default function CheckoutPage() {
           </form>
 
           <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-4">Hình thức thanh toán</h3>
+            <h3 className="text-xl font-semibold mb-4">{c("paymentMethod")}</h3>
             <div className="space-y-3">
               <div className="space-y-3">
                 {PAYMENT_OPTIONS.map((opt) => (
@@ -193,7 +195,7 @@ export default function CheckoutPage() {
 
         {/* Giỏ hàng + Thanh toán */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">Giỏ hàng</h2>
+          <h2 className="text-2xl font-bold mb-6">{c("title")}</h2>
 
           {/* nút chọn tất cả */}
           <div className="flex items-center gap-2 mb-2">
@@ -202,7 +204,7 @@ export default function CheckoutPage() {
               checked={selectedItems.length === cart?.items.length}
               onChange={toggleAll}
             />
-            <span>Chọn tất cả</span>
+            <span>{c("selectAll")}</span>
           </div>
 
           {/* danh sách sản phẩm */}
@@ -282,18 +284,18 @@ export default function CheckoutPage() {
           })}
           {/* Voucher mock */}
           <div className="mt-6 bg-neutral-900 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-3">Voucher khuyến mãi</h3>
+            <h3 className="text-lg font-semibold mb-3">{c("voucher")}</h3>
             <div className="space-y-2">
               <div className="flex justify-between items-center bg-neutral-800 p-3 rounded-lg">
                 <span>Giảm 20k cho đơn từ 200k</span>
                 <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded text-sm">
-                  Áp dụng
+                  {c("apply")}
                 </button>
               </div>
               <div className="flex justify-between items-center bg-neutral-800 p-3 rounded-lg">
                 <span>Freeship cho đơn từ 150k</span>
                 <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded text-sm">
-                  Áp dụng
+                  {c("apply")}
                 </button>
               </div>
             </div>
@@ -301,21 +303,21 @@ export default function CheckoutPage() {
 
           {/* Chi tiết thanh toán */}
           <div className="mt-8 bg-neutral-900 p-4 rounded-lg">
-            <h3 className="text-xl font-semibold mb-4">Chi tiết thanh toán</h3>
+            <h3 className="text-xl font-semibold mb-4">{c("paymentDetails")}</h3>
             <div className="flex justify-between text-sm mb-2">
-              <span>Tạm tính</span>
+              <span>{c("subtotal")}</span>
               <span>{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex justify-between text-sm mb-2">
-              <span>Phí giao hàng</span>
+              <span>{c("shipping")}</span>
               <span>Miễn phí</span>
             </div>
             <div className="flex justify-between text-sm text-red-400 mb-2">
-              <span>Giảm giá</span>
+              <span>{c("discount")}</span>
               <span>-{formatCurrency(discount)}</span>
             </div>
             <div className="flex justify-between font-bold text-lg">
-              <span>Thành tiền</span>
+              <span>{c("grandTotal")}</span>
               <span>{formatCurrency(total)}</span>
             </div>
           </div>
@@ -329,7 +331,7 @@ export default function CheckoutPage() {
               console.log("Total:", total);
             }}
           >
-            Đặt hàng
+            {c("placeOrder")}
           </button>
         </div>
       </div>

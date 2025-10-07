@@ -8,7 +8,7 @@ import {
   BreadcrumbItem,
   HomeIcon,
 } from "flowbite-react";
-import { FaSearch, FaPlus } from "react-icons/fa";
+import { FaSearch, FaPlus, FaPen, FaTrash } from "react-icons/fa";
 import CategoryModal from "./components/ActionModal";
 import { categoryService } from "@/services/categoryService";
 import ConfirmModal from "@/app/components/ui/modal/ConfirmModal";
@@ -96,25 +96,23 @@ export default function CategoryManagementPage() {
       key: "actions",
       label: t("actions"),
       render: (category: Category) => (
-        <div className="flex items-center justify-between gap-2">
-          <button
-            className="px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md text-xs transition"
+        <div className="flex gap-1 sm:gap-2">
+          <Button size="sm" color="yellow" className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setEditingCategory(category);
               setOpenCategoryModal(true);
             }}
           >
-            {t("edit")}
-          </button>
-          <button
-            className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs transition"
+            <FaPen />
+          </Button>
+          <Button size="sm" color="red" className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setSelectedId(category._id!);
               setOpenConfirm(true);
             }}
           >
-            {t("delete")}
-          </button>
+            <FaTrash />
+          </Button>
         </div>
       ),
     },
@@ -122,7 +120,7 @@ export default function CategoryManagementPage() {
 
   return (
     <div>
-      <Breadcrumb aria-label="Solid background breadcrumb example" className="px-5 py-3">
+      <Breadcrumb aria-label="breadcrumb" className="px-5 py-3">
         <BreadcrumbItem href="#" icon={HomeIcon}>Dashboard</BreadcrumbItem>
         <BreadcrumbItem href="#">{m("productManagement")}</BreadcrumbItem>
         <BreadcrumbItem>{m("categoryManagement")}</BreadcrumbItem>
@@ -141,13 +139,13 @@ export default function CategoryManagementPage() {
           />
           <div className="ml-auto flex gap-2">
             <Button
-              color="green"
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
               onClick={() => {
                 setEditingCategory(null);
                 setOpenCategoryModal(true);
               }}
             >
-              <FaPlus className="mr-2" /> {t("c.create")}
+              <FaPlus />
             </Button>
           </div>
         </div>

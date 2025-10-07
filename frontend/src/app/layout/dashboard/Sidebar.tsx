@@ -11,6 +11,7 @@ import {
   FaTag,
   FaChevronDown,
   FaChevronRight,
+  FaFileImage,
 } from "react-icons/fa";
 import { DASHBOARD_SIDEBAR_ITEMS } from "@/constants";
 import { useTranslations } from "use-intl";
@@ -23,6 +24,7 @@ const ICONS: Record<string, React.ReactNode> = {
   "/dashboard/user": <FaUsers />,
   "/dashboard/order": <FaShoppingCart />,
   "/dashboard/discount": <FaTag />,
+  "/dashboard/footer-image": <FaFileImage />,
 };
 
 interface SidebarProps {
@@ -66,8 +68,9 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
       {/* Menu items */}
       <nav className="flex-1 px-2">
         {DASHBOARD_SIDEBAR_ITEMS.map((item) => {
-          const isActive =
-            pathname === item.path || pathname.startsWith(item.path + "/");
+          const isActive = isCollapsed && !!item.subItems?.some(
+            (sub) => pathname === sub.path || pathname.startsWith(sub.path + "/")
+          );
           const isOpen = openItems.includes(item.path);
 
           return (

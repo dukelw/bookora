@@ -16,8 +16,30 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { footerImageService } from "@/services/footerImageService";
 
 const AppFooter = () => {
+  const [inImages, setImages] = useState<
+    { image: string; 
+      title?: string;
+      link?: string;
+    }[]
+  >([]);
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const data = await footerImageService.getActive();
+        const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        setImages(sorted);
+      } catch (err) {
+        console.error("Failed to load footer images", err);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
   const t = useTranslations("footer");
   return (
     <Footer className="bg-[#111] text-gray-300 rounded-none">
@@ -125,15 +147,17 @@ const AppFooter = () => {
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </p>
             <div className="grid grid-cols-5 gap-2">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <Image
-                  key={i}
-                  src={`/images/insta/insta-${i + 1}.jpg`}
-                  alt={`Instagram ${i}`}
-                  width={100}
-                  height={100}
-                  className="object-cover rounded"
-                />
+              {inImages.map((img, i) => (
+                <div key={i} className="relative w-full aspect-square">
+                  <a href={img.link} target="_blank" rel="noopener noreferrer">
+                    <Image
+                      src={img.image}
+                      alt={img.title || `Instagram ${i}`}
+                      fill
+                      className="object-cover rounded cursor-pointer"
+                    />
+                  </a>
+                </div>
               ))}
             </div>
           </div>

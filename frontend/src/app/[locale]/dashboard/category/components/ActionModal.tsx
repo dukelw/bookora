@@ -5,9 +5,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
-  Label,
-  TextInput,
+  Button
 } from "flowbite-react";
 import { toast } from "react-toastify";
 import { useTranslations } from "use-intl";
@@ -65,50 +63,52 @@ export default function CategoryModal({
   };
 
   return (
-    <Modal show={isOpen} onClose={onClose} size="md" popup>
-      <ModalHeader>
-        <p className="p-3">
-          {initialData ? t("c.edit") : t("c.create")}
-        </p>
-      </ModalHeader>
+    <Modal show={isOpen} onClose={onClose} size="lg">
+      <ModalHeader className="border-gray-200">{initialData ? t("c.edit") : t("c.create")}</ModalHeader>
       <ModalBody>
-        <div className="space-y-4">
+        <div className="flex flex-col gap-6">
           <div>
-            <Label>{t("c.name")}</Label>
-            <TextInput
+            <label className="block text-md font-medium text-gray-700 mb-2">{t("c.name")}</label>
+            <input
+              type="text"
               id="name"
               name="name"
               placeholder={t("c.enterName")}
               value={formData.name}
               onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
           <div>
-            <Label>{t("c.description")}</Label>
-            <TextInput
+            <label className="block text-md font-medium text-gray-700 mb-2">{t("c.description")}</label>
+            <input
+              type="text"
               id="description"
               name="description"
               placeholder={t("c.enterDescription")}
               value={formData.description}
               onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <Label>{t("c.ageRange")}</Label>
-            <TextInput
+            <label className="block text-md font-medium text-gray-700 mb-2">{t("c.ageRange")}</label>
+            <input
+              type="text"
               id="ageRange"
               name="ageRange"
               placeholder={t("c.enterAgeRange")}
               value={formData.ageRange}
               onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
       </ModalBody>
-      <ModalFooter>
+      <ModalFooter className="mt-4 flex justify-end gap-2 w-full">
         <Button onClick={handleSubmit}>
           {initialData ? t("update") : t("create")}
         </Button>

@@ -33,6 +33,7 @@ export const DASHBOARD_SIDEBAR_ITEMS: SidebarItem[] = [
   { label: "userManagement", path: "/dashboard/user" },
   { label: "orderManagement", path: "/dashboard/order" },
   { label: "discountManagement", path: "/dashboard/discount" },
+  { label: "footerImageManagement", path: "/dashboard/footer-image" },
 ];
 
 export const FALLBACK_BOOK =
