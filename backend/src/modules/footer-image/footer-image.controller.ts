@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { FooterImageService } from './footer-image.service';
 import { CreateFooterImageDto } from './dto/create-footer-image.dto';
 import { UpdateFooterImageDto } from './dto/update-footer-image.dto';

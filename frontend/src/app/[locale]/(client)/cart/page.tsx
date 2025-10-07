@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
 import { PAYMENT_OPTIONS } from "@/constants";
 import { useTranslations } from "use-intl";
+import { discountService } from "@/services/discountService";
 
 export default function CheckoutPage() {
   const c = useTranslations("cart");
@@ -103,7 +104,9 @@ export default function CheckoutPage() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Form thông tin vận chuyển */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">{c("shippingInformation")}</h2>
+          <h2 className="text-2xl font-bold mb-6">
+            {c("shippingInformation")}
+          </h2>
           <form className="space-y-4">
             <div className="flex gap-4">
               <input
@@ -303,7 +306,9 @@ export default function CheckoutPage() {
 
           {/* Chi tiết thanh toán */}
           <div className="mt-8 bg-neutral-900 p-4 rounded-lg">
-            <h3 className="text-xl font-semibold mb-4">{c("paymentDetails")}</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              {c("paymentDetails")}
+            </h3>
             <div className="flex justify-between text-sm mb-2">
               <span>{c("subtotal")}</span>
               <span>{formatCurrency(subtotal)}</span>
