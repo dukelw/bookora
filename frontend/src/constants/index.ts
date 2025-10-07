@@ -44,9 +44,9 @@ export const MAX_LIMIT = 1000000000;
 export const PAYMENT_OPTIONS = [
   {
     value: "cod",
-    label: "Thanh toán khi nhận hàng",
+    label: "payWithCod",
     icon: "/images/payment/cod.png",
   },
-  { value: "momo", label: "Ví MoMo", icon: "/images/payment/momo.png" },
-  { value: "vnpay", label: "Ví VNPay", icon: "/images/payment/vnpay.jpg" },
+  { value: "momo", label: "payWithMomo", icon: "/images/payment/momo.png" },
+  { value: "vnpay", label: "payWithVNPay", icon: "/images/payment/vnpay.jpg" },
 ];

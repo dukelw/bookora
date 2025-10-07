@@ -105,7 +105,7 @@
   },
   "cart": {
     "title": "Giỏ hàng",
-    "empty": "Giỏ hàng của bạn trống",  
+    "empty": "Giỏ hàng của bạn trống",
     "viewCart": "Xem giỏ hàng",
     "quantity": "Số lượng",
     "checkout": "Thanh toán",
@@ -129,7 +129,10 @@
     "removeSuccess": "Xóa sản phẩm khỏi giỏ hàng thành công!",
     "removeError": "Đã xảy ra lỗi khi xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.",
     "updateSuccess": "Cập nhật giỏ hàng thành công!",
-    "errorQuantity": "Cập nhật số lượng thất bại. Vui lòng thử lại."
+    "errorQuantity": "Cập nhật số lượng thất bại. Vui lòng thử lại.",
+    "payWithMomo": "Ví Momo",
+    "payWithVNPay": "Ví VNPay",
+    "payWithCod": "Thanh toán khi nhận hàng"
   },
   "dashboard": {
     "create": "Tạo mới",

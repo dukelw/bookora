@@ -129,7 +129,10 @@
     "removeSuccess": "Item removed from cart!",
     "removeError": "An error occurred while removing the item from cart. Please try again.",
     "updateSuccess": "Cart updated successfully!",
-    "errorQuantity": "Failed to update quantity. Please try again."
+    "errorQuantity": "Failed to update quantity. Please try again.",
+    "payWithMomo": "Using Momo",
+    "payWithVNPay": "Using VNPay",
+    "payWithCod": "Pay when receive"
   },
   "dashboard": {
     "create": "Create",
@@ -184,7 +187,7 @@
       "detailBook": "Detail Product",
       "detailVariant": "Detail Variant",
       "bookInfo": "Product Information",
-      "chooseCategory":"Choose category",
+      "chooseCategory": "Choose category",
       "description": "Description",
       "images": "Product images (at least 5)",
       "selectImages": "Click to select images",
@@ -214,7 +217,7 @@
       "deleteConfirmTitle": "Delete Confirmation",
       "deleteConfirmMessage": "Are you sure you want to delete this product?"
     },
-    "i":{
+    "i": {
       "create": "Create Invoice",
       "createSuccess": "Invoice and inventory created successfully!",
       "createFail": "Failed to create invoice and inventory",
