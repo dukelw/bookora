@@ -17,12 +17,12 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth()
 @ApiTags('Discounts')
-@Controller('Discounts')
+@Controller('discounts')
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
   //   @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  // @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   async create(@Body() dto: CreateDiscountDto) {
     return this.discountService.create(dto);
@@ -36,14 +36,14 @@ export class DiscountController {
   }
 
   //   @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  // @UseGuards(JwtAuthGuard, AdminGuard)
   @Get()
   async findAll() {
     return this.discountService.findAll();
   }
 
   //   @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('apply/:code')
   async applyDiscount(
     @Param('code') code: string,

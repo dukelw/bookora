@@ -34,6 +34,7 @@ import CartDropdown from "@/app/components/header/CartDropdown";
 import { cartService } from "@/services/cartService";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
+import { eventBus } from "@/utils/eventBus";
 
 const AppNavbar = () => {
   const { user } = useAuthStore();
@@ -54,8 +55,16 @@ const AppNavbar = () => {
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
 
   const handleGetCart = async () => {
-    const res = await cartService.getCart(user?._id);
-    setCart(res);
+    try {
+      if (!user?._id) return;
+      const res = await cartService.getCart(user._id);
+      setCart(res);
+    } catch (err: any) {
+      console.error(
+        "Không thể tải giỏ hàng:",
+        err.response?.data || err.message
+      );
+    }
   };
 
   useEffect(() => {
@@ -63,6 +72,11 @@ const AppNavbar = () => {
       handleGetCart();
     }
   }, [user]);
+
+  useEffect(() => {
+    eventBus.on("cart:refresh", handleGetCart);
+    return () => eventBus.off("cart:refresh", handleGetCart);
+  }, []);
 
   return (
     <div className="w-full">

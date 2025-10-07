@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Book } from "@/interfaces/Book";
+import Book from "@/interfaces/Book";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

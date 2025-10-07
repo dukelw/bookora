@@ -7,15 +7,18 @@ import { useAuthStore } from "@/store/authStore";
 import { authService } from "@/services/authService";
 import { useTranslations } from "use-intl";
 import { useRouter } from "next/navigation";
+import { useCartStore } from "@/store/cartStore";
 
 const UserDropdown = () => {
   const t = useTranslations("navbar");
   const { user, setUser, setTokens } = useAuthStore();
+  const { setCart } = useCartStore();
   const router = useRouter();
 
   const handleLogout = async () => {
     await authService.logout();
     setUser(null);
+    setCart(null);
     setTokens(null);
     router.push("/signin");
   };
