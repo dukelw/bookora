@@ -1,7 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { CreateDiscountDto } from './create-discount.dto';
 
-export class UpdateDiscountDto {
+export class UpdateDiscountDto extends PartialType(CreateDiscountDto) {
   @ApiPropertyOptional({ example: 60000, description: 'New discount value in VND' })
   @IsOptional()
   @IsNumber()
