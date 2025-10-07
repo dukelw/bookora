@@ -8,6 +8,8 @@ import CartItemList from "./components/CartItemList";
 import CartSummary from "./components/CartSummary";
 import { cartService } from "@/services/cartService";
 import VoucherList from "./components/VoucherList";
+import { orderService } from "@/services/orderService";
+import { toast } from "react-toastify";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
@@ -25,12 +27,23 @@ export default function CheckoutPage() {
   });
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
+  const handleGetCart = async () => {
+    const res = await cartService.getCart(user._id);
+    setCart(res);
+    setSelectedItems(res.items.map((item: any) => item._id));
+  };
+
   useEffect(() => {
     if (!user?._id) return;
-    cartService.getCart(user._id).then((res) => {
-      setCart(res);
-      setSelectedItems(res.items.map((item: any) => item._id));
+    setFormData({
+      name: user.name || "",
+      phone: user.phone || "",
+      email: user.email || "",
+      address: user.address || "",
+      city: user.city || "",
+      note: "",
     });
+    handleGetCart();
   }, [user]);
 
   const subtotal =
@@ -49,6 +62,84 @@ export default function CheckoutPage() {
 
   const shippingFee = 0;
   const total = subtotal - discount + shippingFee;
+
+  const handleSubmit = async () => {
+    try {
+      // ⚡ Kiểm tra điều kiện cơ bản
+      if (!cart || !user?._id) {
+        toast.error("Không tìm thấy giỏ hàng hoặc thông tin người dùng!");
+        return;
+      }
+
+      if (!formData.name || !formData.phone || !formData.address) {
+        toast.warning("Vui lòng nhập đầy đủ thông tin giao hàng!");
+        return;
+      }
+
+      if (!selectedItems.length) {
+        toast.warning("Vui lòng chọn ít nhất một sản phẩm để đặt hàng!");
+        return;
+      }
+
+      // setIsSubmitting(true);
+
+      // 🧮 Chuẩn bị danh sách sản phẩm
+      const items = cart.items
+        .filter((i: any) => selectedItems.includes(i._id))
+        .map((i: any) => {
+          const variant = i.book.variants.find(
+            (v: any) => v._id === i.variantId
+          );
+          return {
+            book: i.book._id,
+            variantId: i.variantId,
+            quantity: i.quantity,
+            price: variant?.price || 0,
+            finalPrice: variant?.price || 0,
+          };
+        });
+
+      // 📦 Chuẩn bị payload gửi backend
+      const payload = {
+        items,
+        selectedItems,
+        totalAmount: subtotal,
+        discountAmount: discount,
+        finalAmount: total,
+        discountCode: appliedDiscount?.code || undefined,
+        user: user._id,
+        paymentMethod,
+        shippingAddress: formData,
+        cart: cart._id,
+      };
+
+      console.log("📦 Sending order:", payload);
+
+      // 🛒 Gọi API tạo đơn hàng
+      const order = await orderService.createOrder(payload);
+
+      // ✅ Thành công
+      toast.success("Đặt hàng thành công!");
+      console.log("✅ Order created:", order);
+
+      // Làm mới giỏ hàng
+      handleGetCart();
+
+      // Điều hướng sang trang chi tiết đơn hàng nếu muốn
+      // router.push(`/orders/${order._id}`);
+    } catch (error: any) {
+      console.error("❌ Lỗi khi tạo đơn hàng:", error);
+
+      // Nếu server có message cụ thể, hiển thị message đó
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Đã xảy ra lỗi khi tạo đơn hàng!";
+      toast.error(msg);
+    } finally {
+      // setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="bg-neutral-950 text-white min-h-screen py-10 px-6">
@@ -90,15 +181,7 @@ export default function CheckoutPage() {
             discount={discount}
             total={total}
             t={t}
-            onSubmit={() =>
-              console.log({
-                formData,
-                selectedItems,
-                paymentMethod,
-                total,
-                appliedDiscount,
-              })
-            }
+            onSubmit={handleSubmit}
           />
         </div>
       </div>

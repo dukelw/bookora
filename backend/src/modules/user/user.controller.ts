@@ -1,9 +1,18 @@
-import { Controller, Get, Put, Param, Patch, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Param,
+  Patch,
+  Body,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { UpdateUserDto } from '../auth/dto/update-user.dto';
 import { AdminGuard } from 'src/guards/admin.guard';
-import { UpdateStatusDto } from './dto/update-status.dto'
+import { UpdateStatusDto } from './dto/update-status.dto';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -48,10 +57,7 @@ export class UserController {
 
   @Patch(':id/status')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  async updateStatus(
-    @Param('id') id: string,
-    @Body() dto: UpdateStatusDto
-  ) {
+  async updateStatus(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
     return this.userService.updateStatus(id, dto.status);
   }
 }

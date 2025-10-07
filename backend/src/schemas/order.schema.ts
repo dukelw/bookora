@@ -8,7 +8,7 @@ export enum OrderStatus {
   CANCELLED = 'cancelled',
 }
 
-@Schema({ timestamps: true })
+@Schema({ _id: false })
 export class OrderItem {
   @Prop({ type: Types.ObjectId, ref: 'Book', required: true })
   book: Types.ObjectId;
@@ -51,8 +51,21 @@ export class Order extends Document {
   @Prop({ type: String, required: true })
   user: string; // ID user đặt đơn
 
+  @Prop({ type: Object, required: true })
+  shippingAddress: {
+    name: string;
+    phone: string;
+    email: string;
+    address: string;
+    city: string;
+    note?: string;
+  };
+
   @Prop({ type: String, required: true })
-  shippingAddress: string; // địa chỉ giao hàng
+  paymentMethod: string; // cod, vnpay, etc.
+
+  @Prop({ type: Types.ObjectId, ref: 'Cart', required: true })
+  cart: Types.ObjectId;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

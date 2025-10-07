@@ -5,10 +5,14 @@ import { OrderController } from './order.controller';
 import { CartModule } from '../cart/cart.module';
 import { Order, OrderSchema } from 'src/schemas/order.schema';
 import { DiscountModule } from '../discount/discount.module';
+import { Book, BookSchema } from 'src/schemas/book.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
+    MongooseModule.forFeature([
+      { name: Order.name, schema: OrderSchema },
+      { name: Book.name, schema: BookSchema },
+    ]),
     CartModule,
     DiscountModule,
   ],

@@ -155,24 +155,22 @@ export class CartService {
   }
 
   async applyDiscountToCart(userId: string, code: string) {
-      const summary = await this.cartSummary(userId);
+    const summary = await this.cartSummary(userId);
 
-      if (summary.total === 0) {
-        throw new NotFoundException('Cart is empty');
-      }
-
-      const { discount, discountedTotal } = await this.discountService.validateAndApply(
-        code,
-        summary.grandTotal,
-      );
-
-      return {
-        ...summary,
-        discountCode: discount.code,
-        discountValue: discount.value,
-        grandTotalAfterDiscount: discountedTotal,
-      };
+    if (summary.total === 0) {
+      throw new NotFoundException('Cart is empty');
     }
+
+    const { discount, discountedTotal } =
+      await this.discountService.validateAndApply(code, summary.grandTotal);
+
+    return {
+      ...summary,
+      discountCode: discount.code,
+      discountValue: discount.value,
+      grandTotalAfterDiscount: discountedTotal,
+    };
+  }
 
   async adjustItemQuantity(userId: string, dto: AdjustCartItemDto) {
     const cart = await this.cartModel.findOne({ userId });

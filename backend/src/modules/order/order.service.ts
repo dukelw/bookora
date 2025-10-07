@@ -1,104 +1,150 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { CartService } from '../cart/cart.service';
+import { Model, Types } from 'mongoose';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Order, OrderItem, OrderStatus } from 'src/schemas/order.schema';
-import { CartItemStatus } from 'src/schemas/cart.schema';
+import { Order } from 'src/schemas/order.schema';
+import { CartService } from '../cart/cart.service';
 import { DiscountService } from '../discount/discount.service';
-import { Types } from 'mongoose'
+import { DiscountType } from 'src/schemas/discount.schema';
+import { Book } from 'src/schemas/book.schema';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
-    private cartService: CartService,
-    private discountService: DiscountService,
+    @InjectModel(Book.name) private bookModel: Model<Book>,
+    private readonly cartService: CartService,
+    private readonly discountService: DiscountService,
   ) {}
 
-  async createOrder(dto: CreateOrderDto) {
-    const { user, shippingAddress, discountCode } = dto;
+  async create(dto: CreateOrderDto): Promise<Order> {
+    // 1. Lấy cart thật từ DB
+    const cart = await this.cartService.getCart(dto.user);
+    if (!cart) throw new NotFoundException('Cart not found');
 
-    // Lấy giỏ hàng
-    const cart = await this.cartService.getCart(user);
-    if (!cart || cart.items.length === 0) {
-      throw new NotFoundException('Cart is empty');
-    }
-
-    // Chỉ lấy những item status = PURCHASED
-    const orderItems: OrderItem[] = cart.items
-      .filter((i) => i.status === CartItemStatus.PURCHASED)
-      .map((i) => {
-        const variant = (i.book as any).variants.find(
-          (v) => v._id.toString() === i.variantId,
+    // 2. Lấy các item đã chọn
+    const items = await Promise.all(
+      cart.items.map(async (i) => {
+        const book = i.book as unknown as Book;
+        const variant = book.variants.find(
+          (v) => (v._id as Types.ObjectId).toString() === i.variantId,
         );
-        const price = variant?.price || 0;
+
+        const freshBook = await this.bookModel.findById(book._id).lean();
+        if (!freshBook)
+          throw new NotFoundException(`Book not found: ${book._id}`);
+
+        const freshVariant = freshBook.variants.find(
+          (v: any) => v._id.toString() === i.variantId,
+        );
+        if (!freshVariant)
+          throw new BadRequestException(`Variant not found in DB`);
+        if (freshVariant.stock < i.quantity)
+          throw new BadRequestException(
+            `Not enough stock for "${freshBook.title}" (${freshVariant.rarity})`,
+          );
+
+        if (!variant) throw new BadRequestException('Variant not found');
+
+        // Trừ stock
+        variant.stock -= i.quantity;
+
         return {
-          book: i.book,
+          book: i.book._id,
           variantId: i.variantId,
           quantity: i.quantity,
-          price,
-          finalPrice: price, // sẽ điều chỉnh nếu có discount
+          price: variant.price,
+          finalPrice: variant.price,
         };
-      });
-
-    if (orderItems.length === 0) {
-      throw new NotFoundException('No items marked for purchase');
-    }
-
-    let totalAmount = orderItems.reduce(
-      (sum, i) => sum + i.price * i.quantity,
-      0,
+      }),
     );
-    let finalAmount = totalAmount;
-    let discountAmount = 0;
 
-    // Nếu có discountCode
-    if (discountCode) {
-      const result = await this.discountService.validateAndApply(
-        discountCode,
-        totalAmount,
+    // Sau khi map xong, lưu luôn biến thể để update stock
+    await Promise.all(
+      items.map((item) =>
+        this.bookModel.updateOne(
+          { _id: item.book, 'variants._id': item.variantId },
+          { $inc: { 'variants.$.stock': -item.quantity } },
+        ),
+      ),
+    );
+
+    // 3. Tính subtotal
+    const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+    // 4. Áp dụng discount nếu có
+    let discountAmount = 0;
+    if (dto.discountCode) {
+      const { discount } = await this.discountService.validateAndApply(
+        dto.discountCode,
+        subtotal,
       );
-      finalAmount = result.discountedTotal;
-      discountAmount = totalAmount - finalAmount;
+
+      discountAmount =
+        discount.type === DiscountType.PERCENTAGE
+          ? Math.floor(subtotal * (discount.value / 100))
+          : discount.value;
     }
 
+    // 5. Tính finalAmount
+    const finalAmount = subtotal - discountAmount;
+
+    // 6. Tạo order
     const order = new this.orderModel({
-      user,
-      items: orderItems,
-      totalAmount,
+      ...dto,
+      items: items.map((i) => ({
+        ...i,
+        finalPrice: i.finalPrice - discountAmount,
+      })),
+      totalAmount: subtotal,
       discountAmount,
       finalAmount,
-      shippingAddress,
-      status: OrderStatus.PENDING,
-      discountCode,
     });
 
-    await order.save();
+    const savedOrder = await order.save();
 
-    // markAsUsed sau khi order thành công
-    if (discountCode) {
+    // 7. Cập nhật discount nếu có
+    if (dto.discountCode) {
       await this.discountService.markAsUsed(
-        discountCode,
-        (order._id as Types.ObjectId).toString(),
+        dto.discountCode,
+        (savedOrder._id as Types.ObjectId).toString(),
       );
     }
 
-    // Sau khi tạo order, xóa những item PURCHASED khỏi giỏ
-    cart.items = cart.items.filter(
-      (i) => i.status !== CartItemStatus.PURCHASED,
-    );
-    await cart.save();
+    // 8. Xóa các item đã đặt khỏi cart
+    if (dto.selectedItems && dto.selectedItems.length > 0) {
+      cart.items = cart.items.filter(
+        (i: any) => !dto.selectedItems.includes((i._id as any).toString()),
+      );
+      await cart.save();
+    }
 
+    return savedOrder;
+  }
+
+  async findAllByUser(userId: string): Promise<Order[]> {
+    return this.orderModel
+      .find({ user: userId })
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
+  async findOne(id: string): Promise<Order> {
+    const order = await this.orderModel.findById(id);
+    if (!order) throw new NotFoundException('Order not found');
     return order;
   }
 
-  async getOrders(user: string) {
-    return this.orderModel.find({ user }).sort({ createdAt: -1 }).exec();
-  }
-
-  async getOrderById(orderId: string) {
-    const order = await this.orderModel.findById(orderId).exec();
+  async updateStatus(id: string, status: Order['status']): Promise<Order> {
+    const order = await this.orderModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true },
+    );
     if (!order) throw new NotFoundException('Order not found');
     return order;
   }
