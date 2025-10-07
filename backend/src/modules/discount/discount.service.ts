@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Discount } from 'src/schemas/discount.schema';
@@ -7,20 +11,26 @@ import { UpdateDiscountDto } from './dto/update-discount.dto';
 
 @Injectable()
 export class DiscountService {
-  constructor(@InjectModel(Discount.name) private discountModel: Model<Discount>) {}
+  constructor(
+    @InjectModel(Discount.name) private discountModel: Model<Discount>,
+  ) {}
 
   async create(dto: CreateDiscountDto) {
     return this.discountModel.create(dto);
   }
 
   async update(id: string, dto: UpdateDiscountDto) {
-    const discount = await this.discountModel.findByIdAndUpdate(id, dto, { new: true });
+    const discount = await this.discountModel.findByIdAndUpdate(id, dto, {
+      new: true,
+    });
     if (!discount) throw new NotFoundException('Discount not found');
     return discount;
   }
 
   async findAll() {
-    return this.discountModel.find().populate('orders', 'totalAmount createdAt');
+    return this.discountModel
+      .find()
+      .populate('orders', 'totalAmount createdAt');
   }
 
   async validateAndApply(code: string, orderTotal: number) {
@@ -54,6 +64,4 @@ export class DiscountService {
     await discount.save();
     return discount;
   }
-
 }
-
