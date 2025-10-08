@@ -5,6 +5,7 @@ import {
   // UseGuards,
   Request,
   Res,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -58,7 +59,9 @@ export class AuthController {
   @ApiBody({ type: LoginAuthDto })
   async login(@Body() body: LoginAuthDto) {
     const auth = await this.authService.validateAuth(body.email, body.password);
-    if (!auth) return { error: 'Invalid credentials' };
+    if (!auth) throw new BadRequestException('Invalid credentials');
+    if (auth.status === 'disable')
+      throw new BadRequestException('Account has been disabled.');
 
     const tokens = this.authService.generateTokens(auth);
     const user = await this.authService.findByEmail(body.email);

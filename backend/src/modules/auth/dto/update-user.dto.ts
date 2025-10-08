@@ -1,7 +1,40 @@
-import { IsOptional, IsString } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEmail,
+  IsEnum,
+  MinLength,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
+export enum UserRole {
+  ADMIN = 'admin',
+  CUSTOMER = 'customer',
+}
+
+export enum UserStatus {
+  ACTIVE = 'active',
+  DISABLE = 'disable',
+}
+
 export class UpdateUserDto {
+  @ApiPropertyOptional({
+    example: 'user@example.com',
+    description: 'Email của người dùng',
+  })
+  @IsOptional()
+  @IsEmail()
+  email: string;
+
+  @ApiPropertyOptional({
+    example: 'strongpassword',
+    description: 'Mật khẩu người dùng',
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(6)
+  password: string;
+
   @ApiPropertyOptional({
     example: 'Nguyen Van A',
     description: 'Tên hiển thị của user',
@@ -33,4 +66,22 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   shippingAddress?: string;
+
+  @ApiPropertyOptional({
+    enum: UserRole,
+    example: UserRole.CUSTOMER,
+    description: 'Vai trò người dùng',
+  })
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
+
+  @ApiPropertyOptional({
+    enum: UserStatus,
+    example: UserStatus.ACTIVE,
+    description: 'Trạng thái người dùng',
+  })
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status?: UserStatus;
 }

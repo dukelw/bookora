@@ -7,6 +7,7 @@ import {
   Body,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
@@ -18,6 +19,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
+  ApiQuery,
   ApiBody,
 } from '@nestjs/swagger';
 
@@ -55,8 +57,41 @@ export class UserController {
     return { message: 'Profile updated successfully', user };
   }
 
+  // ========== ADMIN ==========
+  @Get()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Lấy danh sách tất cả người dùng (Admin)' })
+  @ApiQuery({ name: 'keySearch', required: false })
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
+  @ApiQuery({ name: 'status', required: false })
+  @ApiQuery({ name: 'role', required: false })
+  getUsers(
+    @Query('keySearch') keySearch?: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('status') status: 'active' | 'disable' | '' = '',
+    @Query('role') role: 'admin' | 'customer' | '' = '',
+  ) {
+    return this.userService.findAll(
+      keySearch,
+      Number(page),
+      Number(limit),
+      status,
+      role,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Cập nhật người dùng theo ID (Admin)' })
+  async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.userService.updateUser(id, dto);
+  }
+
   @Patch(':id/status')
   @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Cập nhật trạng thái ngưới dùng theo ID (Admin)' })
   async updateStatus(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
     return this.userService.updateStatus(id, dto.status);
   }

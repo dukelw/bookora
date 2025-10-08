@@ -39,8 +39,8 @@ export const authService = {
       });
 
       return response.data;
-    } catch (error) {
-      throw new Error("Invalid credentials");
+    } catch (error: any) {
+      throw new Error( error.response?.data?.message || error.message);
     }
   },
 

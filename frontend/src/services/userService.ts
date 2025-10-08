@@ -32,4 +32,25 @@ export const userService = {
       );
     }
   },
+
+  // ========== Admin ==========
+  // Lấy danh sách tất cả người dùng (admin)
+  async getUsers(keySearch?: string, page?: number, limit?: number, status?: string | undefined, role?: string | undefined) {
+    const res: AxiosResponse = await api.get(API_URL, {
+      params: { keySearch, page, limit, status, role },
+    });
+    return res.data;
+  },
+
+  // Cập nhật người dùng (admin)  
+  async updateUser(id: string, data: any) {
+    const res: AxiosResponse = await api.put(`${API_URL}/${id}`, data);
+    return res.data;
+  },
+
+  // Cập nhật trạng thái user (chỉ Admin có quyền)
+  async updateStatus(id: string, data: { status: "active" | "inactive" }) {
+    const res: AxiosResponse = await api.patch(`${API_URL}/${id}/status`, data);
+    return res.data;
+  },
 };

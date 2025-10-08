@@ -256,6 +256,35 @@
       "warnImageRequired": "Image is required!",
       "deleteConfirmTitle": "Delete Confirmation",
       "deleteConfirmMessage": "Are you sure you want to delete this image footer?"
+    },
+    "u": {
+      "editUser": "Edit user",
+      "viewUser": "View user",
+      "name": "Full name",
+      "email": "Email",
+      "changePassword": "Change Password",
+      "address": "Address",
+      "shippingAddress": "Shipping Address",
+      "avatar": "Avatar",
+      "uploadAvatar": "Upload Avatar",
+      "role": "Role",
+      "roleAdmin": "Admin",
+      "roleCustomer": "Customer",
+      "allRoles": "All roles",
+      "status": "Status",
+      "statusActivated": "Actived Successfully",
+      "statusDisabled": "Disabled Successfully",
+      "allStatus": "All status",
+      "active": "Active",
+      "disable": "Disable",
+      "searchPlaceholder": "Search by name or email...",
+      "namePlaceholder": "Enter full name",
+      "emailPlaceholder": "Enter email",
+      "addressPlaceholder": "Enter address",
+      "shippingAddressPlaceholder": "Enter shipping address",
+      "warnEmailRequired": "Email is required",
+      "actionFailed":"Action failed, please try again",
+      "tabInfo": "Information"
     }
   }
 }

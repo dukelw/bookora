@@ -256,6 +256,35 @@
       "warnImageRequired": "Ảnh là bắt buộc!",
       "deleteConfirmTitle": "Xác nhận xóa",
       "deleteConfirmMessage": "Bạn có chắc muốn xóa ảnh chân trang này không?"
+    },
+    "u": {
+      "editUser": "Chỉnh sửa thông tin người dùng",
+      "viewUser": "Chi tiết thông tin người dùng",
+      "name": "Họ và tên",
+      "email": "Email",
+      "changePassword": "Đổi mật khẩu",
+      "address": "Địa chỉ",
+      "shippingAddress": "Địa chỉ nhận hàng",
+      "avatar": "Ảnh đại diện",
+      "uploadAvatar": "Tải ảnh đại diện",
+      "role": "Vai trò",
+      "roleAdmin": "Quản trị viên",
+      "roleCustomer": "Khách hàng",
+      "allRoles": "Tất cả vai trò",
+      "status": "Trạng thái tài khoản",
+      "statusActivated": "Kích hoạt thành công",
+      "statusDisabled": "Vô hiệu hóa thành công",
+      "allStatus": "Tất cả trạng thái",
+      "active": "Kích hoạt",
+      "disable": "Vô hiệu hóa",
+      "searchPlaceholder": "Tìm kiếm theo tên hoặc email...",
+      "namePlaceholder": "Vui lòng nhập họ và tên",
+      "emailPlaceholder": "Vui lòng nhập email",
+      "addressPlaceholder": "Vui lòng nhập địa chỉ nhà",
+      "shippingAddressPlaceholder": "Vui lòng nhập địa chỉ giao hàng",
+      "warnEmailRequired": "Email là bắt buộc",
+      "actionFailed": "Thao tác thất bại, vui lòng thử lại",
+      "tabInfo": "Thông tin người dùng"
     }
   }
 }
