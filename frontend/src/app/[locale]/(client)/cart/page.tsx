@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkoutStore";
 import { eventBus } from "@/utils/eventBus";
+import { paymentService } from "@/services/paymentService";
+import { REDIRECT_URL } from "@/constants";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
@@ -115,21 +117,23 @@ export default function CheckoutPage() {
 
       console.log("📦 Sending order:", payload);
 
+      setCheckout(payload);
       // ⚡ Xử lý theo phương thức thanh toán
       if (paymentMethod === "cod") {
-        const order = await orderService.createOrder(payload);
-        if (order) {
-          setTimeout(() => {
-            eventBus.emit("cart:refresh");
-          }, 1000);
-          toast.success("Tạo đơn hàng thành công!");
-          handleGetCart();
-        }
+        router.push("/payment/success");
       } else if (paymentMethod === "momo") {
-        setCheckout(payload);
         router.push("/payment/momo");
       } else if (paymentMethod === "vnpay") {
-        toast.info("Tính năng thanh toán VNPAY đang được phát triển!");
+        try {
+          const res = await paymentService.payWithVnpay(total, REDIRECT_URL);
+          if (res?.paymentUrl) {
+            window.location.href = res.paymentUrl;
+          } else {
+            toast.error("Không tạo được liên kết thanh toán VNPay");
+          }
+        } catch (err) {
+          toast.error("Lỗi khi tạo thanh toán VNPay");
+        }
       }
     } catch (error: any) {
       console.error("❌ Lỗi khi tạo đơn hàng:", error);

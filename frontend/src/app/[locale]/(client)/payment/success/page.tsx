@@ -48,7 +48,7 @@ export default function ThankYou() {
         className="bg-neutral-900 rounded-2xl p-8 shadow-lg text-center max-w-md w-full"
       >
         <FaCheckCircle className="text-green-400 text-6xl mb-4 mx-auto" />
-        <h1 className="text-2xl font-bold mb-2">Thanh toán thành công!</h1>
+        <h1 className="text-2xl font-bold mb-2">Mua hàng thành công!</h1>
         <p className="text-gray-300 mb-6">
           Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đang được xử lý, vui lòng
           theo dõi trạng thái để biết thêm chi tiết.
