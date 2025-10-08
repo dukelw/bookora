@@ -18,6 +18,7 @@ import { DiscountModule } from './modules/discount/discount.module';
 import { FooterImageModule } from './modules/footer-image/footer-image.module';
 import { MailModule } from './modules/mail/mail.module';
 import { MomoModule } from './modules/payment/momo/momo.module';
+import { BookoraVnpayModule } from './modules/payment/vnpay/vnpay.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -39,6 +40,7 @@ import { MomoModule } from './modules/payment/momo/momo.module';
     FooterImageModule,
     MailModule,
     MomoModule,
+    BookoraVnpayModule,
   ],
 })
 export class AppModule {}

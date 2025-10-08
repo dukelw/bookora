@@ -18,4 +18,18 @@ export const paymentService = {
       throw new Error("Failed to pay with Momo");
     }
   },
+
+  async payWithVnpay(amount: number, redirectUrl?: string) {
+    try {
+      const response: AxiosResponse<{
+        paymentUrl: string;
+        txnRef: string;
+      }> = await axios.post(`${API_URL}/vnpay`, { amount, redirectUrl });
+
+      return response.data; // { paymentUrl, txnRef }
+    } catch (error) {
+      console.error("VNPay Error:", error);
+      throw new Error("Failed to create VNPay payment URL");
+    }
+  },
 };
