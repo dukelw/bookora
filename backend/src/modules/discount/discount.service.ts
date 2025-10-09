@@ -16,6 +16,12 @@ export class DiscountService {
   ) {}
 
   async create(dto: CreateDiscountDto) {
+    const existing = await this.discountModel
+      .findOne({ code: dto.code })
+      .exec();
+    if (existing) {
+      throw new BadRequestException('Discount code already exists');
+    }
     return this.discountModel.create(dto);
   }
 
@@ -27,10 +33,49 @@ export class DiscountService {
     return discount;
   }
 
-  async findAll() {
-    return this.discountModel
-      .find()
-      .populate('orders', 'totalAmount createdAt');
+  async remove(id: string): Promise<any> {
+    const discount = await this.discountModel.findById(id).exec();
+    if (!discount) throw new NotFoundException('Discount not found');
+    if ((discount.usedCount || 0) > 0) {
+      throw new BadRequestException('Discount already used, cannot be deleted');
+    }
+    await this.discountModel.findByIdAndDelete(id).exec();
+    return {
+      message: 'Delete successfully',
+      statusCode: 200,
+    };
+  }
+
+  async findAll(
+    keySearch?: string,
+    page = 1,
+    limit = 10,
+    active: true | false | null = null,
+    type: 'percentage' | 'amount' | '' = '',
+  ): Promise<{ discounts: Discount[]; total: number }> {
+    const query: any = {};
+
+    if (keySearch) {
+      query.$or = [{ code: { $regex: keySearch, $options: 'i' } }];
+    }
+
+    if (active !== null) {
+      query.active = active;
+    }
+
+    if (type !== '') {
+      query.type = type;
+    }
+
+    const total = await this.discountModel.countDocuments(query);
+    const discounts = await this.discountModel
+      .find(query)
+      .populate('orders', 'totalAmount createdAt')
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .exec();
+    return { discounts, total };
   }
 
   async validateAndApply(code: string, orderTotal: number) {

@@ -285,6 +285,38 @@
       "warnEmailRequired": "Email is required",
       "actionFailed":"Action failed, please try again",
       "tabInfo": "Information"
+    },
+    "d": {
+      "create": "Create Discount",
+      "edit": "Edit Discount",
+      "detail": "Detail Discount",
+      "code": "Code",
+      "value": "Value",
+      "usageLimit": "Usage limit",
+      "usedCount": "Used count",
+      "type": "Type",
+      "allType": "All type",
+      "typePercentage": "Percentage (%)",
+      "typeAmount": "Amount (VND)",
+      "allStatus": "All status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "statusActivated": "Active Successfully",
+      "statusDisabled": "Disabled Successfully",
+      "searchPlaceholder": "Search code...",
+      "codeExists": "Code discount already exists", 
+      "createSuccess":"Discount create successfully!",
+      "updateSuccess":"Discount updated successfully!",
+      "deleteSuccess":"Discount updated successfully!",
+      "deleteFailed":"Failed to delete discount",
+      "actionFailed":"Action failed, please try again",
+      "warnCodeRequired": "Code is required",
+      "warnCodeLengthRequired": "The length of the code requires 5 characters",
+      "warnValuePercentage": "Value must be greater than 0 and less than 100",
+      "warnValueAmount": "Value must be less than 1000",
+      "warnUsageLimitRequired": "Usage limit must be greater than 0 and less than 10",
+      "deleteConfirmTitle": "Delete Confirmation",
+      "deleteConfirmMessage": "Are you sure you want to delete this discount?"
     }
   }
 }
