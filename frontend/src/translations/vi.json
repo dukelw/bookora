@@ -134,6 +134,13 @@
     "payWithVNPay": "Ví VNPay",
     "payWithCod": "Thanh toán khi nhận hàng"
   },
+  "payment": {
+    "createOrderSuccessfully": "Tạo đơn hàng thành công!",
+    "cantCreateOrder": "Không thể tạo đơn hàng. Vui lòng thử lại.",
+    "orderSuccessfully": "Đặt hàng thành công!",
+    "orderSuccessMessage": "Cảm ơn bạn đã mua hàng! Bạn có thể theo dõi đơn hàng trong trang lịch sử đơn hàng.",
+    "followOrder": "Xem đơn hàng của tôi"
+  },
   "dashboard": {
     "create": "Tạo mới",
     "update": "Cập nhật",

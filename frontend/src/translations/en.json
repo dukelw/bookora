@@ -23,6 +23,13 @@
     "confirmPassword": "Confirm Password",
     "note": "New password must have at least 6 characters, 1 uppercase letter and 1 special character"
   },
+  "payment": {
+    "createOrderSuccessfully": "Order created successfully!",
+    "cantCreateOrder": "Unable to create order. Please try again.",
+    "orderSuccessfully": "Order placed successfully!",
+    "orderSuccessMessage": "Thank you for your purchase! You can track your order in the order history page.",
+    "followOrder": "View my orders"
+  },
   "inventory": {
     "inventories": "Inventories"
   },

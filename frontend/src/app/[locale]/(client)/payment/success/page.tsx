@@ -10,11 +10,13 @@ import { toast } from "react-toastify";
 import { useCheckoutStore } from "@/store/checkoutStore";
 import { orderService } from "@/services/orderService";
 import { eventBus } from "@/utils/eventBus";
+import { useTranslations } from "use-intl";
 
 export default function ThankYou() {
   // const searchParams = useSearchParams();
   // const resultCode = searchParams.get("resultCode");
   const { checkout } = useCheckoutStore();
+  const t = useTranslations("payment");
 
   useEffect(() => {
     const handleCreateOrder = async () => {
@@ -23,14 +25,14 @@ export default function ThankYou() {
         try {
           const res = await orderService.createOrder(checkout);
           if (res) {
-            toast.success("Tạo đơn hàng thành công!");
+            toast.success(t("createOrderSuccessfully"));
             setTimeout(() => {
               eventBus.emit("cart:refresh");
             }, 1000);
           }
         } catch (err) {
           console.error(err);
-          toast.error("Không thể tạo đơn hàng!");
+          toast.error("cantCreateOrder");
         }
       }
     };
@@ -48,18 +50,15 @@ export default function ThankYou() {
         className="bg-neutral-900 rounded-2xl p-8 shadow-lg text-center max-w-md w-full"
       >
         <FaCheckCircle className="text-green-400 text-6xl mb-4 mx-auto" />
-        <h1 className="text-2xl font-bold mb-2">Mua hàng thành công!</h1>
-        <p className="text-gray-300 mb-6">
-          Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đang được xử lý, vui lòng
-          theo dõi trạng thái để biết thêm chi tiết.
-        </p>
+        <h1 className="text-2xl font-bold mb-2">{t("orderSuccessfully")}</h1>
+        <p className="text-gray-300 mb-6">{t("orderSuccessMessage")}</p>
 
         <Link href="/orders" className="w-full">
           <Button
             color="success"
             className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl transition-all"
           >
-            Theo dõi đơn hàng
+            {t("followOrder")}
           </Button>
         </Link>
       </motion.div>
