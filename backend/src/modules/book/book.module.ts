@@ -4,12 +4,17 @@ import { Book, BookSchema } from 'src/schemas/book.schema';
 import { BookService } from './book.service';
 import { BookController } from './book.controller';
 import { RatingModule } from '../rating/rating.module';
+import { Order, OrderSchema } from 'src/schemas/order.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Book.name, schema: BookSchema }]),
+    MongooseModule.forFeature([
+      { name: Book.name, schema: BookSchema },
+      { name: Order.name, schema: OrderSchema },
+    ]),
     RatingModule,
   ],
+
   providers: [BookService],
   controllers: [BookController],
   exports: [MongooseModule],
