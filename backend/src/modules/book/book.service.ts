@@ -11,6 +11,8 @@ import { RatingService } from '../rating/rating.service';
 import { BestSellersQueryDto } from './dto/book-bestsellers.dto';
 import { NewReleasesQueryDto } from './dto/book-newreleases.dto';
 import { Order, OrderStatus } from 'src/schemas/order.schema';
+import { ListBooksQueryDto, BookSort } from './dto/list-books.dto';
+
 @Injectable()
 export class BookService {
   constructor(
@@ -105,6 +107,90 @@ export class BookService {
     const book = await this.bookModel.findById(bookId).lean();
     const avg = await this.ratingService.getAverageRating(bookId);
     return { ...book, averageRating: avg.avgStars, totalRatings: avg.count };
+  }
+
+  async list(q: ListBooksQueryDto) {
+    const { search, sort = BookSort.NAME_ASC, page = 1, limit = 12 } = q;
+    const skip = (page - 1) * limit;
+
+    const filter: any = {};
+    let projection: any = {};
+    let mongoSort: any = {};
+    let useText = false;
+
+    // Search: prefer $text (for relevance), else fallback regex
+    if (sort === BookSort.RELEVANCE && search?.trim()) {
+      filter.$text = { $search: search.trim() };
+      projection = { score: { $meta: 'textScore' } };
+      mongoSort = { score: { $meta: 'textScore' } };
+      useText = true;
+    } else if (search?.trim()) {
+      const kw = search.trim();
+      filter.$or = [
+        { title: { $regex: kw, $options: 'i' } },
+        { author: { $regex: kw, $options: 'i' } },
+        { publisher: { $regex: kw, $options: 'i' } },
+        { description: { $regex: kw, $options: 'i' } },
+      ];
+    }
+
+    // Sort mapping
+    const SORT_MAP: Record<BookSort, any> = {
+      [BookSort.NAME_ASC]:  { title: 1 },
+      [BookSort.NAME_DESC]: { title: -1 },
+      [BookSort.PRICE_ASC]: { price: 1, title: 1 },
+      [BookSort.PRICE_DESC]:{ price: -1, title: 1 },
+      [BookSort.RELEASE_NEW]: { releaseYear: -1, createdAt: -1 },
+      [BookSort.RELEASE_OLD]: { releaseYear: 1, createdAt: 1 },
+      [BookSort.CREATED_NEW]: { createdAt: -1 },
+      [BookSort.CREATED_OLD]: { createdAt: 1 },
+      [BookSort.RELEVANCE]: mongoSort || { createdAt: -1 },
+    };
+
+    const sortSpec = SORT_MAP[sort] || SORT_MAP[BookSort.NAME_ASC];
+
+    // Query
+    const query = this.bookModel
+      .find(filter, projection)
+      .sort(sortSpec)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // For proper A-Z, Z-A, use collation (case/diacritics insensitive)
+    if (sort === BookSort.NAME_ASC || sort === BookSort.NAME_DESC) {
+      query.collation({ locale: 'vi', strength: 1 }); // vi for Vietnamese; strength:1 ignores case/diacritics
+    }
+
+    const [items, total] = await Promise.all([
+      query.exec(),
+      this.bookModel.countDocuments(filter),
+    ]);
+
+    // Attach mainImage
+    const mapped = items.map((b: any) => ({
+      _id: b._id,
+      title: b.title,
+      slug: b.slug,
+      author: b.author,
+      publisher: b.publisher,
+      price: b.price,
+      releaseYear: b.releaseYear,
+      mainImage: (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url || null,
+      ...(useText ? { score: b.score } : {}),
+    }));
+
+    return {
+      items: mapped,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        sort,
+        ...(search ? { search } : {}),
+      },
+    };
   }
 
   // BEST SELLERS via aggregation from orders

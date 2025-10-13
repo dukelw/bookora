@@ -13,6 +13,7 @@ import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
 import { BestSellersQueryDto } from './dto/book-bestsellers.dto';
 import { NewReleasesQueryDto } from './dto/book-newreleases.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiOkResponse } from '@nestjs/swagger';
+import { ListBooksQueryDto } from './dto/list-books.dto';
 
 @ApiTags('Books')
 @Controller('books')
@@ -35,6 +36,12 @@ export class BookController {
     @Query('limit') limit: number = 10,
   ) {
     return this.bookService.findAll(searchKey, +page, +limit);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Lấy danh sách theo filter (có phân trang)' })
+  getBooks(@Query() q: ListBooksQueryDto) {
+    return this.bookService.list(q);
   }
 
   @Get('best-sellers')
