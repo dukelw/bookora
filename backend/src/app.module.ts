@@ -19,6 +19,8 @@ import { FooterImageModule } from './modules/footer-image/footer-image.module';
 import { MailModule } from './modules/mail/mail.module';
 import { MomoModule } from './modules/payment/momo/momo.module';
 import { BookoraVnpayModule } from './modules/payment/vnpay/vnpay.module';
+import { AddressModule } from './modules/address/address.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -41,6 +43,7 @@ import { BookoraVnpayModule } from './modules/payment/vnpay/vnpay.module';
     MailModule,
     MomoModule,
     BookoraVnpayModule,
+    AddressModule,
   ],
 })
 export class AppModule {}
