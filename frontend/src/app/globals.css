@@ -286,12 +286,12 @@ body {
   background: var(--color-foreground);
   color: var(--color-black);
   font-family: Poppins, sans-serif;
+  cursor: url("/cursor/default.png"), auto;
 }
 
 a:hover,
 button:hover,
 .nav-hover:hover {
-  cursor: pointer;
-  /* color: var(--color-cyan-shadow) !important; */
+  cursor: url("/cursor/hover.png"), pointer;
 }
 
