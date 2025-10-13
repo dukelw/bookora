@@ -22,7 +22,10 @@ export default function NotFound() {
       {/* Nút quay về Home */}
       <div className="mt-6 flex gap-3">
         <Link href="/">
-          <Button className="cursor-pointer" color="success">
+          <Button
+            className="cursor-pointer outline-2 outline-cyan-600 focus:!ring-2 focus:!ring-cyan-500"
+            color="success"
+          >
             {t("backHome")}
           </Button>
         </Link>
