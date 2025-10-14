@@ -20,16 +20,16 @@ export class Address extends Document {
   phone: string;
 
   // 3) Địa chỉ (tỉnh/thành, quận/huyện, phường/xã, địa chỉ cụ thể)
-  @Prop({ required: true }) province: string; // ví dụ: "TP. Hồ Chí Minh"
-  @Prop({ required: true }) district: string; // ví dụ: "Quận 1"
-  @Prop({ required: true }) ward: string;     // ví dụ: "Phường Bến Nghé"
-  @Prop({ required: true }) addressLine1: string; // số nhà, tên đường
+  @Prop({ required: true }) province: string;
+  @Prop({ required: true }) district: string;
+  @Prop({ required: true }) ward: string;
+  @Prop({ required: true }) addressLine1: string;
 
   // 4) Loại địa chỉ
   @Prop({ required: true, enum: AddressType })
-  addressType: AddressType; // 'home' | 'office'
+  addressType: AddressType;
 
-  // 5) Có phải mặc định không?
+  // 5) Mặc định?
   @Prop({ default: false })
   isDefault: boolean;
 

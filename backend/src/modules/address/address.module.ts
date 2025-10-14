@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Address, AddressSchema } from 'src/schemas/address.schema';
-import { User, UserSchema } from 'src/schemas/user.schema'; // cần để guest-create
-import { AddressService } from './address.service';
+import { User, UserSchema } from 'src/schemas/user.schema';
 import { AddressController } from './address.controller';
+import { AddressService } from './address.service';
 
 @Module({
   imports: [

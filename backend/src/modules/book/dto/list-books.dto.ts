@@ -15,7 +15,7 @@ export enum BookSort {
 }
 
 export class ListBooksQueryDto {
-  @ApiPropertyOptional({ description: 'Search keyword' })
+  @ApiPropertyOptional({ description: 'Từ khóa' })
   @IsOptional() @IsString()
   search?: string;
 

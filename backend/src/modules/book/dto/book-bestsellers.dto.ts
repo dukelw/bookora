@@ -7,11 +7,11 @@ export class BestSellersQueryDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(50)
   limit?: number = 12;
 
-  @ApiPropertyOptional({ description: 'Từ ngày (ISO). VD: 2025-01-01T00:00:00.000Z' })
+  @ApiPropertyOptional({ description: 'Từ ngày (ISO). VD: 2025-01-01' })
   @IsOptional() @IsDateString()
   from?: string;
 
-  @ApiPropertyOptional({ description: 'Đến ngày (ISO). VD: 2025-12-31T23:59:59.999Z' })
+  @ApiPropertyOptional({ description: 'Đến ngày (ISO). VD: 2025-12-31' })
   @IsOptional() @IsDateString()
   to?: string;
 

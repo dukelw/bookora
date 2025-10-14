@@ -3,7 +3,6 @@ import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-valid
 import { Type } from 'class-transformer';
 import { AddressType } from 'src/schemas/address.schema';
 
-// CREATE
 export class CreateAddressDto {
   @ApiProperty({ example: 'Nguyễn Văn A' })
   @IsString() @IsNotEmpty()
@@ -11,7 +10,7 @@ export class CreateAddressDto {
 
   @ApiProperty({ example: '0987654321' })
   @IsString() @IsNotEmpty()
-  phone!: string;
+  phone!: string; // có thể thay bằng regex VN nếu muốn chặt hơn
 
   @ApiProperty({ example: 'TP. Hồ Chí Minh' })
   @IsString() @IsNotEmpty()
@@ -38,7 +37,6 @@ export class CreateAddressDto {
   isDefault?: boolean = false;
 }
 
-// UPDATE (tất cả optional)
 export class UpdateAddressDto {
   @IsOptional() @IsString() fullName?: string;
   @IsOptional() @IsString() phone?: string;
@@ -52,4 +50,14 @@ export class UpdateAddressDto {
 
   @IsOptional() @Type(() => Boolean) @IsBoolean()
   isDefault?: boolean;
+}
+
+// Body cho guest checkout (public)
+export class GuestCreateBody {
+  @ApiProperty({ example: 'guest@example.com' })
+  @IsString() @IsNotEmpty()
+  email!: string;
+
+  @ApiProperty({ type: CreateAddressDto })
+  address!: CreateAddressDto;
 }

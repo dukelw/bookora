@@ -52,7 +52,7 @@ export class BookController {
   }
 
   @Get('new-releases')
-  @ApiOperation({ summary: 'Lấy danh sách sách mới phát hành (dựa vào releaseYear)' })
+  @ApiOperation({ summary: 'Lấy danh sách sách mới phát hành (dựa vào create at)' })
   @ApiOkResponse({ description: 'Danh sách sách mới phát hành' })
   getNewReleases(@Query() q: NewReleasesQueryDto) {
     return this.bookService.getNewReleases(q);

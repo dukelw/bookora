@@ -1,16 +1,23 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsMongoId, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsDateString, IsInt, IsMongoId, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class NewReleasesQueryDto {
-  @ApiPropertyOptional({ description: 'Giới hạn số sách trả về', default: 12, maximum: 50 })
+  @ApiPropertyOptional({ description: 'Giới hạn số lượng trả về', default: 12, maximum: 50 })
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(50)
   limit?: number = 12;
 
-  @ApiPropertyOptional({ description: 'Chỉ lấy sách của năm phát hành này (releaseYear)' })
-  @IsOptional() @Type(() => Number) @IsInt()
-  year?: number;
+  // NEW: filter by createdAt >= from (ISO date) e.g. 2025-10-01T00:00:00.000Z
+  @ApiPropertyOptional({ description: 'Từ ngày (ISO). VD: 2025-01-01' })
+  @IsOptional() @IsDateString()
+  from?: string;
 
+  // NEW: alternatively, last N days up to now (if `from` not provided)
+  @ApiPropertyOptional({ description: 'Lấy danh sách theo số ngày gần nhất', default: 30 })
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(3650)
+  days?: number = 30;
+
+  // (Optional filters)
   @ApiPropertyOptional({ description: 'Lọc theo categoryId' })
   @IsOptional() @IsMongoId()
   category?: string;

@@ -302,12 +302,20 @@ export class BookService {
     return { items, meta: { count: items.length, limit: Math.min(limit, 50) } };
   }
 
-  // NEW RELEASES via releaseYear
+  // --- NEW RELEASES via createdAt window ---
   async getNewReleases(q: NewReleasesQueryDto) {
-    const { limit = 12, year, category, author, publisher } = q;
+    const { limit = 12, from, days = 30, category, author, publisher } = q;
+
+    // Decide start date: `from` (ISO) takes precedence; else use `days` window
+    let start: Date | undefined;
+    if (from) {
+      start = new Date(from);
+    } else if (days) {
+      start = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    }
 
     const filter: any = {};
-    if (year) filter.releaseYear = year;
+    if (start) filter.createdAt = { $gte: start };
     if (category && mongoose.Types.ObjectId.isValid(category)) {
       filter.category = new mongoose.Types.ObjectId(category);
     }
@@ -316,12 +324,11 @@ export class BookService {
 
     const docs = await this.bookModel
       .find(filter)
-      .sort({ releaseYear: -1, createdAt: -1 })
+      .sort({ createdAt: -1 })                // newest first based on createdAt
       .limit(Math.min(limit, 50))
       .lean()
       .exec();
 
-    // map thêm mainImage (computed)
     const items = docs.map((b: any) => {
       const main = (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url;
       return {
@@ -333,9 +340,18 @@ export class BookService {
         price: b.price,
         releaseYear: b.releaseYear,
         mainImage: main || null,
+        createdAt: b.createdAt,
       };
     });
 
-    return { items, meta: { count: items.length, limit: Math.min(limit, 50) } };
+    return {
+      items,
+      meta: {
+        count: items.length,
+        limit: Math.min(limit, 50),
+        from: start?.toISOString(),
+        now: new Date().toISOString(),
+      },
+    };
   }
 }
