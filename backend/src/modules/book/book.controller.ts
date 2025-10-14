@@ -12,7 +12,13 @@ import { BookService } from './book.service';
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
 import { BestSellersQueryDto } from './dto/book-bestsellers.dto';
 import { NewReleasesQueryDto } from './dto/book-newreleases.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import { ListBooksQueryDto } from './dto/list-books.dto';
 
 @ApiTags('Books')
@@ -45,14 +51,18 @@ export class BookController {
   }
 
   @Get('best-sellers')
-  @ApiOperation({ summary: 'Lấy danh sách sách bán chạy nhất (aggregation từ Orders)' })
+  @ApiOperation({
+    summary: 'Lấy danh sách sách bán chạy nhất (aggregation từ Orders)',
+  })
   @ApiOkResponse({ description: 'Danh sách best-sellers' })
   getBestSellers(@Query() q: BestSellersQueryDto) {
     return this.bookService.getBestSellers(q);
   }
 
   @Get('new-releases')
-  @ApiOperation({ summary: 'Lấy danh sách sách mới phát hành (dựa vào create at)' })
+  @ApiOperation({
+    summary: 'Lấy danh sách sách mới phát hành (dựa vào create at)',
+  })
   @ApiOkResponse({ description: 'Danh sách sách mới phát hành' })
   getNewReleases(@Query() q: NewReleasesQueryDto) {
     return this.bookService.getNewReleases(q);
@@ -98,6 +108,4 @@ export class BookController {
   ) {
     return this.bookService.findByCategory(categoryId, +page, +limit);
   }
-
-
 }

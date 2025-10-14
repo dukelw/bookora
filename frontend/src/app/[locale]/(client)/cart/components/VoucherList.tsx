@@ -22,7 +22,7 @@ export default function VoucherList({
     const fetchDiscounts = async () => {
       try {
         const res = await discountService.getAll();
-        setDiscounts(res);
+        setDiscounts(res.discounts);
       } catch (err) {
         console.error(err);
         toast.error("Không thể lấy voucher");
@@ -35,7 +35,7 @@ export default function VoucherList({
     <div className="mt-6 bg-neutral-900 p-4 rounded-lg">
       <h3 className="text-lg font-semibold mb-3">{t("voucher")}</h3>
       <div className="space-y-2">
-        {discounts.map((d) => (
+        {discounts?.map((d) => (
           <div
             key={d._id}
             className={`flex justify-between items-center p-3 rounded-lg ${
