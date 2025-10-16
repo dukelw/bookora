@@ -101,6 +101,17 @@ export default function UserManagementPage() {
 
   const columns = [
     { key: "name", label: t("u.name") },
+    {
+      key: "image",
+      label: t("u.avatar"),
+      render: (user: User) => (
+        <img
+          src={user.avatar || "/default-avatar.png"}
+          alt={user.name}
+          className="w-50 h-auto rounded-circle object-cover non-border"
+        />
+      ),
+    },
     { key: "email", label: t("u.email") },
     {
       key: "role",
