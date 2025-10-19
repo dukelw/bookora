@@ -13,10 +13,7 @@ export class RatingGateway {
   @WebSocketServer()
   server: Server;
   @SubscribeMessage('joinProductRoom')
-  handleJoin(
-    @MessageBody() bookId: string,
-    @ConnectedSocket() client: Socket,
-  ) {
+  handleJoin(@MessageBody() bookId: string, @ConnectedSocket() client: Socket) {
     client.join(bookId);
     // console.log(` Client ${client.id} joined room ${bookId}`);
     return { event: 'joined', bookId };

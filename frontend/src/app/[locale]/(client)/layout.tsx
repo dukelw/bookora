@@ -31,7 +31,7 @@ export default function RootLayout({
     <div>
       <AppNavbar />
       {children}
-//       <AppFooter />
+      <AppFooter />
     </div>
   );
 }

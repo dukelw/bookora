@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -28,15 +37,36 @@ export class OrderController {
   }
 
   @Get('user/:userId')
-  @ApiOperation({ summary: 'Lấy tất cả đơn hàng của một user' })
+  @ApiOperation({
+    summary:
+      'Lấy tất cả đơn hàng của một user (có phân trang & lọc trạng thái)',
+  })
   @ApiParam({ name: 'userId', description: 'ID của user' })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: OrderStatus,
+    description: 'Lọc theo trạng thái đơn hàng',
+  })
   @ApiResponse({
     status: 200,
     description: 'Danh sách đơn hàng',
     type: [Order],
   })
-  async getByUser(@Param('userId') userId: string): Promise<Order[]> {
-    return this.orderService.findAllByUser(userId);
+  async getByUser(
+    @Param('userId') userId: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('status') status?: OrderStatus,
+  ): Promise<{ data: Order[]; total: number; page: number; limit: number }> {
+    return this.orderService.findAllByUser(
+      userId,
+      Number(page),
+      Number(limit),
+      status,
+    );
   }
 
   @Get(':id')

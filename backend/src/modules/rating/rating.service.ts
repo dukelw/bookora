@@ -39,7 +39,7 @@ export class RatingService {
     const rating = await this.ratingModel.findOneAndUpdate(
       { book: new Types.ObjectId(bookId), user: new Types.ObjectId(userId) },
       { $set: { ...dto } },
-      { new: true }
+      { new: true },
     );
 
     if (!rating) {

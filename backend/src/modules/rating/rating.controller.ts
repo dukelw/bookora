@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Put, Param, Body, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Put,
+  Param,
+  Body,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { RatingService } from './rating.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
@@ -39,7 +48,7 @@ export class RatingController {
   }
 
   @Get(':bookId')
-  async getRatings(@Param('bookId') bookId: string){
+  async getRatings(@Param('bookId') bookId: string) {
     return this.ratingService.getRatings(bookId);
   }
 

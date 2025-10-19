@@ -1,6 +1,8 @@
 // services/orderService.ts
+import OrderItem from "@/interfaces/OrderItem";
 import { api } from "../lib/axios";
 import { AxiosResponse } from "axios";
+import ShippingAddress from "@/interfaces/ShippingAddress";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/orders`;
 
@@ -23,8 +25,14 @@ export const orderService = {
   },
 
   // Lấy danh sách order của user
-  async getOrdersByUser(userId: string) {
-    const res: AxiosResponse = await api.get(`${API_URL}/user/${userId}`);
+  async getOrdersByUser(userId: string, { page = 1, limit = 10, status = "" } = {}) {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (status) params.append("status", status);
+
+    const res = await api.get(`${API_URL}/user/${userId}?${params.toString()}`);
     return res.data;
   },
 

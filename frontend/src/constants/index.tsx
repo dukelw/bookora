@@ -1,3 +1,10 @@
+import {
+  FaClock,
+  FaTimesCircle,
+  FaMoneyBillWave,
+  FaBoxOpen,
+} from "react-icons/fa";
+
 export interface NavItem {
   label: string;
   path: string;
@@ -52,3 +59,26 @@ export const PAYMENT_OPTIONS = [
 ];
 
 export const REDIRECT_URL = `${process.env.NEXT_PUBLIC_CLIENT_URL}/payment/success`;
+
+export const STATUS_MAP = {
+  pending: {
+    label: "Đang xử lý",
+    color: "warning",
+    icon: <FaClock className="inline mr-1" />,
+  },
+  paid: {
+    label: "Đã thanh toán",
+    color: "success",
+    icon: <FaMoneyBillWave className="inline mr-1" />,
+  },
+  shipped: {
+    label: "Đã giao",
+    color: "info",
+    icon: <FaBoxOpen className="inline mr-1" />,
+  },
+  cancelled: {
+    label: "Đã hủy",
+    color: "failure",
+    icon: <FaTimesCircle className="inline mr-1" />,
+  },
+};

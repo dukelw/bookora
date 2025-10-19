@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Order } from 'src/schemas/order.schema';
+import { Order, OrderStatus } from 'src/schemas/order.schema';
 import { CartService } from '../cart/cart.service';
 import { DiscountService } from '../discount/discount.service';
 import { DiscountType } from 'src/schemas/discount.schema';
@@ -126,11 +126,38 @@ export class OrderService {
     return savedOrder;
   }
 
-  async findAllByUser(userId: string): Promise<Order[]> {
-    return this.orderModel
-      .find({ user: userId })
-      .sort({ createdAt: -1 })
-      .exec();
+  async findAllByUser(
+    userId: string,
+    page = 1,
+    limit = 10,
+    status?: OrderStatus,
+  ): Promise<{ data: Order[]; total: number; page: number; limit: number }> {
+    const query: any = { user: userId };
+    if (status) query.status = status;
+
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.orderModel
+        .find(query)
+        .populate({
+          path: 'items.book',
+          select:
+            'title author variants image price element description publisher images', // tuỳ schema Book
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.orderModel.countDocuments(query),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 
   async findOne(id: string): Promise<Order> {
