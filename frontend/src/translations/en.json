@@ -158,6 +158,27 @@
     "orderSuccessMessage": "Thank you for your purchase! You can track your order in the order history page.",
     "followOrder": "View my orders"
   },
+  "book": {
+    "newArrivals": "Newly Released Books",
+    "title": "Explore newly updated books",
+    "new": "New launched",
+    "lastUpdate": "Last updated",
+    "filter": "Filter List",
+    "sort": "Sort by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "fromDate": "From date",
+    "daysRange": "Date range",
+    "category": "Category",
+    "author": "Author",
+    "publisher": "Publisher",
+    "all": "All",
+    "bestsellers": "Bestsellers",
+    "bestsellerTitle": "Most popular and top-selling books",
+    "hot": "Hot",
+    "bestselling": "Top selling",
+    "leastSelling": "Least selling"
+  },
   "dashboard": {
     "create": "Create",
     "update": "Update",

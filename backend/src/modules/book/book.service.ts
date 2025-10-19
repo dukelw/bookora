@@ -324,6 +324,7 @@ export class BookService {
 
     const docs = await this.bookModel
       .find(filter)
+      .populate('category')
       .sort({ createdAt: -1 })                // newest first based on createdAt
       .limit(Math.min(limit, 50))
       .lean()
@@ -341,6 +342,11 @@ export class BookService {
         releaseYear: b.releaseYear,
         mainImage: main || null,
         createdAt: b.createdAt,
+        category: Array.isArray(b.category)
+          ? b.category.map((c: any) => ({ _id: c._id, name: c.name }))
+          : b.category
+            ? [{ _id: b.category._id, name: b.category.name }]
+         : [],
       };
     });
 

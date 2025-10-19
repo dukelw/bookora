@@ -158,6 +158,27 @@
     "orderSuccessMessage": "Cảm ơn bạn đã mua hàng! Bạn có thể theo dõi đơn hàng trong trang lịch sử đơn hàng.",
     "followOrder": "Xem đơn hàng của tôi"
   },
+  "book": {
+    "newArrivals": "Sách Mới Phát Hành",
+    "title": "Khám phá những tựa sách mới nhất",
+    "new": "Mới ra mắt",
+    "lastUpdate": "Cập nhật lần cuối",
+    "filter": "Bộ lọc",
+    "sort": "Sắp xếp",
+    "newest": "Mới nhất",
+    "oldest": "Cũ nhất",
+    "fromDate": "Từ ngày",
+    "daysRange": "Khoảng ngày",
+    "category": "Thể loại",
+    "author": "Tác giả",
+    "publisher": "Nhà xuất bản",
+    "all": "Tất cả",
+    "bestsellers": "Sách Bán Chạy",
+    "bestsellerTitle": "Những cuốn sách được yêu thích nhất",
+    "hot": "Hot",
+    "bestselling": "Bán chạy nhất",
+    "leastSelling": "Ít bán hơn"
+  },
   "dashboard": {
     "create": "Tạo mới",
     "update": "Cập nhật",
