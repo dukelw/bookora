@@ -39,7 +39,7 @@ export default function BookList({ books, title }: BookListProps) {
               handleGoToDetail(book);
             }}
             key={book._id}
-            className="cursor-pointer bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300"
+            className="book-card cursor-pointer bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300"
           >
             {/* Image */}
             <div className="relative h-48">

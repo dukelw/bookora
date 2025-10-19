@@ -104,6 +104,22 @@
     "discountManagement": "Quản lý giảm giá",
     "footerImageManagement": "Quản lý chân trang"
   },
+  "contact": {
+    "warn": "Vui lòng điền đầy đủ thông tin!",
+    "success": "Cảm ơn bạn! Chúng tôi sẽ phản hồi sớm nhất có thể.",
+    "error": "Đã xảy ra lỗi khi gửi tin nhắn. Vui lòng thử lại.",
+    "title": "Liên Hệ Với Bookora",
+    "intro": "Hãy để lại lời nhắn cho chúng tôi nếu bạn có bất kỳ câu hỏi, phản hồi hoặc cần hỗ trợ — Bookora luôn sẵn sàng giúp bạn.",
+    "infoContact": "Thông Tin Liên Hệ",
+    "address": "Broadway và Morris St, New York",
+    "open": "Thứ 2 – Thứ 7: 8:00 - 17:30",
+    "formContact": "Gửi Tin Nhắn",
+    "name": "Họ và tên",
+    "message": "Nội dung",
+    "placeholderName": "Nhập họ tên của bạn",
+    "placeholderEmail": "Nhập email của bạn",
+    "placeholderMessage": "Nhập nội dung bạn cần gửi"
+  },
   "cart": {
     "title": "Giỏ hàng",
     "empty": "Giỏ hàng của bạn trống",
@@ -141,6 +157,27 @@
     "orderSuccessfully": "Đặt hàng thành công!",
     "orderSuccessMessage": "Cảm ơn bạn đã mua hàng! Bạn có thể theo dõi đơn hàng trong trang lịch sử đơn hàng.",
     "followOrder": "Xem đơn hàng của tôi"
+  },
+  "book": {
+    "newArrivals": "Sách Mới Phát Hành",
+    "title": "Khám phá những tựa sách mới nhất",
+    "new": "Mới ra mắt",
+    "lastUpdate": "Cập nhật lần cuối",
+    "filter": "Bộ lọc",
+    "sort": "Sắp xếp",
+    "newest": "Mới nhất",
+    "oldest": "Cũ nhất",
+    "fromDate": "Từ ngày",
+    "daysRange": "Khoảng ngày",
+    "category": "Thể loại",
+    "author": "Tác giả",
+    "publisher": "Nhà xuất bản",
+    "all": "Tất cả",
+    "bestsellers": "Sách Bán Chạy",
+    "bestsellerTitle": "Những cuốn sách được yêu thích nhất",
+    "hot": "Hot",
+    "bestselling": "Bán chạy nhất",
+    "leastSelling": "Ít bán hơn"
   },
   "dashboard": {
     "create": "Tạo mới",

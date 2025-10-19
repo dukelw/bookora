@@ -23,13 +23,6 @@
     "confirmPassword": "Confirm Password",
     "note": "New password must have at least 6 characters, 1 uppercase letter and 1 special character"
   },
-  "payment": {
-    "createOrderSuccessfully": "Order created successfully!",
-    "cantCreateOrder": "Unable to create order. Please try again.",
-    "orderSuccessfully": "Order placed successfully!",
-    "orderSuccessMessage": "Thank you for your purchase! You can track your order in the order history page.",
-    "followOrder": "View my orders"
-  },
   "inventory": {
     "inventories": "Inventories"
   },
@@ -111,6 +104,22 @@
     "discountManagement": "Discount management",
     "footerImageManagement": "Footer management"
   },
+  "contact": {
+    "warn": "Please fill in all information!",
+    "success": "Thank you! We will respond as soon as possible.",
+    "error": "An error occurred while sending the message. Please try again.",
+    "title": "Contact Bookora",
+    "intro": "Leave us a message if you have any questions, feedback or need support — Bookora is here to help.",
+    "infoContact": "Contact Information",
+    "address": "Broadway and Morris St, New York",
+    "open": "Monday – Saturday: 8:00 - 17:30",
+    "formContact": "Send Message",
+    "name": "Full name",
+    "message": "Content",
+    "placeholderName": "Enter your full name",
+    "placeholderEmail": "Enter your email",
+    "placeholderMessage": "Enter the content you want to send"
+  },
   "cart": {
     "title": "Shopping Cart",
     "empty": "Your cart is empty",
@@ -141,6 +150,34 @@
     "payWithMomo": "Using Momo",
     "payWithVNPay": "Using VNPay",
     "payWithCod": "Pay when receive"
+  },
+  "payment": {
+    "createOrderSuccessfully": "Order created successfully!",
+    "cantCreateOrder": "Unable to create order. Please try again.",
+    "orderSuccessfully": "Order placed successfully!",
+    "orderSuccessMessage": "Thank you for your purchase! You can track your order in the order history page.",
+    "followOrder": "View my orders"
+  },
+  "book": {
+    "newArrivals": "Newly Released Books",
+    "title": "Explore newly updated books",
+    "new": "New launched",
+    "lastUpdate": "Last updated",
+    "filter": "Filter List",
+    "sort": "Sort by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "fromDate": "From date",
+    "daysRange": "Date range",
+    "category": "Category",
+    "author": "Author",
+    "publisher": "Publisher",
+    "all": "All",
+    "bestsellers": "Bestsellers",
+    "bestsellerTitle": "Most popular and top-selling books",
+    "hot": "Hot",
+    "bestselling": "Top selling",
+    "leastSelling": "Least selling"
   },
   "dashboard": {
     "create": "Create",
