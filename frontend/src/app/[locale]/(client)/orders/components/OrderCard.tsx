@@ -1,14 +1,69 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, Badge } from "flowbite-react";
-import Image from "next/image";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import OrderShippingInfo from "./OrderShippingInfo";
 import OrderPaymentInfo from "./OrderPaymentInfo";
 import { STATUS_MAP } from "@/constants";
 import OrderItemsList from "./OrderItemsList";
+import { orderService } from "@/services/orderService";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useRatingStore } from "@/store/ratingStore";
+import ConfirmModal from "@/components/modal/ConfirmModal";
+import { useState } from "react";
 
 export default function OrderCard({ order, expanded, onToggle }: any) {
+  const router = useRouter();
+  const { setBooksToRate } = useRatingStore();
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleComplete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    try {
+      const res = await orderService.updateOrderStatus(order._id, "completed");
+      if (res) {
+        toast.success("Cập nhật trạng thái đơn hàng thành công!");
+        setShowConfirm(true);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Cập nhật thất bại, thử lại sau!");
+    }
+  };
+
+  const handleConfirmRating = () => {
+    const books =
+      order.items?.map((item: any) => {
+        const mainImage =
+          item.book.images?.find((img: any) => img.isMain)?.url ||
+          "/default-book.png";
+
+        // Chỉ lấy variant đã mua
+        const boughtVariant = item.book.variants?.find(
+          (v: any) => v._id === item.variantId
+        );
+
+        return {
+          bookId: item.book._id,
+          title: item.book.title,
+          slug: item.book.slug,
+          thumbnail: mainImage,
+          variant: boughtVariant,
+          book: item.book,
+        };
+      }) || [];
+
+    if (books.length > 0) {
+      setBooksToRate(books);
+      router.push("/rating");
+    } else {
+      toast.info("Không có sản phẩm nào để đánh giá");
+    }
+
+    setShowConfirm(false);
+  };
+
   return (
     <motion.div
       layout
@@ -65,7 +120,7 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
           )}
           {order.status === "shipped" && (
             <button
-              onClick={(e) => e.stopPropagation()}
+              onClick={handleComplete}
               className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-semibold
                 rounded-full flex items-center gap-2 
                 shadow-[0_0_10px_rgba(0,128,0,0.5)] hover:shadow-[0_0_15px_rgba(0,200,0,0.7)]
@@ -90,6 +145,15 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
             </motion.div>
           )}
         </AnimatePresence>
+        <ConfirmModal
+          show={showConfirm}
+          title="Đánh giá sản phẩm"
+          message="Bạn có muốn đánh giá các sản phẩm trong đơn hàng này không?"
+          confirmText="Có, đánh giá"
+          cancelText="Không"
+          onConfirm={handleConfirmRating}
+          onCancel={() => setShowConfirm(false)}
+        />
       </Card>
     </motion.div>
   );

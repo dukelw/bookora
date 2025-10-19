@@ -53,7 +53,7 @@ export class RatingService {
   async getRatings(bookId: string) {
     return this.ratingModel
       .find({ book: new Types.ObjectId(bookId) })
-      .populate('user', 'fullname');
+      .populate({ path: 'user', select: 'fullname email name avatar' });
   }
 
   async getAverageRating(bookId: string) {
