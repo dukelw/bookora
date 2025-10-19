@@ -1,38 +1,45 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { io } from "socket.io-client";
 import Image from "next/image";
 import { Rating } from "@/interfaces/Rating";
 import { ratingService } from "@/services/ratingService";
 import { FALLBACK_BOOK } from "@/constants";
-
-const socket = io(process.env.NEXT_PUBLIC_API_URL!, {
-  transports: ["websocket"],
-});
+import { useSocket } from "@/app/hooks/useSocket";
+import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
 
 export default function ReviewSlider({ bookId }: { bookId: string }) {
   const [reviews, setReviews] = useState<Rating[]>([]);
+  const [average, setAverage] = useState<{ avgStars: number; count: number }>({
+    avgStars: 0,
+    count: 0,
+  });
+  const socket = useSocket();
 
   useEffect(() => {
-    if (!bookId) return;
+    if (!bookId || !socket) return;
 
     const fetchReviews = async () => {
       try {
         const data = await ratingService.getRatings(bookId);
-        console.log(data);
         setReviews(data);
+
+        const avg = await ratingService.getAverageRating(bookId);
+        setAverage(avg);
       } catch (err) {
-        console.error("Không thể lấy danh sách đánh giá:", err);
+        console.error("Không thể lấy đánh giá:", err);
       }
     };
 
     fetchReviews();
 
     socket.emit("joinProductRoom", bookId);
-    socket.on("ratingUpdate", () => fetchReviews());
-    return () => socket.off("ratingUpdate");
-  }, [bookId]);
+    socket.on("ratingUpdate", fetchReviews);
+
+    return () => {
+      socket.off("ratingUpdate", fetchReviews);
+    };
+  }, [bookId, socket]);
 
   if (!reviews.length) return null;
 
@@ -48,6 +55,27 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
         </button>
       </div>
 
+      <div className="mb-6 flex items-center gap-4">
+        <div className="flex items-center gap-1 text-yellow-400">
+          {Array.from({ length: 5 }).map((_, i) => {
+            if (i + 1 <= Math.floor(average.avgStars)) {
+              return <FaStar key={i} className="w-5 h-5" />;
+            } else if (i + 0.5 < average.avgStars) {
+              return <FaStarHalfAlt key={i} className="w-5 h-5" />;
+            } else {
+              return <FaRegStar key={i} className="w-5 h-5 text-gray-300" />;
+            }
+          })}
+        </div>
+
+        <span className="text-gray-800 font-semibold text-lg">
+          {average.avgStars.toFixed(1)} / 5
+        </span>
+
+        <span className="text-gray-500 text-sm">
+          ({average.count} đánh giá)
+        </span>
+      </div>
       {/* Track chính */}
       <motion.div
         className="flex gap-6 p-4 w-max"

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { bookService } from "@/services/bookService";
 import Image from "next/image";
-import { Book, BookImage, BookVariant, Category } from "@/interfaces/Book";
 import { FaShoppingCart, FaHeart } from "react-icons/fa";
 import Link from "next/link";
 import ReviewSlider from "./components/ReviewSlider";
@@ -15,6 +14,10 @@ import { cartService } from "@/services/cartService";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "react-toastify";
 import { useCartStore } from "@/store/cartStore";
+import Book from "@/interfaces/Book";
+import BookImage from "@/interfaces/BookImage";
+import Category from "@/interfaces/Category";
+import BookVariant from "@/interfaces/BookVariant";
 
 export default function BookDetailPage() {
   const { bookId } = useBookStore();

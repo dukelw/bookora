@@ -3,19 +3,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { io } from "socket.io-client";
 import { ratingService } from "@/services/ratingService";
 import { useRatingStore } from "@/store/ratingStore";
-
-const socket = io(process.env.NEXT_PUBLIC_API_URL!, {
-  transports: ["websocket"],
-});
+import { useSocket } from "@/app/hooks/useSocket";
 
 export default function RatingDetailPage() {
   const router = useRouter();
   const { currentBookToRate, clearBookToRate } = useRatingStore();
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
+  const socket = useSocket();
 
   if (!currentBookToRate)
     return (
