@@ -168,6 +168,7 @@
     "newest": "Newest",
     "oldest": "Oldest",
     "fromDate": "From date",
+    "toDate": "To date",
     "daysRange": "Date range",
     "category": "Category",
     "author": "Author",
