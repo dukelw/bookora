@@ -6,14 +6,14 @@ import { orderService } from "@/services/orderService";
 import OrderCard from "./OrderCard";
 import { STATUS_MAP } from "@/constants";
 import { Order } from "@/interfaces/Order";
+import { useAuthStore } from "@/store/authStore";
 
 export default function OrderTabs() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("pending");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  const userId = "68bea11edb9431f875386e1e";
+  const { user } = useAuthStore();
 
   const handleGetOrders = async (userId: string, status: string) => {
     try {
@@ -33,7 +33,7 @@ export default function OrderTabs() {
   };
 
   useEffect(() => {
-    handleGetOrders(userId, status);
+    handleGetOrders(user?._id, status);
   }, [status]);
 
   return (

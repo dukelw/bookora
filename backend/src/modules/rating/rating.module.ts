@@ -6,7 +6,9 @@ import { RatingController } from './rating.controller';
 import { RatingGateway } from './rating.gateway';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Rating.name, schema: RatingSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: Rating.name, schema: RatingSchema }]),
+  ],
   controllers: [RatingController],
   providers: [RatingService, RatingGateway],
   exports: [RatingService],
