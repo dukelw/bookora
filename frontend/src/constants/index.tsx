@@ -3,6 +3,7 @@ import {
   FaTimesCircle,
   FaMoneyBillWave,
   FaBoxOpen,
+  FaCheckCircle,
 } from "react-icons/fa";
 
 export interface NavItem {
@@ -80,5 +81,10 @@ export const STATUS_MAP = {
     label: "Đã hủy",
     color: "failure",
     icon: <FaTimesCircle className="inline mr-1" />,
+  },
+  completed: {
+    label: "Hoàn thành",
+    color: "success",
+    icon: <FaCheckCircle className="inline mr-1" />,
   },
 };
