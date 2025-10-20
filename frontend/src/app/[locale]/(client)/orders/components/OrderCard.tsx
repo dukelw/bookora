@@ -13,8 +13,11 @@ import { useRatingStore } from "@/store/ratingStore";
 import ConfirmModal from "@/components/modal/ConfirmModal";
 import { useState } from "react";
 import { eventBus } from "@/utils/eventBus";
+import { useTranslations } from "use-intl";
+import { OrderStatus } from "@/enums";
 
 export default function OrderCard({ order, expanded, onToggle }: any) {
+  const t = useTranslations("order");
   const router = useRouter();
   const { setCurrentBookToRate, setReviewRequest } = useRatingStore();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -23,13 +26,16 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
     e.stopPropagation();
 
     try {
-      const res = await orderService.updateOrderStatus(order._id, "completed");
+      const res = await orderService.updateOrderStatus(
+        order._id,
+        OrderStatus.COMPLETED
+      );
       if (res) {
-        toast.success("Cập nhật trạng thái đơn hàng thành công!");
+        toast.success(t("updateOrderStatusSuccessfully"));
         setShowConfirm(true);
       }
     } catch (err: any) {
-      toast.error(err.message || "Cập nhật thất bại, thử lại sau!");
+      toast.error(err.message || t("updateOrderStatusFailed"));
     }
   };
 
@@ -73,7 +79,7 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
       >
         <div className="flex justify-between items-start mb-3">
           <h5 className="text-lg font-semibold text-white">
-            Đơn #{order._id.slice(-6)}
+            {t("order")} #{order._id.slice(-6)}
           </h5>
           <Badge
             color={
@@ -82,37 +88,38 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
             }
           >
             {STATUS_MAP[order.status as keyof typeof STATUS_MAP]?.icon}
-            {STATUS_MAP[order.status as keyof typeof STATUS_MAP]?.label ||
-              order.status}
+            {t(
+              `${STATUS_MAP[order.status as keyof typeof STATUS_MAP]?.label}`
+            ) || t(`${order.status}`)}
           </Badge>
         </div>
 
         {/* --- Thông tin cơ bản --- */}
         <OrderItemsList items={order.items} onRate={handleRateSingleItem} />
         <p>
-          <strong>Tổng tiền:</strong>{" "}
+          <strong>{t("total")}:</strong>{" "}
           <span className="text-yellow-400 font-semibold">
             {order.finalAmount?.toLocaleString("vi-VN")}₫
           </span>
         </p>
         <p>
-          <strong>Ngày tạo:</strong>{" "}
+          <strong>{t("createdAt")}:</strong>{" "}
           {new Date(order.createdAt).toLocaleString("vi-VN")}
         </p>
 
         {/* --- Nút hành động --- */}
         <div className="mt-3 flex justify-end gap-3">
-          {order.status === "pending" && (
+          {order.status === OrderStatus.PENDING && (
             <button
               onClick={(e) => e.stopPropagation()}
               className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold 
                 rounded-full flex items-center gap-2 shadow-[0_0_10px_rgba(255,0,0,0.5)] 
                 hover:shadow-[0_0_15px_rgba(255,50,50,0.7)] transition-all"
             >
-              <FaTimesCircle className="text-white" /> Hủy đơn
+              <FaTimesCircle className="text-white" /> {t("cancel")}
             </button>
           )}
-          {order.status === "shipped" && (
+          {order.status === OrderStatus.SHIPPED && (
             <button
               onClick={handleComplete}
               className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-semibold
@@ -120,7 +127,7 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
                 shadow-[0_0_10px_rgba(0,128,0,0.5)] hover:shadow-[0_0_15px_rgba(0,200,0,0.7)]
                 transition-all"
             >
-              <FaCheckCircle className="text-white" /> Đã nhận hàng
+              <FaCheckCircle className="text-white" /> {t("received")}
             </button>
           )}
         </div>
@@ -141,10 +148,10 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
         </AnimatePresence>
         <ConfirmModal
           show={showConfirm}
-          title="Đánh giá sản phẩm"
-          message="Bạn có thể đánh giá sản phẩm khi vào mục Hoàn thành!"
-          confirmText="Đã hiểu"
-          cancelText="Thoát"
+          title={t("rateTheBook")}
+          message={t("youCanRateTheBookInCompletedTab")}
+          confirmText={t("understood")}
+          cancelText={t("cancel")}
           onConfirm={handleConfirmClick}
           onCancel={() => setShowConfirm(false)}
         />

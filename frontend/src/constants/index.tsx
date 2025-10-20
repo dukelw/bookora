@@ -63,27 +63,27 @@ export const REDIRECT_URL = `${process.env.NEXT_PUBLIC_CLIENT_URL}/payment/succe
 
 export const STATUS_MAP = {
   pending: {
-    label: "Đang xử lý",
+    label: "pending",
     color: "warning",
     icon: <FaClock className="inline mr-1" />,
   },
   paid: {
-    label: "Đã thanh toán",
+    label: "paid",
     color: "success",
     icon: <FaMoneyBillWave className="inline mr-1" />,
   },
   shipped: {
-    label: "Đã giao",
+    label: "shipped",
     color: "info",
     icon: <FaBoxOpen className="inline mr-1" />,
   },
   cancelled: {
-    label: "Đã hủy",
+    label: "cancelled",
     color: "failure",
     icon: <FaTimesCircle className="inline mr-1" />,
   },
   completed: {
-    label: "Hoàn thành",
+    label: "completed",
     color: "success",
     icon: <FaCheckCircle className="inline mr-1" />,
   },

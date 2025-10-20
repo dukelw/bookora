@@ -1,9 +1,12 @@
 "use client";
+import { RatingStatus } from "@/enums";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "use-intl";
 
 export default function OrderItemsList({ items, onRate }: any) {
   const router = useRouter();
+  const t = useTranslations("order");
 
   return (
     <div className="text-sm text-gray-300 space-y-2">
@@ -14,10 +17,9 @@ export default function OrderItemsList({ items, onRate }: any) {
 
         const handleClick = (e: React.MouseEvent) => {
           e.stopPropagation();
-          if (item.reviewStatus === "pending") {
-            console.log("Items", item);
+          if (item.reviewStatus === RatingStatus.PENDING) {
             onRate?.(item);
-          } else if (item.reviewStatus === "completed") {
+          } else if (item.reviewStatus === RatingStatus.COMPLETED) {
             router.push(`/rating/view?bookId=${item.book?._id}`);
           }
         };
@@ -53,7 +55,7 @@ export default function OrderItemsList({ items, onRate }: any) {
               </div>
             </div>
 
-            {item.reviewStatus !== "unknown" && item.reviewStatus && (
+            {item.reviewStatus !== RatingStatus.UNKNOWN && item.reviewStatus && (
               <button
                 onClick={handleClick}
                 className={`px-3 py-1 text-xs font-semibold rounded-full transition-all whitespace-nowrap ${
@@ -62,7 +64,7 @@ export default function OrderItemsList({ items, onRate }: any) {
                     : "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(0,100,255,0.5)]"
                 }`}
               >
-                {item.reviewStatus === "pending" ? "Đánh giá" : "Xem đánh giá"}
+                {item.reviewStatus === RatingStatus.PENDING ? t("rate") : t("view")}
               </button>
             )}
           </div>
@@ -71,7 +73,7 @@ export default function OrderItemsList({ items, onRate }: any) {
 
       {items.length > 2 && (
         <span className="text-xs text-gray-500 block text-right mt-1">
-          +{items.length - 2} sản phẩm khác
+          +{items.length - 2} {t("otherItem")}
         </span>
       )}
     </div>

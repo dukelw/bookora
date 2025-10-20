@@ -8,6 +8,7 @@ import { STATUS_MAP } from "@/constants";
 import { Order } from "@/interfaces/Order";
 import { useAuthStore } from "@/store/authStore";
 import { eventBus } from "@/utils/eventBus";
+import { useLocale, useTranslations } from "use-intl";
 
 export default function OrderTabs() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -15,6 +16,7 @@ export default function OrderTabs() {
   const [status, setStatus] = useState("pending");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const { user } = useAuthStore();
+  const t = useTranslations("order");
 
   const handleGetOrders = async (userId: string, status: string) => {
     try {
@@ -47,7 +49,7 @@ export default function OrderTabs() {
 
   return (
     <Tabs
-      aria-label="Tabs đơn hàng"
+      aria-label={t("orders")}
       variant="underline"
       onActiveTabChange={(tabIndex) => {
         const keys = Object.keys(STATUS_MAP);
@@ -56,7 +58,7 @@ export default function OrderTabs() {
       }}
     >
       {Object.entries(STATUS_MAP).map(([key, { label }]) => (
-        <TabItem key={key} title={label}>
+        <TabItem key={key} title={t(label)}>
           {loading ? (
             <div className="flex justify-center py-10">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-yellow-400"></div>
@@ -76,7 +78,7 @@ export default function OrderTabs() {
             </div>
           ) : (
             <p className="text-gray-500 italic mt-8 text-center">
-              Không có đơn hàng nào trong trạng thái này.
+              {t("noOrderInThisStatus")}
             </p>
           )}
         </TabItem>
