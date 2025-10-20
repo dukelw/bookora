@@ -12,10 +12,11 @@ import { useRouter } from "next/navigation";
 import { useRatingStore } from "@/store/ratingStore";
 import ConfirmModal from "@/components/modal/ConfirmModal";
 import { useState } from "react";
+import { eventBus } from "@/utils/eventBus";
 
 export default function OrderCard({ order, expanded, onToggle }: any) {
   const router = useRouter();
-  const { setBooksToRate } = useRatingStore();
+  const { setCurrentBookToRate, setReviewRequest } = useRatingStore();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleComplete = async (e: React.MouseEvent) => {
@@ -32,36 +33,29 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
     }
   };
 
-  const handleConfirmRating = () => {
-    const books =
-      order.items?.map((item: any) => {
-        const mainImage =
-          item.book.images?.find((img: any) => img.isMain)?.url ||
-          "/default-book.png";
+  const handleRateSingleItem = (item: any) => {
+    const mainImage =
+      item.book.images?.find((img: any) => img.isMain)?.url ||
+      "/default-book.png";
 
-        // Chỉ lấy variant đã mua
-        const boughtVariant = item.book.variants?.find(
-          (v: any) => v._id === item.variantId
-        );
+    // Chỉ lấy variant đã mua
+    const boughtVariant = item.book.variants?.find(
+      (v: any) => v._id === item.variantId
+    );
+    const rateBook = {
+      ...item.book,
+      variant: boughtVariant,
+      thumbnail: mainImage,
+      bookId: item.book._id,
+    };
+    setCurrentBookToRate(rateBook);
+    setReviewRequest(item.reviewRequestId);
+    router.push(`/rating/${item.book.slug}`);
+  };
 
-        return {
-          bookId: item.book._id,
-          title: item.book.title,
-          slug: item.book.slug,
-          thumbnail: mainImage,
-          variant: boughtVariant,
-          book: item.book,
-        };
-      }) || [];
-
-    if (books.length > 0) {
-      setBooksToRate(books);
-      router.push("/rating");
-    } else {
-      toast.info("Không có sản phẩm nào để đánh giá");
-    }
-
+  const handleConfirmClick = () => {
     setShowConfirm(false);
+    eventBus.emit("orderUpdated");
   };
 
   return (
@@ -94,7 +88,7 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
         </div>
 
         {/* --- Thông tin cơ bản --- */}
-        <OrderItemsList items={order.items} />
+        <OrderItemsList items={order.items} onRate={handleRateSingleItem} />
         <p>
           <strong>Tổng tiền:</strong>{" "}
           <span className="text-yellow-400 font-semibold">
@@ -148,10 +142,10 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
         <ConfirmModal
           show={showConfirm}
           title="Đánh giá sản phẩm"
-          message="Bạn có muốn đánh giá các sản phẩm trong đơn hàng này không?"
-          confirmText="Có, đánh giá"
-          cancelText="Không"
-          onConfirm={handleConfirmRating}
+          message="Bạn có thể đánh giá sản phẩm khi vào mục Hoàn thành!"
+          confirmText="Đã hiểu"
+          cancelText="Thoát"
+          onConfirm={handleConfirmClick}
           onCancel={() => setShowConfirm(false)}
         />
       </Card>

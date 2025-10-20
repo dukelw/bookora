@@ -6,6 +6,7 @@ export enum OrderStatus {
   PAID = 'paid',
   SHIPPED = 'shipped',
   CANCELLED = 'cancelled',
+  COMPLETED = 'completed',
 }
 
 @Schema({ _id: false })

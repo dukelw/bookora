@@ -4,9 +4,17 @@ import { AxiosResponse } from "axios";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/rating`;
 
+export interface VariantSnapshotDto {
+  name: string;
+  rarity: string;
+  price: number;
+  image: string;
+}
+
 export interface CreateRatingDto {
   stars: number; // số sao (1–5)
   comment?: string;
+  variant?: VariantSnapshotDto; // thêm phần này
 }
 
 export const ratingService = {

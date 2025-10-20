@@ -20,6 +20,7 @@ import { MailModule } from './modules/mail/mail.module';
 import { MomoModule } from './modules/payment/momo/momo.module';
 import { BookoraVnpayModule } from './modules/payment/vnpay/vnpay.module';
 import { AddressModule } from './modules/address/address.module';
+import { ReviewRequestModule } from './modules/review-request/review-request.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { AddressModule } from './modules/address/address.module';
     MomoModule,
     BookoraVnpayModule,
     AddressModule,
+    ReviewRequestModule,
   ],
 })
 export class AppModule {}

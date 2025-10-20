@@ -141,7 +141,6 @@ export default function CheckoutPage() {
         error?.response?.data?.message ||
         error?.message ||
         "Đã xảy ra lỗi khi tạo đơn hàng!";
-      toast.error(msg);
     }
   };
 

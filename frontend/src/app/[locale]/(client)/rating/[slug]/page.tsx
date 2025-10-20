@@ -6,10 +6,12 @@ import { toast } from "react-toastify";
 import { ratingService } from "@/services/ratingService";
 import { useRatingStore } from "@/store/ratingStore";
 import { useSocket } from "@/app/hooks/useSocket";
+import { reviewRequestService } from "@/services/reviewReviewService";
 
 export default function RatingDetailPage() {
   const router = useRouter();
-  const { currentBookToRate, clearBookToRate } = useRatingStore();
+  const { currentBookToRate, clearBookToRate, reviewRequest } =
+    useRatingStore();
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
   const socket = useSocket();
@@ -31,15 +33,17 @@ export default function RatingDetailPage() {
       const res = await ratingService.addRating(book.bookId, {
         stars,
         comment,
+        variant,
       });
       if (res) {
         socket.emit("ratingUpdate", { bookId: book.bookId });
+        await reviewRequestService.markAsComplete(reviewRequest);
 
         // ❌ Xóa sách này khỏi danh sách booksToRate
         clearBookToRate(book.bookId);
 
         toast.success("Gửi đánh giá thành công!");
-        router.push("/rating");
+        router.push("/orders");
       }
     } catch (err) {
       console.error(err);

@@ -11,11 +11,17 @@ import { CartService } from '../cart/cart.service';
 import { DiscountService } from '../discount/discount.service';
 import { DiscountType } from 'src/schemas/discount.schema';
 import { Book } from 'src/schemas/book.schema';
+import {
+  ReviewRequest,
+  ReviewRequestStatus,
+} from 'src/schemas/request-review.schema';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
+    @InjectModel(ReviewRequest.name)
+    private reviewRequestModel: Model<ReviewRequest>,
     @InjectModel(Book.name) private bookModel: Model<Book>,
     private readonly cartService: CartService,
     private readonly discountService: DiscountService,
@@ -131,19 +137,19 @@ export class OrderService {
     page = 1,
     limit = 10,
     status?: OrderStatus,
-  ): Promise<{ data: Order[]; total: number; page: number; limit: number }> {
+  ): Promise<{ data: any[]; total: number; page: number; limit: number }> {
     const query: any = { user: userId };
     if (status) query.status = status;
 
     const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
+    const [orders, total] = await Promise.all([
       this.orderModel
         .find(query)
         .populate({
           path: 'items.book',
           select:
-            'title author variants image price element description publisher images', // tuỳ schema Book
+            'title author variants image price element description publisher images slug',
         })
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -152,8 +158,39 @@ export class OrderService {
       this.orderModel.countDocuments(query),
     ]);
 
+    // ✅ Nếu là đơn completed thì enrich thêm trạng thái đánh giá
+    const enrichedOrders = await Promise.all(
+      orders.map(async (order) => {
+        const reviewRequests = await this.reviewRequestModel.find({
+          order: order._id,
+          user: userId,
+        });
+
+        const itemsWithReview = order.items.map((item) => {
+          const foundRequest = reviewRequests.find(
+            (r) =>
+              r.book.toString() === item.book._id.toString() &&
+              r.variantId === item.variantId,
+          );
+
+          return {
+            ...(typeof (item as any).toObject === 'function'
+              ? (item as any).toObject()
+              : { ...item }),
+            reviewStatus: foundRequest?.status || ReviewRequestStatus.UNKNOWN,
+            reviewRequestId: foundRequest?._id || null,
+          };
+        });
+
+        return {
+          ...order.toObject(),
+          items: itemsWithReview,
+        };
+      }),
+    );
+
     return {
-      data,
+      data: enrichedOrders,
       total,
       page,
       limit,
@@ -173,6 +210,31 @@ export class OrderService {
       { new: true },
     );
     if (!order) throw new NotFoundException('Order not found');
+
+    // ✅ Nếu đơn hàng chuyển sang hoàn tất
+    if (status === OrderStatus.COMPLETED) {
+      // duyệt qua từng item trong đơn
+      for (const item of order.items) {
+        // kiểm tra xem user này đã đánh giá sản phẩm đó chưa
+        const existingRating = await this.reviewRequestModel.findOne({
+          user: order.user,
+          book: item.book,
+          order: id,
+          status: ReviewRequestStatus.COMPLETED,
+        });
+
+        // nếu chưa có đánh giá => tạo yêu cầu đánh giá mới
+        if (!existingRating) {
+          await this.reviewRequestModel.create({
+            order: order._id,
+            user: order.user,
+            book: item.book,
+            variantId: item.variantId,
+          });
+        }
+      }
+    }
+
     return order;
   }
 }

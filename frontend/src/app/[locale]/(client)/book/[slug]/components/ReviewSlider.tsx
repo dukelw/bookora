@@ -96,7 +96,7 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
             <div className="flex items-center gap-4">
               <Image
                 src={review.user?.avatar || FALLBACK_BOOK}
-                alt={review.user?.name || "User"}
+                alt={"Avatar"}
                 width={56}
                 height={56}
                 className="rounded-full object-cover"
@@ -105,6 +105,9 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
                 <h3 className="text-lg font-semibold">
                   {review.user?.name || "Ẩn danh"}
                 </h3>
+                <p className="text-sm text-gray-500">
+                  Biến thể: {review.variant?.rarity || "Không có"}
+                </p>
                 <div className="flex text-yellow-400">
                   {Array.from({ length: review.stars }).map((_, i) => (
                     <span key={i}>★</span>

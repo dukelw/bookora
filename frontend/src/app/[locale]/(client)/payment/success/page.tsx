@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { FaCheckCircle } from "react-icons/fa";
@@ -15,30 +15,29 @@ import { useTranslations } from "use-intl";
 export default function ThankYou() {
   // const searchParams = useSearchParams();
   // const resultCode = searchParams.get("resultCode");
-  const { checkout } = useCheckoutStore();
+  const { checkout, setCheckout } = useCheckoutStore();
+  const hasCreated = useRef(false); // 👈 flag để ngăn gọi 2 lần
   const t = useTranslations("payment");
 
   useEffect(() => {
     const handleCreateOrder = async () => {
-      if (checkout) {
-        // if (resultCode === "0" && checkout) {
+      if (checkout && !hasCreated.current) {
+        hasCreated.current = true; // ✅ đánh dấu đã gọi rồi
         try {
           const res = await orderService.createOrder(checkout);
           if (res) {
             toast.success(t("createOrderSuccessfully"));
-            setTimeout(() => {
-              eventBus.emit("cart:refresh");
-            }, 1000);
+            eventBus.emit("cart:refresh");
+            setCheckout(null); // 👈 clear checkout sau khi tạo xong
           }
         } catch (err) {
           console.error(err);
-          toast.error("cantCreateOrder");
+          toast.error("Không thể tạo đơn hàng!");
+          hasCreated.current = false; // Cho phép thử lại nếu cần
         }
       }
     };
-
     handleCreateOrder();
-    // }, [resultCode, checkout]);
   }, [checkout]);
 
   return (

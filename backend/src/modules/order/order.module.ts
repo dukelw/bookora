@@ -6,6 +6,7 @@ import { CartModule } from '../cart/cart.module';
 import { Order, OrderSchema } from 'src/schemas/order.schema';
 import { DiscountModule } from '../discount/discount.module';
 import { Book, BookSchema } from 'src/schemas/book.schema';
+import { ReviewRequestModule } from '../review-request/review-request.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { Book, BookSchema } from 'src/schemas/book.schema';
     ]),
     CartModule,
     DiscountModule,
+    ReviewRequestModule,
   ],
   controllers: [OrderController],
   providers: [OrderService],

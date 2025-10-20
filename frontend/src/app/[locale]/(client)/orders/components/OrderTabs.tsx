@@ -7,6 +7,7 @@ import OrderCard from "./OrderCard";
 import { STATUS_MAP } from "@/constants";
 import { Order } from "@/interfaces/Order";
 import { useAuthStore } from "@/store/authStore";
+import { eventBus } from "@/utils/eventBus";
 
 export default function OrderTabs() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -34,7 +35,15 @@ export default function OrderTabs() {
 
   useEffect(() => {
     handleGetOrders(user?._id, status);
-  }, [status]);
+  }, [user?._id, status]);
+
+  useEffect(() => {
+    const refreshOrders = () => handleGetOrders(user?._id, status);
+    eventBus.on("orderUpdated", refreshOrders);
+    return () => {
+      eventBus.off("orderUpdated", refreshOrders);
+    };
+  }, [user?._id, status]);
 
   return (
     <Tabs
