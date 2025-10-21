@@ -12,6 +12,7 @@ import { BestSellersQueryDto } from './dto/book-bestsellers.dto';
 import { NewReleasesQueryDto } from './dto/book-newreleases.dto';
 import { Order, OrderStatus } from 'src/schemas/order.schema';
 import { ListBooksQueryDto, BookSort } from './dto/list-books.dto';
+import { AuthorsQueryDto, BooksByAuthorQueryDto } from './dto/author.dto';
 
 @Injectable()
 export class BookService {
@@ -358,6 +359,87 @@ export class BookService {
         from: start?.toISOString(),
         now: new Date().toISOString(),
       },
+    };
+  }
+
+  /** Lấy danh sách tất cả tác giả (distinct) + số lượng sách mỗi tác giả */
+  async getAllAuthors(q: AuthorsQueryDto) {
+    const { search, page = 1, limit = 20 } = q;
+    const skip = (page - 1) * limit;
+
+    const pipeline: any[] = [
+      { $match: { author: { $exists: true, $ne: '' } } },
+    ];
+
+    if (search?.trim()) {
+      pipeline.push({
+        $match: { author: { $regex: search.trim(), $options: 'i' } },
+      });
+    }
+
+    pipeline.push(
+      { $group: { _id: '$author', books: { $sum: 1 } } },
+      { $sort: { _id: 1 } },                  // sort theo tên tác giả A→Z
+      { $skip: skip },
+      { $limit: Math.min(limit, 100) },
+      { $project: { _id: 0, author: '$_id', books: 1 } },
+    );
+
+    const [items, totalAgg] = await Promise.all([
+      this.bookModel.aggregate(pipeline).exec(),
+      // tổng distinct authors (theo filter search)
+      this.bookModel.aggregate([
+        ...(search?.trim()
+          ? [{ $match: { author: { $exists: true, $ne: '', $regex: search.trim(), $options: 'i' } } }]
+          : [{ $match: { author: { $exists: true, $ne: '' } } }]),
+        { $group: { _id: '$author' } },
+        { $count: 'total' },
+      ]).exec(),
+    ]);
+
+    const total = totalAgg?.[0]?.total ?? 0;
+    return {
+      items,
+      meta: { page, limit: Math.min(limit, 100), total, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  /** Lấy sách theo tên tác giả (case-insensitive) */
+  async getBooksByAuthor(authorParam: string, q: BooksByAuthorQueryDto) {
+    const { page = 1, limit = 12 } = q;
+    const skip = (page - 1) * limit;
+
+    // escape regex và match chính xác theo tên (không phân biệt hoa/thường)
+    const escaped = authorParam.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const filter = { author: { $regex: `^${escaped}$`, $options: 'i' } };
+
+    const [docs, total] = await Promise.all([
+      this.bookModel
+        .find(filter)
+        .sort({ createdAt: -1, title: 1 })
+        .skip(skip)
+        .limit(Math.min(limit, 50))
+        .lean()
+        .collation({ locale: 'vi', strength: 1 }) // sort tên chuẩn Tiếng Việt
+        .exec(),
+      this.bookModel.countDocuments(filter),
+    ]);
+
+    const items = docs.map((b: any) => ({
+      _id: b._id,
+      title: b.title,
+      slug: b.slug,
+      author: b.author,
+      publisher: b.publisher,
+      price: b.price,
+      releaseYear: b.releaseYear,
+      mainImage: (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url || null,
+      createdAt: b.createdAt,
+    }));
+
+    return {
+      items,
+      meta: { page, limit: Math.min(limit, 50), total, totalPages: Math.ceil(total / limit) },
     };
   }
 }
