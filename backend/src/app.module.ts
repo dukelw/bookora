@@ -21,6 +21,7 @@ import { MomoModule } from './modules/payment/momo/momo.module';
 import { BookoraVnpayModule } from './modules/payment/vnpay/vnpay.module';
 import { AddressModule } from './modules/address/address.module';
 import { ReviewRequestModule } from './modules/review-request/review-request.module';
+import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { CommentModule } from './modules/comment/comment.module';
 
 @Module({
@@ -47,6 +48,7 @@ import { CommentModule } from './modules/comment/comment.module';
     BookoraVnpayModule,
     AddressModule,
     ReviewRequestModule,
+    WishlistModule,
     CommentModule,
   ],
 })
