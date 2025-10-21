@@ -8,15 +8,14 @@ import CartItemList from "./components/CartItemList";
 import CartSummary from "./components/CartSummary";
 import { cartService } from "@/services/cartService";
 import VoucherList from "./components/VoucherList";
-import { orderService } from "@/services/orderService";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkoutStore";
-import { eventBus } from "@/utils/eventBus";
 import { paymentService } from "@/services/paymentService";
 import { REDIRECT_URL } from "@/constants";
 import { clearGuestId, getOrCreateGuestId } from "@/lib/guest";
 import { authService } from "@/services/authService";
+import Loader from "@/components/loader/Loader";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
@@ -24,6 +23,7 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<any>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { setCheckout } = useCheckoutStore();
   const [formData, setFormData] = useState({
@@ -103,13 +103,13 @@ export default function CheckoutPage() {
         return;
       }
 
+      setIsSubmitting(true);
+
       const guestId = getOrCreateGuestId();
 
       let currentUser = user;
 
       if (!currentUser?._id) {
-        // create account & auto-login
-        // authService.registerFromCheckout should return { user, tokens }
         const res = await authService.registerFromCheckout({
           email: formData.email,
           name: formData.name,
@@ -194,6 +194,8 @@ export default function CheckoutPage() {
         error?.message ||
         "Đã xảy ra lỗi khi tạo đơn hàng!";
       toast.error(msg);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -201,6 +203,12 @@ export default function CheckoutPage() {
 
   return (
     <div className="bg-neutral-950 text-white min-h-screen py-10 px-6">
+      {isSubmitting && (
+        <Loader
+          fullscreen
+          message={t("processingOrder") || "Đang xử lý đơn hàng..."}
+        />
+      )}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div>
           <h2 className="text-2xl font-bold mb-6">

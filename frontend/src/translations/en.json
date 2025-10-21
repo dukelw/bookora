@@ -153,6 +153,8 @@
     "placeholderMessage": "Enter the content you want to send"
   },
   "cart": {
+    "processingOrder": "Processing your order...",
+    "loadError": "Unable to load cart. Please try again.",
     "updateError": "Failed to update cart.",
     "title": "Shopping Cart",
     "empty": "Your cart is empty",
