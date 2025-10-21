@@ -54,4 +54,9 @@ export class CommentController {
   remove(@Param('id') id: string) {
     return this.commentService.remove(id);
   }
+
+  @Put(':id/like/:userId')
+  toggleLike(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.commentService.toggleLike(id, userId);
+  }
 }

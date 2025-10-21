@@ -40,7 +40,7 @@ export const authService = {
 
       return response.data;
     } catch (error: any) {
-      throw new Error( error.response?.data?.message || error.message);
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
@@ -82,21 +82,29 @@ export const authService = {
     }
   },
 
-  // Làm mới token (sử dụng refreshToken)
+  // ✅ FIX: Làm mới token tự động (gọi đúng field "token")
   async refreshTokens(refreshTokenParams: string) {
     try {
       const response: AxiosResponse = await axios.post(`${API_URL}/refresh`, {
-        refreshToken: refreshTokenParams,
+        token: refreshTokenParams, // ✅ Đổi từ "refreshToken" thành "token"
       });
       const { accessToken, refreshToken } = response.data;
 
-      // Lưu token mới vào localStorage và cookie
+      // Lưu token mới
       setAccessToken(accessToken);
-      localStorage.setItem("refreshToken", refreshToken); // Lưu refresh token vào localStorage
+      localStorage.setItem("refreshToken", refreshToken);
+
+      // Cập nhật cookie
+      await axios.post("/api/login", {
+        accessToken,
+        refreshToken,
+      });
 
       return response.data;
-    } catch (error) {
-      throw new Error("Failed to refresh tokens");
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.message || "Failed to refresh tokens"
+      );
     }
   },
 
@@ -118,9 +126,7 @@ export const authService = {
       const res = await axios.post(`${API_URL}/verify-otp`, { email, otp });
       return res.data;
     } catch (error: any) {
-      throw new Error(
-        error?.response?.data?.message || "Failed to verify OTP"
-      );
+      throw new Error(error?.response?.data?.message || "Failed to verify OTP");
     }
   },
 
@@ -128,7 +134,7 @@ export const authService = {
   async resetPassword(resetPasswordToken: string, newPassword: string) {
     try {
       const res = await axios.post(`${API_URL}/reset-password`, {
-        resetPasswordToken, 
+        resetPasswordToken,
         newPassword,
       });
       return res.data;
@@ -148,7 +154,9 @@ export const authService = {
       });
       return res.data;
     } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Failed to change password");
+      throw new Error(
+        error?.response?.data?.message || "Failed to change password"
+      );
     }
   },
 };

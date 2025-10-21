@@ -36,11 +36,15 @@ export class CommentService {
 
   async findByBook(bookId: string) {
     return this.commentModel
-      .find({ bookId, parentComment: null })
-      .populate('user', 'name avatar')
+      .find({ bookId })
+      .populate('user', 'name avatar email')
       .populate({
-        path: 'replies',
-        populate: { path: 'user', select: 'name avatar' },
+        path: 'parentComment',
+        select: 'user content createdAt updatedAt',
+        populate: {
+          path: 'user',
+          select: 'name avatar email',
+        },
       })
       .sort({ createdAt: -1 });
   }
@@ -65,5 +69,17 @@ export class CommentService {
       .to(comment.bookId.toString())
       .emit('commentDeleted', { _id: commentId });
     return { message: 'Deleted successfully' };
+  }
+
+  async toggleLike(commentId: string, userId: string) {
+    const comment = await this.commentModel.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    const index = comment.likes.indexOf(userId);
+    if (index === -1) comment.likes.push(userId);
+    else comment.likes.splice(index, 1);
+
+    await comment.save();
+    return comment;
   }
 }

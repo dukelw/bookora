@@ -5,7 +5,13 @@ const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/discounts`;
 
 export const discountService = {
   // Lấy danh sách tất cả discount (admin)
-  async getAll(keySearch?: string, page?: number, limit?: number, status?: boolean | undefined, type?: string | undefined) {
+  async getAll(
+    keySearch?: string,
+    page?: number,
+    limit?: number,
+    status?: boolean | undefined,
+    type?: string | undefined
+  ) {
     const res: AxiosResponse = await api.get(API_URL, {
       params: { keySearch, page, limit, status, type },
     });
@@ -16,7 +22,7 @@ export const discountService = {
   async create(data: {
     code: string;
     value: number;
-    type: 'percentage' | 'amount';
+    type: "percentage" | "amount";
     usageLimit: number;
     active?: boolean;
   }) {
@@ -31,7 +37,7 @@ export const discountService = {
   },
 
   // Bật/tắt trạng thái hoạt động của discount (admin)
-  async toggleStatus(id: string, p0: { active: boolean; }) {
+  async toggleStatus(id: string, p0: { active: boolean }) {
     const res: AxiosResponse = await api.patch(`${API_URL}/${id}/status`);
     return res.data;
   },
