@@ -95,7 +95,11 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
         </div>
 
         {/* --- Thông tin cơ bản --- */}
-        <OrderItemsList items={order.items} onRate={handleRateSingleItem} />
+        <OrderItemsList
+          items={order.items}
+          onRate={handleRateSingleItem}
+          showAll={expanded} // <-- pass expanded so it shows all when expanded
+        />
         <p>
           <strong>{t("total")}:</strong>{" "}
           <span className="text-yellow-400 font-semibold">

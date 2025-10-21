@@ -121,6 +121,7 @@
     "placeholderMessage": "Nhập nội dung bạn cần gửi"
   },
   "cart": {
+    "updateError": "Có lỗi xảy ra khi cập nhật giỏ hàng.",
     "title": "Giỏ hàng",
     "empty": "Giỏ hàng của bạn trống",
     "viewCart": "Xem giỏ hàng",

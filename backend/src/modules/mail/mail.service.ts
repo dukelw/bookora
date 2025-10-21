@@ -7,8 +7,6 @@ export class MailService {
   private transporter;
 
   constructor() {
-    console.log('SMTP_USER:', process.env.SMTP_USER);
-    console.log('SMTP_PASS:', process.env.SMTP_PASS);
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
@@ -34,7 +32,9 @@ export class MailService {
       const info = await this.transporter.sendMail(mailOptions);
       return { message: 'Mail sent successfully', info };
     } catch (err) {
-      throw new InternalServerErrorException('Failed to send email: ' + err.message);
+      throw new InternalServerErrorException(
+        'Failed to send email: ' + err.message,
+      );
     }
   }
 }

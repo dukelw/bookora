@@ -19,6 +19,7 @@ import BookImage from "@/interfaces/BookImage";
 import Category from "@/interfaces/Category";
 import BookVariant from "@/interfaces/BookVariant";
 import CommentSection from "./components/CommentSection";
+import { getOrCreateGuestId } from "@/lib/guest";
 
 export default function BookDetailPage() {
   const { bookId } = useBookStore();
@@ -57,14 +58,39 @@ export default function BookDetailPage() {
     router.push(`/category/${category.slug}`);
   };
 
+  // const handleAddToCart = async (
+  //   items: { variant: BookVariant; quantity: number }[]
+  // ) => {
+  //   try {
+  //     await Promise.all(
+  //       items.map((item) =>
+  //         cartService.addToCart({
+  //           userId: user._id,
+  //           bookId: bookId ?? "",
+  //           variantId: item.variant._id,
+  //           quantity: item.quantity,
+  //         })
+  //       )
+  //     );
+
+  //     // 🚀 Sau khi thêm, fetch lại giỏ hàng để store cập nhật
+  //     const updatedCart = await cartService.getCart(user._id);
+  //     setCart(updatedCart);
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Có lỗi khi thêm giỏ hàng");
+  //   }
+  // };
+
   const handleAddToCart = async (
     items: { variant: BookVariant; quantity: number }[]
   ) => {
     try {
+      const ownerId = user?._id || getOrCreateGuestId();
       await Promise.all(
         items.map((item) =>
           cartService.addToCart({
-            userId: user._id,
+            userId: ownerId,
             bookId: bookId ?? "",
             variantId: item.variant._id,
             quantity: item.quantity,
@@ -72,8 +98,7 @@ export default function BookDetailPage() {
         )
       );
 
-      // 🚀 Sau khi thêm, fetch lại giỏ hàng để store cập nhật
-      const updatedCart = await cartService.getCart(user._id);
+      const updatedCart = await cartService.getCart(ownerId);
       setCart(updatedCart);
     } catch (err) {
       console.error(err);

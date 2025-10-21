@@ -2,14 +2,14 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 export enum CartItemStatus {
-  PENDING = 'pending', // chưa mua
-  PURCHASED = 'purchased', // đã đánh dấu để mua
+  PENDING = 'pending',
+  PURCHASED = 'purchased',
 }
 
 @Schema({ timestamps: true })
 export class CartItem {
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
-  book: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Book', required: true })
+  book: Types.ObjectId; // khi populate -> Book document
 
   @Prop({ required: true })
   variantId: string;
@@ -25,11 +25,23 @@ export const CartItemSchema = SchemaFactory.createForClass(CartItem);
 
 @Schema({ timestamps: true })
 export class Cart {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+  userId?: Types.ObjectId;
+
+  @Prop({ type: String, required: false, index: true })
+  guestId?: string;
 
   @Prop({ type: [CartItemSchema], default: [] })
   items: CartItem[];
 }
 
 export const CartSchema = SchemaFactory.createForClass(Cart);
+
+// IMPORTANT: create unique index for userId only when userId exists
+CartSchema.index(
+  { userId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { userId: { $exists: true, $ne: null } },
+  },
+);

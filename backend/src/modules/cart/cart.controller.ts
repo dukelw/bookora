@@ -34,16 +34,7 @@ export class CartController {
   @ApiOperation({ summary: 'Lấy giỏ hàng của người dùng hoặc guest' })
   getCart(@Query('userId') userId: string) {
     if (!userId) throw new BadRequestException('Missing userId');
-    return this.service.getCart(userId);
-  }
-
-  @Get('summary')
-  @ApiOperation({
-    summary: 'Tổng hợp giỏ hàng (tổng tiền, thuế, phí vận chuyển)',
-  })
-  cartSummary(@Query('userId') userId: string) {
-    if (!userId) throw new BadRequestException('Missing userId');
-    return this.service.cartSummary(userId);
+    return this.service.getCart(userId); // userId có thể là guestId
   }
 
   @Post()
@@ -57,6 +48,24 @@ export class CartController {
       variantId,
       quantity,
     });
+  }
+
+  @Post('merge')
+  @ApiOperation({ summary: 'Merge guest cart vào user cart' })
+  async mergeGuestCart(@Body() body: { userId: string; guestId: string }) {
+    const { userId, guestId } = body;
+    if (!userId || !guestId)
+      throw new BadRequestException('Missing userId or guestId');
+    return this.service.mergeGuestCartToUser(userId, guestId);
+  }
+
+  @Get('summary')
+  @ApiOperation({
+    summary: 'Tổng hợp giỏ hàng (tổng tiền, thuế, phí vận chuyển)',
+  })
+  cartSummary(@Query('userId') userId: string) {
+    if (!userId) throw new BadRequestException('Missing userId');
+    return this.service.cartSummary(userId);
   }
 
   @Put()
@@ -100,20 +109,16 @@ export class CartController {
 
   @Post('apply-discount/:code')
   @ApiOperation({ summary: 'Áp dụng mã giảm giá cho giỏ hàng' })
-  applyDiscount(
-    @Query('userId') userId: string,
-    @Param('code') code: string,
-  ) {
+  applyDiscount(@Query('userId') userId: string, @Param('code') code: string) {
     if (!userId) throw new BadRequestException('Missing userId');
     return this.service.applyDiscountToCart(userId, code);
   }
-  
+
   @Put('adjust')
   @ApiOperation({ summary: 'Tăng/Giảm số lượng sản phẩm trong giỏ hàng (±1)' })
   adjustItem(@Body() dto: AdjustCartItemDto) {
     const { userId } = dto;
     if (!userId) throw new BadRequestException('Missing userId');
     return this.service.adjustItemQuantity(userId, dto);
-
   }
 }

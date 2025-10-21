@@ -17,7 +17,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @ApiTags('Discounts')
 @Controller('discounts')
 export class DiscountController {
@@ -42,8 +42,8 @@ export class DiscountController {
     return this.discountService.remove(id);
   }
 
-  @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  // @ApiBearerAuth('access-token')
+  // @UseGuards(JwtAuthGuard, AdminGuard)
   @Get()
   @ApiQuery({ name: 'keySearch', required: false })
   @ApiQuery({ name: 'page', required: false })

@@ -4,13 +4,19 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "use-intl";
 
-export default function OrderItemsList({ items, onRate }: any) {
+export default function OrderItemsList({
+  items,
+  onRate,
+  showAll = false,
+}: any) {
   const router = useRouter();
   const t = useTranslations("order");
 
+  const displayItems = showAll ? items : items.slice(0, 2);
+
   return (
     <div className="text-sm text-gray-300 space-y-2">
-      {items.slice(0, 2).map((item: any, idx: number) => {
+      {displayItems.map((item: any, idx: number) => {
         const variant = item.book?.variants?.find(
           (v: any) => v._id === item.variantId
         );
@@ -26,7 +32,7 @@ export default function OrderItemsList({ items, onRate }: any) {
 
         return (
           <div
-            key={idx}
+            key={item._id ?? idx}
             className="flex items-center justify-between gap-2 py-1 border-b border-gray-700 last:border-0"
           >
             <div className="flex gap-2 items-center flex-1 min-w-0">
@@ -55,23 +61,26 @@ export default function OrderItemsList({ items, onRate }: any) {
               </div>
             </div>
 
-            {item.reviewStatus !== RatingStatus.UNKNOWN && item.reviewStatus && (
-              <button
-                onClick={handleClick}
-                className={`px-3 py-1 text-xs font-semibold rounded-full transition-all whitespace-nowrap ${
-                  item.reviewStatus === "pending"
-                    ? "bg-yellow-500 hover:bg-yellow-400 text-black shadow-[0_0_10px_rgba(255,200,0,0.5)]"
-                    : "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(0,100,255,0.5)]"
-                }`}
-              >
-                {item.reviewStatus === RatingStatus.PENDING ? t("rate") : t("view")}
-              </button>
-            )}
+            {item.reviewStatus !== RatingStatus.UNKNOWN &&
+              item.reviewStatus && (
+                <button
+                  onClick={handleClick}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full transition-all whitespace-nowrap ${
+                    item.reviewStatus === "pending"
+                      ? "bg-yellow-500 hover:bg-yellow-400 text-black shadow-[0_0_10px_rgba(255,200,0,0.5)]"
+                      : "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(0,100,255,0.5)]"
+                  }`}
+                >
+                  {item.reviewStatus === RatingStatus.PENDING
+                    ? t("rate")
+                    : t("view")}
+                </button>
+              )}
           </div>
         );
       })}
 
-      {items.length > 2 && (
+      {!showAll && items.length > 2 && (
         <span className="text-xs text-gray-500 block text-right mt-1">
           +{items.length - 2} {t("otherItem")}
         </span>

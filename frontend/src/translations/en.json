@@ -153,6 +153,7 @@
     "placeholderMessage": "Enter the content you want to send"
   },
   "cart": {
+    "updateError": "Failed to update cart.",
     "title": "Shopping Cart",
     "empty": "Your cart is empty",
     "viewCart": "View Cart",

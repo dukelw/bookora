@@ -117,7 +117,8 @@ export class AuthController {
   async forgotPassword(@Body() body: ForgotPasswordDto) {
     console.log('Swagger Body:', body);
     const result = await this.authService.sendResetOtp(body.email);
-    if (!result) return { message: 'If the email exists, an OTP has been sent' };
+    if (!result)
+      return { message: 'If the email exists, an OTP has been sent' };
     return { message: 'OTP sent' };
   }
 
@@ -157,5 +158,28 @@ export class AuthController {
     );
     if (!ok) return { error: 'Old password incorrect' };
     return { message: 'Password changed successfully' };
+  }
+
+  @Post('register-from-checkout')
+  @ApiOperation({
+    summary: 'Tạo tài khoản từ thông tin checkout (guest -> user)',
+  })
+  async registerFromCheckout(
+    @Body()
+    body: {
+      email: string;
+      name?: string;
+      phone?: string;
+      address?: string;
+    },
+  ) {
+    if (!body?.email) throw new BadRequestException('Email is required');
+    const result = await this.authService.registerFromCheckout({
+      email: body.email,
+      name: body.name,
+      phone: body.phone,
+      address: body.address,
+    });
+    return result;
   }
 }

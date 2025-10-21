@@ -7,11 +7,12 @@ import { User, UserSchema } from '../../schemas/user.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from 'src/strategies/jwt.strategy';
+import { MailModule } from '../mail/mail.module';
 
-// In module file we can not use process.env.JWT_SECRET, service and controller file can use process.env
 @Module({
   imports: [
     ConfigModule,
+    MailModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.registerAsync({
       imports: [ConfigModule],

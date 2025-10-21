@@ -2,7 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Modal, ModalBody, ModalHeader, Label, TextInput, Select, Dropdown, DropdownItem, Button } from "flowbite-react";
+import {
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Label,
+  TextInput,
+  Select,
+  Dropdown,
+  DropdownItem,
+  Button,
+} from "flowbite-react";
 import { bookService } from "@/services/bookService";
 import { purchaseInvoiceService } from "@/services/purchaseInvoiceService";
 import { toast } from "react-toastify";
@@ -43,7 +53,7 @@ interface InventoryModalProps {
 
 export default function InventoryModal({ show, setShow }: InventoryModalProps) {
   const t = useTranslations("dashboard");
-  
+
   const [books, setBooks] = useState<Book[]>([]);
   const [searchKey, setSearchKey] = useState("");
   const [items, setItems] = useState<InventoryItemForm[]>([]);
@@ -99,7 +109,6 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
         purchaseInvoice: invoiceData.invoiceNumber, // tạm đặt invoiceNumber cho field này
       })),
     };
-    console.log("Invoice payload:", payload);
     const res = await purchaseInvoiceService.createLot(payload);
     if (res) {
       toast.success(t("i.createSuccess"));
@@ -153,7 +162,7 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
             </label>
             <input
               type="text"
-              placeholder={t("i.searchPlaceholder")} 
+              placeholder={t("i.searchPlaceholder")}
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -199,7 +208,8 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                     <option value="">{t("i.selectVariant")}</option>
                     {selectedBook?.variants.map((v) => (
                       <option key={v._id} value={v._id}>
-                        {v.rarity} - {t("p.price")}: {v.price} - {t("p.stock")}: {v.stock}
+                        {v.rarity} - {t("p.price")}: {v.price} - {t("p.stock")}:{" "}
+                        {v.stock}
                       </option>
                     ))}
                   </select>
@@ -266,9 +276,13 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                       }
                     </span>
                     <span className="mx-4"></span>
-                    <span>{t("i.quantity")}: {item.quantity}</span>
+                    <span>
+                      {t("i.quantity")}: {item.quantity}
+                    </span>
                     <span className="mx-4"></span>
-                    <span>{t("i.unitPrice")}: {item.unitPrice}</span>
+                    <span>
+                      {t("i.unitPrice")}: {item.unitPrice}
+                    </span>
                   </div>
                   <button
                     type="button"
@@ -280,8 +294,8 @@ export default function InventoryModal({ show, setShow }: InventoryModalProps) {
                 </div>
               ))}
             </div>
-            )}
-          
+          )}
+
           <div className="mt-3 flex flex-col gap-4 w-full">
             <div className="-mx-6 border-t border-gray-200 w-full-2xl" />
             <div className="flex justify-end gap-4 mt-3 mb-2">

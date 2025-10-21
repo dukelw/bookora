@@ -12,6 +12,14 @@ export const cartService = {
     return res.data;
   },
 
+  async mergeCart(userId: string, guestId: string) {
+    const res: AxiosResponse = await api.post(`${API_URL}/merge`, {
+      userId,
+      guestId,
+    });
+    return res.data;
+  },
+
   // Lấy tổng hợp giỏ hàng (tổng tiền, thuế, phí ship)
   async cartSummary(userId: string) {
     const res: AxiosResponse = await api.get(`${API_URL}/summary`, {
