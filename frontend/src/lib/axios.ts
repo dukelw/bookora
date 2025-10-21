@@ -57,26 +57,58 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Lấy refresh_token từ localStorage
-        const refreshToken = localStorage.getItem("refresh_token");
+        // ✅ FIX: Đọc đúng key "refreshToken" (không có underscore)
+        const refreshToken = localStorage.getItem("refreshToken");
 
         if (!refreshToken) {
           throw new Error("No refresh token available");
         }
 
-        // Gửi refresh_token qua body
+        // ✅ FIX: Gửi đúng field "token" như backend mong đợi (RefreshTokenDto)
         const res = await api.post("/auth/refresh", {
-          refresh_token: refreshToken,
+          token: refreshToken,
         });
-        const newAccessToken = res.data.accessToken;
+
+        // ✅ FIX: Backend trả về { accessToken, refreshToken }
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          res.data;
+
+        // Lưu cả 2 token mới
         setAccessToken(newAccessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
+
+        // Cập nhật cookie qua API route (nếu bạn dùng)
+        try {
+          await axios.post("/api/login", {
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+          });
+        } catch (cookieError) {
+          console.warn("Failed to update cookies:", cookieError);
+        }
+
         processQueue(null, newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (err) {
+        console.error("Token refresh failed:", err);
         processQueue(err, null);
+
+        // Xóa tất cả tokens và cookies
         removeAccessToken();
-        localStorage.removeItem("refresh_token"); // Xóa refresh token khỏi localStorage khi không hợp lệ
+        localStorage.removeItem("refreshToken");
+
+        try {
+          await axios.post("/api/logout");
+        } catch (logoutError) {
+          console.warn("Logout failed:", logoutError);
+        }
+
+        // Redirect to login page
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

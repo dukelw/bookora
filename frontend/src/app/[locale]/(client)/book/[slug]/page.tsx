@@ -18,6 +18,7 @@ import Book from "@/interfaces/Book";
 import BookImage from "@/interfaces/BookImage";
 import Category from "@/interfaces/Category";
 import BookVariant from "@/interfaces/BookVariant";
+import CommentSection from "./components/CommentSection";
 
 export default function BookDetailPage() {
   const { bookId } = useBookStore();
@@ -201,65 +202,7 @@ export default function BookDetailPage() {
       </div>
 
       {/* Bình luận */}
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          💬 Bình luận
-        </h2>
-
-        {/* List comment */}
-        <div className="space-y-5">
-          {[
-            {
-              id: 1,
-              user: "Nguyễn Văn A",
-              date: "2025-09-20",
-              comment: "Sách rất hay, giấy in đẹp và nội dung cuốn hút.",
-            },
-            {
-              id: 2,
-              user: "Trần Thị B",
-              date: "2025-09-18",
-              comment: "Tác phẩm ấn tượng nhưng giao hơi chậm.",
-            },
-          ].map((cmt) => (
-            <div
-              key={cmt.id}
-              className="flex gap-3 p-4 rounded-xl bg-gradient-to-r from-white to-cyan-50 shadow-sm hover:shadow-md transition"
-            >
-              {/* Avatar */}
-              <div className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
-                {cmt.user[0]}
-              </div>
-
-              {/* Nội dung */}
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-gray-800">{cmt.user}</p>
-                  <span className="text-xs text-gray-500">
-                    {new Date(cmt.date).toLocaleDateString()}
-                  </span>
-                </div>
-                <p className="mt-1 text-gray-700">{cmt.comment}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Form comment */}
-        <div className="mt-8 p-5 bg-gray-50 rounded-xl shadow-inner">
-          <h3 className="text-lg font-semibold text-gray-700 mb-3">
-            Viết bình luận ✍️
-          </h3>
-          <textarea
-            placeholder="Chia sẻ cảm nhận của bạn..."
-            className="w-full p-3 border-none rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            rows={3}
-          />
-          <button className="mt-3 px-5 py-2 bg-cyan-500 text-white rounded-lg shadow-md hover:bg-cyan-600 hover:shadow-lg transition">
-            🚀 Gửi bình luận
-          </button>
-        </div>
-      </div>
+      <CommentSection bookId={bookId ?? ""} />
     </div>
   );
 }

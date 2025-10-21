@@ -3,14 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Rating } from 'src/schemas/rating.schema';
 import { CreateRatingDto } from './dto/create-rating.dto';
-import { RatingGateway } from './rating.gateway';
 import { Types } from 'mongoose';
+import { RealtimeGateway } from 'src/gateway/realtime.gateway';
 
 @Injectable()
 export class RatingService {
   constructor(
     @InjectModel(Rating.name) private ratingModel: Model<Rating>,
-    private readonly ratingGateway: RatingGateway,
+    private readonly ratingGateway: RealtimeGateway,
   ) {}
 
   async getUserRating(bookId: string, userId: string) {

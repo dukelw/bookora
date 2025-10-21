@@ -1,24 +1,22 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 export function useSocket(path?: string) {
-  const socketRef = useRef<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_API_URL! + (path || ""), {
+    const s = io(process.env.NEXT_PUBLIC_API_URL! + (path || ""), {
       transports: ["websocket"],
     });
-    socketRef.current = socket;
+    setSocket(s);
 
     return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
+      s.disconnect();
+      setSocket(null);
     };
   }, [path]);
 
-  return socketRef.current;
+  return socket;
 }

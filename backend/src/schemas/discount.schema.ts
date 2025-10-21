@@ -33,4 +33,3 @@ export class Discount extends Document {
 }
 
 export const DiscountSchema = SchemaFactory.createForClass(Discount);
-

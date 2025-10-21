@@ -22,6 +22,8 @@ import { BookoraVnpayModule } from './modules/payment/vnpay/vnpay.module';
 import { AddressModule } from './modules/address/address.module';
 import { ReviewRequestModule } from './modules/review-request/review-request.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
+import { CommentModule } from './modules/comment/comment.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -47,6 +49,7 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
     AddressModule,
     ReviewRequestModule,
     WishlistModule,
+    CommentModule,
   ],
 })
 export class AppModule {}
