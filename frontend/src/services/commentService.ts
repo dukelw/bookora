@@ -14,7 +14,7 @@ export const commentService = {
 
   // 🟡 Tạo bình luận mới
   async create(data: {
-    user: string;
+    user?: string;
     bookId: string;
     content: string;
     parentComment?: string;

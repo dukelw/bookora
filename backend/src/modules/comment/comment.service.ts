@@ -12,13 +12,13 @@ export class CommentService {
   ) {}
 
   async create(data: {
-    user: string;
+    user?: string;
     bookId: string;
     content: string;
     parentComment?: string | null;
   }) {
     const comment = await this.commentModel.create({
-      user: new Types.ObjectId(data.user),
+      user: data.user ? new Types.ObjectId(data.user) : null,
       bookId: new Types.ObjectId(data.bookId),
       content: data.content,
       parentComment: data.parentComment

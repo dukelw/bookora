@@ -6,8 +6,8 @@ export type CommentDocument = Comment & Document;
 
 @Schema({ timestamps: true })
 export class Comment {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  user: User;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false })
+  user?: User;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
   bookId: mongoose.Types.ObjectId;

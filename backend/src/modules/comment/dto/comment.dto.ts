@@ -7,7 +7,8 @@ export class CreateCommentDto {
     description: 'ID của người dùng',
   })
   @IsMongoId()
-  user: string;
+  @IsOptional()
+  user?: string;
 
   @ApiProperty({
     example: '67160e5e3a52f8c9d3a1a5c9',

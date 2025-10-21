@@ -65,7 +65,7 @@ export default function CommentSection({ bookId }: { bookId: string }) {
     if (!content.trim()) return toast.warn("Vui lòng nhập nội dung");
     try {
       await commentService.create({
-        user: user._id,
+        user: user ? user._id : null,
         bookId,
         content,
         parentComment: parent?._id,
@@ -140,7 +140,7 @@ export default function CommentSection({ bookId }: { bookId: string }) {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-semibold text-gray-900">
-                  {c.user?.name}
+                  {c.user?.name || "Bookholic"}
                 </span>
                 <span className="text-sm text-gray-500">
                   {dayjs(c.createdAt).fromNow()}
@@ -290,7 +290,7 @@ export default function CommentSection({ bookId }: { bookId: string }) {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-semibold text-gray-900 text-sm">
-                              {d.user?.name}
+                              {d.user?.name || "Booklohic"}
                             </span>
                             {d.user?.verified && (
                               <svg
@@ -431,7 +431,7 @@ export default function CommentSection({ bookId }: { bookId: string }) {
         {parent && (
           <div className="mb-3 text-sm text-gray-600 flex items-center gap-2">
             <span>
-              Đang trả lời <b>@{parent.user?.name}</b>
+              Đang trả lời <b>@{parent.user?.name || "Bookholic"}</b>
             </span>
             <button
               onClick={() => setParent(null)}
@@ -446,14 +446,14 @@ export default function CommentSection({ bookId }: { bookId: string }) {
           <div className="flex items-center gap-3 mb-2">
             <img
               src={
-                user.avatar ||
+                user?.avatar ||
                 `https://ui-avatars.com/api/?name=${user?.name}&background=random`
               }
-              alt={user.name}
+              alt={user?.name}
               className="w-8 h-8 rounded-full object-cover"
             />
             <span className="text-sm font-medium text-gray-700">
-              {user.name}
+              {user?.name || "Bookholic"}
             </span>
           </div>
 
