@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 
 // @WebSocketGateway({ cors: { origin: '*' } })
 @WebSocketGateway({ cors: { origin: 'http://localhost:3000' } })
-export class RatingGateway {
+export class RealtimeGateway {
   @WebSocketServer()
   server: Server;
   @SubscribeMessage('joinProductRoom')

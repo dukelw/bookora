@@ -21,6 +21,7 @@ import { MomoModule } from './modules/payment/momo/momo.module';
 import { BookoraVnpayModule } from './modules/payment/vnpay/vnpay.module';
 import { AddressModule } from './modules/address/address.module';
 import { ReviewRequestModule } from './modules/review-request/review-request.module';
+import { CommentModule } from './modules/comment/comment.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ReviewRequestModule } from './modules/review-request/review-request.mod
     BookoraVnpayModule,
     AddressModule,
     ReviewRequestModule,
+    CommentModule,
   ],
 })
 export class AppModule {}
