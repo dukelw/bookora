@@ -12,6 +12,7 @@ import { BookService } from './book.service';
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
 import { BestSellersQueryDto } from './dto/book-bestsellers.dto';
 import { NewReleasesQueryDto } from './dto/book-newreleases.dto';
+import { AuthorsQueryDto, BooksByAuthorQueryDto } from './dto/author.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -66,6 +67,19 @@ export class BookController {
   @ApiOkResponse({ description: 'Danh sách sách mới phát hành' })
   getNewReleases(@Query() q: NewReleasesQueryDto) {
     return this.bookService.getNewReleases(q);
+  }
+
+  @Get('authors')
+  @ApiOperation({ summary: 'Lấy tất cả tác giả (distinct) + số lượng sách' })
+  getAllAuthors(@Query() q: AuthorsQueryDto) {
+    return this.bookService.getAllAuthors(q);
+  }
+
+  @Get('authors/:author')
+  @ApiOperation({ summary: 'Lấy sách theo tên tác giả (case-insensitive)' })
+  getBooksByAuthor(@Param('author') author: string, @Query() q: BooksByAuthorQueryDto) {
+    // author có thể chứa dấu/space → FE nhớ encodeURIComponent khi gọi
+    return this.bookService.getBooksByAuthor(author, q);
   }
 
   @Get(':id')
