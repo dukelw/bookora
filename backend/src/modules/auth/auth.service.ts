@@ -10,8 +10,9 @@ import { randomBytes } from 'crypto';
 import { UserService } from '../user/user.service';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
-import { ForgotPasswordDto, ResetPasswordDto } from './dto/forgot-reset.dto'; // optional
 import { UnauthorizedException } from '@nestjs/common';
+import { MailService } from '../mail/mail.service';
+import { SendMailDto } from './dto/send-mail.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(email: string, password: string, address: string) {
@@ -60,8 +62,8 @@ export class AuthService {
     }
 
     if (user.status === 'disable') {
-          throw new UnauthorizedException('Account disabled, contact admin');
-        }
+      throw new UnauthorizedException('Account disabled, contact admin');
+    }
 
     const tokens = this.generateTokens(user);
 
@@ -250,7 +252,11 @@ export class AuthService {
     }
   }
 
-  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+  async changePassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<boolean> {
     const user = await this.userModel.findById(userId);
     if (!user) return false;
     const isMatch = await bcrypt.compare(oldPassword, user.password);
@@ -262,5 +268,79 @@ export class AuthService {
     user.usedRefreshTokens = [];
     await user.save();
     return true;
+  }
+
+  async registerFromCheckout(payload: {
+    email: string;
+    name?: string;
+    phone?: string;
+    address?: string;
+  }) {
+    const { email, name, phone, address } = payload;
+    let user = await this.userModel.findOne({ email });
+    let createdNew = false;
+    let plainPassword = '';
+
+    if (!user) {
+      plainPassword = randomBytes(8).toString('hex');
+      const hash = await bcrypt.hash(plainPassword, 10);
+      user = new this.userModel({
+        email,
+        name,
+        phone,
+        address,
+        password: hash,
+        mustChangePassword: true,
+      });
+      await user.save();
+      createdNew = true;
+    }
+
+    if (user.status === 'disable')
+      throw new UnauthorizedException('Account disabled');
+
+    const tokens = this.generateTokens(user);
+
+    if (createdNew) {
+      try {
+        const frontendUrl =
+          this.configService.get('FRONTEND_URL') ||
+          this.configService.get('NEXT_PUBLIC_FRONTEND_URL') ||
+          process.env.FRONTEND_URL ||
+          'http://localhost:3000';
+
+        const loginUrl = `${frontendUrl.replace(/\/$/, '')}/login`;
+
+        const subject = 'Tài khoản Bookora của bạn đã được tạo';
+        const htmlContent = `
+        <p>Xin chào ${name || ''},</p>
+        <p>Tài khoản của bạn đã được tạo tự động trên <b>Bookora</b> dựa theo thông tin đặt hàng.</p>
+        <p>Thông tin đăng nhập của bạn:</p>
+        <ul>
+          <li><b>Email:</b> ${email}</li>
+          <li><b>Mật khẩu tạm thời:</b> <code style="background:#f3f4f6;padding:4px 8px;border-radius:4px">${plainPassword}</code></li>
+        </ul>
+        <p>Vui lòng đăng nhập tại <a href="${loginUrl}">${loginUrl}</a> và đổi mật khẩu ngay sau khi đăng nhập để bảo mật tài khoản.</p>
+        <p>Lưu ý: mật khẩu này chỉ nên được sử dụng một lần. Nếu bạn không yêu cầu tạo tài khoản này, vui lòng bỏ qua email này hoặc liên hệ bộ phận hỗ trợ.</p>
+        <p>Trân trọng,<br/>Bookora Team</p>
+      `;
+
+        const mailDto: SendMailDto = {
+          to: email,
+          subject,
+          content: htmlContent,
+          name: name || undefined,
+        };
+
+        await this.mailService.sendMail(mailDto);
+      } catch (err) {
+        console.error(
+          'Failed to send account email with plaintext password:',
+          err,
+        );
+      }
+    }
+
+    return { user, tokens };
   }
 }

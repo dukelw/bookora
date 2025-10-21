@@ -27,49 +27,74 @@ export class OrderService {
     private readonly discountService: DiscountService,
   ) {}
 
+  // replace the create method with the following (uses (i as any)._id where needed)
+
   async create(dto: CreateOrderDto): Promise<Order> {
     // 1. Lấy cart thật từ DB
     const cart = await this.cartService.getCart(dto.user);
     if (!cart) throw new NotFoundException('Cart not found');
 
-    // 2. Lấy các item đã chọn
-    const items = await Promise.all(
-      cart.items.map(async (i) => {
-        const book = i.book as unknown as Book;
-        const variant = book.variants.find(
-          (v) => (v._id as Types.ObjectId).toString() === i.variantId,
-        );
+    // Ensure dto.selectedItems exists and is an array of cart item _id strings.
+    const selectedIds =
+      Array.isArray(dto.selectedItems) && dto.selectedItems.length
+        ? dto.selectedItems.map((id: any) => String(id))
+        : [];
 
-        const freshBook = await this.bookModel.findById(book._id).lean();
+    // If no selectedIds provided, assume all items are selected (backwards compatible)
+    const selectedSet = selectedIds.length
+      ? new Set(selectedIds)
+      : new Set(cart.items.map((i: any) => String((i as any)._id)));
+
+    // Filter cart items to only those selected
+    const selectedCartItems = cart.items.filter((i: any) =>
+      selectedSet.has(String((i as any)._id)),
+    );
+
+    if (!selectedCartItems.length) {
+      throw new BadRequestException(
+        'No selected items in cart to create order',
+      );
+    }
+
+    // 2. Lấy và validate các item đã chọn (check stock & prepare order items)
+    const items = await Promise.all(
+      selectedCartItems.map(async (i: any) => {
+        // i.book may be populated (object) or an ObjectId
+        const bookDoc = i.book as any;
+        const bookId = bookDoc?._id ? String(bookDoc._id) : String(bookDoc);
+
+        // Always fetch fresh book & variant from DB to ensure up-to-date stock/prices
+        const freshBook = await this.bookModel.findById(bookId).lean();
         if (!freshBook)
-          throw new NotFoundException(`Book not found: ${book._id}`);
+          throw new NotFoundException(`Book not found: ${bookId}`);
 
         const freshVariant = freshBook.variants.find(
-          (v: any) => v._id.toString() === i.variantId,
+          (v: any) => String(v._id) === i.variantId,
         );
         if (!freshVariant)
-          throw new BadRequestException(`Variant not found in DB`);
-        if (freshVariant.stock < i.quantity)
           throw new BadRequestException(
-            `Not enough stock for "${freshBook.title}" (${freshVariant.rarity})`,
+            `Variant not found in DB for book ${bookId}`,
           );
 
-        if (!variant) throw new BadRequestException('Variant not found');
+        if (freshVariant.stock < i.quantity) {
+          throw new BadRequestException(
+            `Not enough stock for "${freshBook.title}" (variant ${freshVariant.rarity})`,
+          );
+        }
 
-        // Trừ stock
-        variant.stock -= i.quantity;
-
+        // Prepare order item (include cartItemId as string)
         return {
-          book: i.book._id,
+          book: freshBook._id,
           variantId: i.variantId,
           quantity: i.quantity,
-          price: variant.price,
-          finalPrice: variant.price,
+          price: freshVariant.price,
+          finalPrice: freshVariant.price,
+          cartItemId: String((i as any)._id),
         };
       }),
     );
 
-    // Sau khi map xong, lưu luôn biến thể để update stock
+    // 3. Trừ stock
     await Promise.all(
       items.map((item) =>
         this.bookModel.updateOne(
@@ -79,10 +104,10 @@ export class OrderService {
       ),
     );
 
-    // 3. Tính subtotal
-    const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    // 4. Tính subtotal (chỉ cho các item đã chọn)
+    const subtotal = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
 
-    // 4. Áp dụng discount nếu có
+    // 5. Áp dụng discount nếu có (áp dụng lên subtotal các item đã chọn)
     let discountAmount = 0;
     if (dto.discountCode) {
       const { discount } = await this.discountService.validateAndApply(
@@ -96,15 +121,18 @@ export class OrderService {
           : discount.value;
     }
 
-    // 5. Tính finalAmount
+    // 6. Tính finalAmount
     const finalAmount = subtotal - discountAmount;
 
-    // 6. Tạo order
+    // 7. Tạo order (chỉ chứa items đã chọn)
     const order = new this.orderModel({
       ...dto,
       items: items.map((i) => ({
-        ...i,
-        finalPrice: i.finalPrice - discountAmount,
+        book: i.book,
+        variantId: i.variantId,
+        quantity: i.quantity,
+        price: i.price,
+        finalPrice: i.finalPrice,
       })),
       totalAmount: subtotal,
       discountAmount,
@@ -113,7 +141,7 @@ export class OrderService {
 
     const savedOrder = await order.save();
 
-    // 7. Cập nhật discount nếu có
+    // 8. Cập nhật discount nếu có
     if (dto.discountCode) {
       await this.discountService.markAsUsed(
         dto.discountCode,
@@ -121,10 +149,13 @@ export class OrderService {
       );
     }
 
-    // 8. Xóa các item đã đặt khỏi cart
-    if (dto.selectedItems && dto.selectedItems.length > 0) {
+    // 9. Xóa các item đã đặt khỏi cart (dựa trên selected cart item _id)
+    if (selectedCartItems.length > 0) {
+      const selectedCartItemIds = selectedCartItems.map((i: any) =>
+        String((i as any)._id),
+      );
       cart.items = cart.items.filter(
-        (i: any) => !dto.selectedItems.includes((i._id as any).toString()),
+        (i: any) => !selectedCartItemIds.includes(String((i as any)._id)),
       );
       await cart.save();
     }

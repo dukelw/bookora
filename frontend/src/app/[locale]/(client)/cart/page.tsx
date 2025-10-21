@@ -15,10 +15,12 @@ import { useCheckoutStore } from "@/store/checkoutStore";
 import { eventBus } from "@/utils/eventBus";
 import { paymentService } from "@/services/paymentService";
 import { REDIRECT_URL } from "@/constants";
+import { clearGuestId, getOrCreateGuestId } from "@/lib/guest";
+import { authService } from "@/services/authService";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore(); // nếu bạn có action setUser trong authStore, dùng để cập nhật user sau register
   const [cart, setCart] = useState<any>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
@@ -34,24 +36,37 @@ export default function CheckoutPage() {
   });
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
+  // helper lấy ownerId (userId nếu login, else guestId)
+  const getOwnerId = () => user?._id || getOrCreateGuestId();
+
   const handleGetCart = async () => {
-    const res = await cartService.getCart(user._id);
-    setCart(res);
-    setSelectedItems(res.items.map((item: any) => item._id));
+    try {
+      const ownerId = getOwnerId();
+      const res = await cartService.getCart(ownerId);
+      setCart(res);
+      setSelectedItems(res.items.map((item: any) => item._id));
+    } catch (err) {
+      console.error("getCart error", err);
+      toast.error("Không thể tải giỏ hàng");
+    }
   };
 
+  // Khi component mount hoặc user đổi (login/ logout), fetch cart
   useEffect(() => {
-    if (!user?._id) return;
-    setFormData({
-      name: user.name || "",
-      phone: user.phone || "",
-      email: user.email || "",
-      address: user.address || "",
-      city: user.city || "",
-      note: "",
-    });
     handleGetCart();
-  }, [user]);
+    // populate form data when user exists
+    if (user?._id) {
+      setFormData({
+        name: user.name || "",
+        phone: user.phone || "",
+        email: user.email || "",
+        address: user.address || "",
+        city: user.city || "",
+        note: "",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?._id]);
 
   const subtotal =
     cart?.items.reduce((sum: any, item: any) => {
@@ -72,8 +87,9 @@ export default function CheckoutPage() {
 
   const handleSubmit = async () => {
     try {
-      if (!cart || !user?._id) {
-        toast.error("Không tìm thấy giỏ hàng hoặc thông tin người dùng!");
+      // ensure we have a cart (guest will have guest cart created on add)
+      if (!cart) {
+        toast.error("Không tìm thấy giỏ hàng!");
         return;
       }
 
@@ -87,6 +103,43 @@ export default function CheckoutPage() {
         return;
       }
 
+      const guestId = getOrCreateGuestId();
+
+      let currentUser = user;
+
+      if (!currentUser?._id) {
+        // create account & auto-login
+        // authService.registerFromCheckout should return { user, tokens }
+        const res = await authService.registerFromCheckout({
+          email: formData.email,
+          name: formData.name,
+          phone: formData.phone,
+          address: formData.address,
+        });
+
+        // update auth store if you have setter (so user is considered logged)
+        if (res?.user) {
+          // if your authStore has a setUser or setAuth action, call it:
+          try {
+            setUser?.(res.user); // optional: only if your store provides it
+          } catch {
+            // ignore if store doesn't expose it
+          }
+          currentUser = res.user;
+        } else {
+          toast.error("Tạo tài khoản thất bại");
+          return;
+        }
+      }
+      // clear guestId
+      clearGuestId();
+
+      await cartService.mergeCart(currentUser._id, guestId);
+
+      // refresh cart (now user cart)
+      handleGetCart();
+
+      // build order payload using mergedCart
       const items = cart.items
         .filter((i: any) => selectedItems.includes(i._id))
         .map((i: any) => {
@@ -109,16 +162,15 @@ export default function CheckoutPage() {
         discountAmount: discount,
         finalAmount: total,
         discountCode: appliedDiscount?.code || undefined,
-        user: user._id,
+        user: currentUser._id,
         paymentMethod,
         shippingAddress: formData,
         cart: cart._id,
       };
 
-      console.log("📦 Sending order:", payload);
-
       setCheckout(payload);
-      // ⚡ Xử lý theo phương thức thanh toán
+
+      // xử lý payment
       if (paymentMethod === "cod") {
         router.push("/payment/success");
       } else if (paymentMethod === "momo") {
@@ -141,8 +193,11 @@ export default function CheckoutPage() {
         error?.response?.data?.message ||
         error?.message ||
         "Đã xảy ra lỗi khi tạo đơn hàng!";
+      toast.error(msg);
     }
   };
+
+  const ownerId = getOwnerId();
 
   return (
     <div className="bg-neutral-950 text-white min-h-screen py-10 px-6">
@@ -167,7 +222,7 @@ export default function CheckoutPage() {
               selectedItems={selectedItems}
               setSelectedItems={setSelectedItems}
               setCart={setCart}
-              userId={user._id}
+              userId={ownerId} // pass ownerId: userId or guestId
               t={t}
             />
           )}

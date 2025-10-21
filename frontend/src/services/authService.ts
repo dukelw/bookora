@@ -159,4 +159,24 @@ export const authService = {
       );
     }
   },
+
+  async registerFromCheckout(data: {
+    email: string;
+    name?: string;
+    phone?: string;
+    address?: string;
+  }) {
+    const res = await axios.post(`${API_URL}/register-from-checkout`, data);
+    const { tokens, user } = res.data;
+    if (tokens?.accessToken) {
+      setAccessToken(tokens.accessToken);
+      localStorage.setItem("refreshToken", tokens.refreshToken);
+      // also set server-side cookies/session if you have Next.js API route /api/login
+      await axios.post("/api/login", {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      });
+    }
+    return { user, tokens };
+  },
 };
