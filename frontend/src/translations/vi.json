@@ -121,6 +121,8 @@
     "placeholderMessage": "Nhập nội dung bạn cần gửi"
   },
   "cart": {
+    "processingOrder": "Đang xử lý đơn hàng...",
+    "loadError": "Không thể tải giỏ hàng. Vui lòng thử lại.",
     "updateError": "Có lỗi xảy ra khi cập nhật giỏ hàng.",
     "title": "Giỏ hàng",
     "empty": "Giỏ hàng của bạn trống",
