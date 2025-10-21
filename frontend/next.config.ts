@@ -36,6 +36,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "hwres.ldmnq.com",
       },
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+      },
     ],
   },
 };
