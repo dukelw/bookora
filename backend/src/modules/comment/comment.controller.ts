@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -30,12 +31,49 @@ export class CommentController {
     return this.commentService.create(dto);
   }
 
+  // @Get(':bookId')
+  // @ApiOperation({ summary: 'Lấy danh sách bình luận theo bookId' })
+  // @ApiParam({ name: 'bookId', type: String, description: 'ID của sách' })
+  // @ApiResponse({ status: 200, description: 'Danh sách bình luận' })
+  // findByBook(@Param('bookId') bookId: string) {
+  //   return this.commentService.findByBook(bookId);
+  // }
+
+  // Get top-level comments (paginated)
   @Get(':bookId')
-  @ApiOperation({ summary: 'Lấy danh sách bình luận theo bookId' })
+  @ApiOperation({
+    summary: 'Lấy danh sách bình luận cha theo bookId (paginated)',
+  })
   @ApiParam({ name: 'bookId', type: String, description: 'ID của sách' })
-  @ApiResponse({ status: 200, description: 'Danh sách bình luận' })
-  findByBook(@Param('bookId') bookId: string) {
-    return this.commentService.findByBook(bookId);
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách bình luận cha (paginated)',
+  })
+  findByBook(
+    @Param('bookId') bookId: string,
+    @Query('page') page = '1',
+    @Query('limit') limit = '5',
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    const pageNum = parseInt(page as string, 10) || 1;
+    const limitNum = parseInt(limit as string, 10) || 5;
+    return this.commentService.findTopLevelByBook(bookId, pageNum, limitNum);
+  }
+
+  // Get all replies (descendants) for a parent comment
+  @Get(':bookId/replies/:parentId')
+  @ApiOperation({ summary: 'Lấy tất cả replies cho một comment cha' })
+  @ApiParam({ name: 'bookId', type: String, description: 'ID của sách' })
+  @ApiParam({
+    name: 'parentId',
+    type: String,
+    description: 'ID của comment cha',
+  })
+  getReplies(
+    @Param('bookId') bookId: string,
+    @Param('parentId') parentId: string,
+  ) {
+    return this.commentService.findRepliesForParent(bookId, parentId);
   }
 
   @Put(':id')

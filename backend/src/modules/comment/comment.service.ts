@@ -49,6 +49,59 @@ export class CommentService {
       .sort({ createdAt: -1 });
   }
 
+  // New: fetch top-level comments with pagination
+  async findTopLevelByBook(bookId: string, page = 1, limit = 5) {
+    const skip = (page - 1) * limit;
+    const filter = {
+      bookId: new Types.ObjectId(bookId),
+      parentComment: null as any,
+    };
+    const [comments, total] = await Promise.all([
+      this.commentModel
+        .find(filter)
+        .populate('user', 'name avatar email')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      this.commentModel.countDocuments(filter),
+    ]);
+
+    const hasMore = skip + comments.length < total;
+    return { comments, total, hasMore, page, limit };
+  }
+
+  // New: fetch all descendants (replies) for a given parentId using iterative BFS
+  async findRepliesForParent(bookId: string, parentId: string) {
+    const result: CommentDocument[] = [];
+    let queue: string[] = [parentId];
+
+    while (queue.length > 0) {
+      const children = await this.commentModel
+        .find({
+          bookId: new Types.ObjectId(bookId),
+          parentComment: {
+            $in: queue.map((id) => new Types.ObjectId(id)),
+          },
+        })
+        .populate('user', 'name avatar email')
+        .populate({
+          path: 'parentComment',
+          select: 'user content createdAt updatedAt',
+          populate: { path: 'user', select: 'name avatar email' },
+        })
+        .sort({ createdAt: 1 }) // replies from oldest to newest
+        .lean();
+
+      if (children.length === 0) break;
+
+      result.push(...children);
+      queue = children.map((c: any) => String(c._id));
+    }
+
+    return result; // array of replies (all descendants)
+  }
+
   async update(commentId: string, content: string) {
     const comment = await this.commentModel
       .findByIdAndUpdate(commentId, { content }, { new: true })
