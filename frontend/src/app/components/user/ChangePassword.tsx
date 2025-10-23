@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "use-intl";
-import { useRouter } from "next/navigation";
 import { Label, TextInput, Button, Spinner } from "flowbite-react";
 import { FaRedoAlt, FaSave } from "react-icons/fa";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
@@ -11,7 +10,6 @@ import { authService } from "@/services/authService";
 
 export default function ChangePassword() {
   const t = useTranslations("user");
-  const router = useRouter();
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -51,8 +49,8 @@ export default function ChangePassword() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center">
-          <h1 className="text-2xl font-bold">{t("changePassword")}</h1>
-        </div>
+        <h1 className="text-2xl font-bold">{t("changePassword")}</h1>
+      </div>
       <div>
         <Label htmlFor="oldPassword">{t("oldPassword")}</Label>
         <TextInput
