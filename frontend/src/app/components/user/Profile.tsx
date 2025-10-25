@@ -18,6 +18,7 @@ export default function ProfileForm() {
   const [profile, setProfile] = useState({
     name: "",
     email: "",
+    phone: "",
     avatar: "",
     address: "",
     shippingAddress: ""
@@ -33,6 +34,7 @@ export default function ProfileForm() {
         setProfile({
           name: data.name || "",
           email: data.email || "",
+          phone: data.phone || "",
           avatar: data.avatar || "",
           address: data.address || "",
           shippingAddress: data.shippingAddress || "",
@@ -40,6 +42,7 @@ export default function ProfileForm() {
         setOriginalProfile({
           name: data.name || "",
           email: data.email || "",
+          phone: data.phone || "",
           avatar: data.avatar || "",
           address: data.address || "",
           shippingAddress: data.shippingAddress || "",
@@ -69,6 +72,7 @@ export default function ProfileForm() {
     } else {
       const hasChanged =
         profile.name !== originalProfile.name ||
+        profile.phone !== originalProfile.phone ||
         profile.address !== originalProfile.address ||
         profile.shippingAddress !== originalProfile.shippingAddress ||
         newAvatarFile !== null;
@@ -90,6 +94,7 @@ export default function ProfileForm() {
         // Update profile với link Cloudinary
         await userService.updateProfile({
           name: profile.name,
+          phone: profile.phone,
           avatar: avatarUrl,
           address: profile.address,
           shippingAddress: profile.shippingAddress,
@@ -164,6 +169,15 @@ export default function ProfileForm() {
             value={profile.name}
             onChange={(e) => setProfile({ ...profile, name: e.target.value })}
             required
+            disabled={!isEditing}
+          />
+        </div>
+        <div className="flex-1 w-full md:w-2/3 space-y-4">
+          <Label htmlFor="phone">{t("phone")}</Label>
+          <TextInput
+            id="phone"
+            value={profile.phone}
+            onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
             disabled={!isEditing}
           />
         </div>
