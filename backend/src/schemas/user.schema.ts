@@ -11,8 +11,8 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop()
-  address: string;
+  @Prop({ type: [String], default: [] })
+  addresses: string[];
 
   @Prop()
   name: string;
@@ -36,10 +36,10 @@ export class User {
   otpAttempts?: number;
 
   @Prop({ type: String, enum: ['admin', 'customer'], default: 'customer' })
-    role: string;
+  role: string;
 
   @Prop({ type: String, enum: ['active', 'disable'], default: 'active' })
-    status: string;
+  status: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

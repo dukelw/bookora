@@ -1,10 +1,22 @@
 import {
-  Body, Controller, Delete, Get, Param, Patch, Post, Req,
-  UseGuards, UnauthorizedException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AddressService } from './address.service';
-import { CreateAddressDto, UpdateAddressDto, GuestCreateBody } from './dto/address.dto';
+import {
+  CreateAddressDto,
+  UpdateAddressDto,
+  GuestCreateBody,
+} from './dto/address.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Addresses')
@@ -18,7 +30,8 @@ export class AddressController {
   /** Lấy userId an toàn từ JWT; có fallback header x-user-id cho DEV */
   private userIdFromReq(req: any): string {
     const u = req?.user ?? {};
-    const uid = u._id || u.id || u.userId || u.sub || u.uid || req.headers['x-user-id'];
+    const uid =
+      u._id || u.id || u.userId || u.sub || u.uid || req.headers['x-user-id'];
     if (!uid) {
       throw new UnauthorizedException(
         'Unauthenticated. Click "Authorize" and provide a valid Bearer token (or set x-user-id header for DEV).',
@@ -41,7 +54,11 @@ export class AddressController {
 
   @Patch('addresses/:id')
   @ApiOperation({ summary: 'Update an address' })
-  update(@Req() req: any, @Param('id') id: string, @Body() dto: UpdateAddressDto) {
+  update(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateAddressDto,
+  ) {
     return this.addressService.update(this.userIdFromReq(req), id, dto);
   }
 

@@ -100,4 +100,55 @@ export class UserService {
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
+
+  async changeShippingAddress(
+    userId: string,
+    newAddress: string,
+  ): Promise<boolean> {
+    const user = await this.userModel.findById(userId);
+    if (!user) return false;
+
+    const addr = (newAddress || '').trim();
+    if (!addr) return false;
+
+    if (!Array.isArray(user.addresses)) user.addresses = [];
+
+    const exists = user.addresses.some((a) => (a || '').trim() === addr);
+    if (!exists) {
+      user.addresses.push(addr);
+    }
+
+    user.shippingAddress = addr;
+
+    await user.save();
+    return true;
+  }
+
+  async removeAddress(
+    userId: string,
+    addressToRemove: string,
+  ): Promise<boolean> {
+    const user = await this.userModel.findById(userId);
+    if (!user) return false;
+
+    const addr = (addressToRemove || '').trim();
+    if (!addr) return false;
+
+    if (!Array.isArray(user.addresses) || user.addresses.length === 0)
+      return false;
+
+    const beforeLen = user.addresses.length;
+    user.addresses = user.addresses.filter((a) => (a || '').trim() !== addr);
+
+    const removed = user.addresses.length !== beforeLen;
+    if (!removed) return false;
+
+    // Nếu xóa đúng shippingAddress thì cập nhật lại
+    if ((user.shippingAddress || '').trim() === addr) {
+      user.shippingAddress = user.addresses[0] || '';
+    }
+
+    await user.save();
+    return true;
+  }
 }
