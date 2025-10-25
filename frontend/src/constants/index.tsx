@@ -23,7 +23,6 @@ export const navItems: NavItem[] = [
   { label: "bestsellers", path: "/bestsellers" },
   { label: "newarrivals", path: "/new-arrivals" },
   { label: "authors", path: "/authors" },
-  { label: "blogs", path: "/blogs" },
   { label: "contact", path: "/contact" },
 ];
 
