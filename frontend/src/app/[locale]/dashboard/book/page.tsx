@@ -30,6 +30,7 @@ import BaseTable, { Column } from "@/components/table/BaseTable";
 import Pagination from "@/components/pagination/pagination";
 import ConfirmModal from "@/app/components/ui/modal/ConfirmModal";
 import { useTranslations } from "use-intl";
+import StockDetailModal from "./components/StockDetailModal";
 
 export default function BookManagementPage() {
   const t = useTranslations("dashboard");
@@ -47,6 +48,8 @@ export default function BookManagementPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
+  const [showStockModal, setShowStockModal] = useState(false);
+  const [stockBook, setStockBook] = useState<Book | null>(null);
 
   const [categoryId, setCategoryId] = useState<string | "">("");
 
@@ -126,7 +129,20 @@ export default function BookManagementPage() {
     {
       key: "stock",
       label: t("p.stock"),
-      render: (book) => book.totalStock ?? 0,
+      render: (book) => (
+        <div className="flex items-center gap-2">
+          <Button
+            size="xs"
+            color="light"
+            onClick={() => {
+              setStockBook(book);
+              setShowStockModal(true);
+            }}
+          >
+            {t("i.detail")}
+          </Button>
+        </div>
+      ),
     },
     {
       key: "actions",
@@ -316,6 +332,11 @@ export default function BookManagementPage() {
           onConfirm={handleDeleteBook}
         />
       </div>
+      <StockDetailModal
+        show={showStockModal}
+        onClose={() => setShowStockModal(false)}
+        book={stockBook}
+      />
     </div>
   );
 }
