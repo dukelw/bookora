@@ -13,6 +13,7 @@ export const orderService = {
     selectedItems: string[];
     totalAmount: number;
     discountAmount: number;
+    shippingFee: number;
     finalAmount: number;
     discountCode?: string;
     user: string;

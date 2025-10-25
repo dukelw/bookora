@@ -87,3 +87,5 @@ export const STATUS_MAP = {
     icon: <FaCheckCircle className="inline mr-1" />,
   },
 };
+
+export const SHIPPING_FEE = 30000; // 30,000 VND

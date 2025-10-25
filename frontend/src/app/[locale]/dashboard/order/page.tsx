@@ -62,7 +62,7 @@ export default function OrderManagementPage() {
       fetchOrders();
     } catch (err) {
       console.error(err);
-      toast.error(t("p.updateError"));
+      toast.error(t("p.updateFailed"));
     } finally {
       setOpenConfirm(false);
       setSelectedOrder(null);
@@ -116,7 +116,6 @@ export default function OrderManagementPage() {
             color="blue"
             size="sm"
             onClick={() => {
-              console.log("order::", order);
               setSelectedOrder(order);
               setShowDetail(true);
             }}
@@ -144,7 +143,7 @@ export default function OrderManagementPage() {
                     setOpenConfirm(true);
                   }}
                 >
-                  {s}
+                  {t(`p.${s}`)}
                 </DropdownItem>
               ))}
           </Dropdown>

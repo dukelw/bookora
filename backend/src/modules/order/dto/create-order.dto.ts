@@ -46,6 +46,10 @@ export class CreateOrderDto {
   @IsNumber()
   totalAmount: number;
 
+  @ApiProperty({ description: 'Tổng tiền phí vận chuyển' })
+  @IsNumber()
+  shippingFee: number;
+
   @ApiProperty({ description: 'Số tiền được giảm' })
   @IsNumber()
   discountAmount: number;

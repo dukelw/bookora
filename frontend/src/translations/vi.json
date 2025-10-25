@@ -156,6 +156,9 @@
     "payWithCod": "Thanh toán khi nhận hàng"
   },
   "order": {
+    "shippingFee": "Phí vận chuyển",
+    "totalAmount": "Tổng số tiền",
+    "discountAmount": "Số tiền giảm",
     "pending": "Đang xử lý",
     "shipped": "Đã vận chuyển",
     "completed": "Hoàn thành",
@@ -248,6 +251,8 @@
       "deleteConfirmMessage": "Bạn có chắc muốn xóa danh mục này không?"
     },
     "p": {
+      "updateSuccess": "Cập nhật đơn hàng thành công!",
+      "updateFailed": "Cập nhật đơn hàng thất bại!",
       "dashboard": "Trang quản trị",
       "orderManagement": "Quản lý đơn hàng",
       "buyer": "Người mua",

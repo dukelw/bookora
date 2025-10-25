@@ -123,7 +123,8 @@ export class OrderService {
     }
 
     // 6. Tính finalAmount
-    const finalAmount = subtotal - discountAmount;
+    const { shippingFee } = dto;
+    const finalAmount = subtotal - discountAmount + shippingFee;
 
     // 7. Tạo order (chỉ chứa items đã chọn)
     const order = new this.orderModel({
@@ -136,6 +137,7 @@ export class OrderService {
         finalPrice: i.finalPrice,
       })),
       totalAmount: subtotal,
+      shippingFee,
       discountAmount,
       finalAmount,
     });
