@@ -44,6 +44,14 @@ export class UpdateUserDto {
   name?: string;
 
   @ApiPropertyOptional({
+    example: '0227727273',
+    description: 'Số điện thoại của user',
+  })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional({
     example: '123 Nguyen Trai, Ha Noi',
     description: 'Địa chỉ của user',
   })

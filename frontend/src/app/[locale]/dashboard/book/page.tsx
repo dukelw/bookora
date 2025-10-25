@@ -11,7 +11,15 @@ import {
   BreadcrumbItem,
   HomeIcon,
 } from "flowbite-react";
-import { FaSearch, FaPlus, FaEye, FaPen, FaTrash, FaCube, FaChevronDown } from "react-icons/fa";
+import {
+  FaSearch,
+  FaPlus,
+  FaEye,
+  FaPen,
+  FaTrash,
+  FaCube,
+  FaChevronDown,
+} from "react-icons/fa";
 import { formatCurrency } from "@/utils/format";
 import ActionModal from "./components/ActionModal";
 import { bookService } from "@/services/bookService";
@@ -49,7 +57,11 @@ export default function BookManagementPage() {
     try {
       let res;
       if (categoryId) {
-        res = await bookService.getBooksByCategory(categoryId, currentPage, pageSize);
+        res = await bookService.getBooksByCategory(
+          categoryId,
+          currentPage,
+          pageSize
+        );
       } else {
         res = await bookService.getBooks(search, currentPage, pageSize);
       }
@@ -70,12 +82,10 @@ export default function BookManagementPage() {
     }
   }, []);
 
-
   useEffect(() => {
     fetchBooks();
     fetchCategory();
   }, [fetchBooks, fetchCategory]);
-
 
   const handleDeleteBook = async () => {
     if (!selectedId) return;
@@ -101,8 +111,8 @@ export default function BookManagementPage() {
       label: t("p.category"),
       render: (book) =>
         Array.isArray(book.category)
-        ? book.category.map((c) => c.name).join(", ")
-        : "",
+          ? book.category.map((c) => c.name).join(", ")
+          : "",
     },
     {
       key: "price",
@@ -110,27 +120,37 @@ export default function BookManagementPage() {
       render: (book) =>
         formatCurrency(
           book.variants?.find((v) => v.rarity === "common")?.price ?? 0
-      ),
+        ),
     },
     { key: "releaseYear", label: t("p.releaseYear") },
-    { key: "stock", label: t("p.stock") },
+    {
+      key: "stock",
+      label: t("p.stock"),
+      render: (book) => book.totalStock ?? 0,
+    },
     {
       key: "actions",
       label: t("actions"),
       render: (book: Book) => (
         <div className="flex gap-1 sm:gap-2">
-          <Button size="sm" color="blue" className="px-2 py-1 sm:px-3 sm:py-2"
+          <Button
+            size="sm"
+            color="blue"
+            className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setIsVariant(false);
               setSelectedBook(book);
               setDetailMode(true);
-              setModalOpen(true)
+              setModalOpen(true);
             }}
           >
             <FaEye />
           </Button>
 
-          <Button size="sm" color="purple" className="px-2 py-1 sm:px-3 sm:py-2"
+          <Button
+            size="sm"
+            color="purple"
+            className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setIsVariant(true);
               setSelectedBook(book);
@@ -141,7 +161,10 @@ export default function BookManagementPage() {
             <FaCube />
           </Button>
 
-          <Button size="sm" color="yellow" className="px-2 py-1 sm:px-3 sm:py-2"
+          <Button
+            size="sm"
+            color="yellow"
+            className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setIsVariant(false);
               setSelectedBook(book);
@@ -152,7 +175,10 @@ export default function BookManagementPage() {
             <FaPen />
           </Button>
 
-          <Button size="sm" color="red" className="px-2 py-1 sm:px-3 sm:py-2"
+          <Button
+            size="sm"
+            color="red"
+            className="px-2 py-1 sm:px-3 sm:py-2"
             onClick={() => {
               setSelectedId(book._id!);
               setOpenConfirm(true);
@@ -168,7 +194,9 @@ export default function BookManagementPage() {
   return (
     <div>
       <Breadcrumb aria-label="breadcrumb" className="px-5 py-3">
-        <BreadcrumbItem href="#" icon={HomeIcon}>Dashboard</BreadcrumbItem>
+        <BreadcrumbItem href="#" icon={HomeIcon}>
+          Dashboard
+        </BreadcrumbItem>
         <BreadcrumbItem href="#">{m("productManagement")}</BreadcrumbItem>
         <BreadcrumbItem>{m("book")}</BreadcrumbItem>
       </Breadcrumb>
@@ -195,11 +223,13 @@ export default function BookManagementPage() {
 
           {/* Category */}
           <Dropdown
-            inline={true} arrowIcon={false}
+            inline={true}
+            arrowIcon={false}
             label={
               <button className="w-60 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center">
-                {category.find(c => c._id === categoryId)?.name || t("p.allCategories")}
-                  <FaChevronDown className="ml-2" />
+                {category.find((c) => c._id === categoryId)?.name ||
+                  t("p.allCategories")}
+                <FaChevronDown className="ml-2" />
               </button>
             }
             dismissOnClick
@@ -225,10 +255,18 @@ export default function BookManagementPage() {
             }
             dismissOnClick
           >
-            <DropdownItem onClick={() => setPriceRange("")}>{t("p.all")}</DropdownItem>
-            <DropdownItem onClick={() => setPriceRange("0-50000")}>0 - 50.000</DropdownItem>
-            <DropdownItem onClick={() => setPriceRange("50000-100000")}>50.000 - 100.000</DropdownItem>
-            <DropdownItem onClick={() => setPriceRange("100000-200000")}>100.000 - 200.000</DropdownItem>
+            <DropdownItem onClick={() => setPriceRange("")}>
+              {t("p.all")}
+            </DropdownItem>
+            <DropdownItem onClick={() => setPriceRange("0-50000")}>
+              0 - 50.000
+            </DropdownItem>
+            <DropdownItem onClick={() => setPriceRange("50000-100000")}>
+              50.000 - 100.000
+            </DropdownItem>
+            <DropdownItem onClick={() => setPriceRange("100000-200000")}>
+              100.000 - 200.000
+            </DropdownItem>
           </Dropdown>
 
           <div className="ml-auto flex gap-2">
@@ -257,7 +295,7 @@ export default function BookManagementPage() {
               setModalOpen(false);
               setSelectedBook(null);
             }}
-            mode={detailMode ? "detail" : selectedBook ? "edit" : "create"} 
+            mode={detailMode ? "detail" : selectedBook ? "edit" : "create"}
           />
           <Pagination
             currentPage={currentPage}
