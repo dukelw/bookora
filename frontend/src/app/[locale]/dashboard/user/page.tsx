@@ -63,7 +63,6 @@ export default function UserManagementPage() {
     }
   }, [search, currentPage, pageSize, statusFilter, roleFilter, t]);
 
-
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
@@ -74,7 +73,6 @@ export default function UserManagementPage() {
       await userService.updateUser(editing._id!, data);
       toast.success(t("c.updateSuccess"));
       await fetchUsers();
-
     } catch (err) {
       console.error("Error saving user:", err);
       toast.error(t("c.actionFailed"));
@@ -106,9 +104,10 @@ export default function UserManagementPage() {
       label: t("u.avatar"),
       render: (user: User) => (
         <img
-          src={user.avatar || "/default-avatar.png"}
+          src={user.avatar || "/images/fallback/default-avatar.png"}
           alt={user.name}
-          className="w-50 h-auto rounded-circle object-cover non-border"
+          className="w-12 h-12 rounded-full object-cover border border-white shadow-sm"
+          style={{ aspectRatio: "1 / 1" }}
         />
       ),
     },
@@ -196,7 +195,9 @@ export default function UserManagementPage() {
   return (
     <div>
       <Breadcrumb aria-label="breadcrumb" className="px-5 py-3">
-        <BreadcrumbItem href="#" icon={HomeIcon}>Dashboard</BreadcrumbItem>
+        <BreadcrumbItem href="#" icon={HomeIcon}>
+          Dashboard
+        </BreadcrumbItem>
         <BreadcrumbItem>{m("userManagement")}</BreadcrumbItem>
       </Breadcrumb>
 
@@ -217,16 +218,28 @@ export default function UserManagementPage() {
             inline
             arrowIcon={false}
             label={
-              <div className="w-48 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center cursor-pointer"> 
-                <span className="text-sm">{roleFilter === "admin" ? t("u.roleAdmin") : roleFilter === "customer" ? t("u.roleCustomer") : t("u.allRoles")}</span>
+              <div className="w-48 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center cursor-pointer">
+                <span className="text-sm">
+                  {roleFilter === "admin"
+                    ? t("u.roleAdmin")
+                    : roleFilter === "customer"
+                    ? t("u.roleCustomer")
+                    : t("u.allRoles")}
+                </span>
                 <FaChevronDown className="ml-2" />
               </div>
             }
             dismissOnClick
           >
-            <DropdownItem onClick={() => setRoleFilter("")}>{t("u.allRoles")}</DropdownItem>
-            <DropdownItem onClick={() => setRoleFilter("admin")}>{t("u.roleAdmin")}</DropdownItem>
-            <DropdownItem onClick={() => setRoleFilter("customer")}>{t("u.roleCustomer")}</DropdownItem>
+            <DropdownItem onClick={() => setRoleFilter("")}>
+              {t("u.allRoles")}
+            </DropdownItem>
+            <DropdownItem onClick={() => setRoleFilter("admin")}>
+              {t("u.roleAdmin")}
+            </DropdownItem>
+            <DropdownItem onClick={() => setRoleFilter("customer")}>
+              {t("u.roleCustomer")}
+            </DropdownItem>
           </Dropdown>
 
           {/* Status filters */}
@@ -234,16 +247,28 @@ export default function UserManagementPage() {
             inline
             arrowIcon={false}
             label={
-              <div className="w-48 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center cursor-pointer"> 
-              <span className="text-sm">{statusFilter === "active" ? t("u.active"): statusFilter === "disable" ? t("u.disable"): t("u.allStatus")}</span>
+              <div className="w-48 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center cursor-pointer">
+                <span className="text-sm">
+                  {statusFilter === "active"
+                    ? t("u.active")
+                    : statusFilter === "disable"
+                    ? t("u.disable")
+                    : t("u.allStatus")}
+                </span>
                 <FaChevronDown className="ml-2" />
               </div>
             }
             dismissOnClick
           >
-            <DropdownItem onClick={() => setStatusFilter("")}>{t("u.allStatus")}</DropdownItem>
-            <DropdownItem onClick={() => setStatusFilter("active")}>{t("u.active")}</DropdownItem>
-            <DropdownItem onClick={() => setStatusFilter("disable")}>{t("u.disable")}</DropdownItem>
+            <DropdownItem onClick={() => setStatusFilter("")}>
+              {t("u.allStatus")}
+            </DropdownItem>
+            <DropdownItem onClick={() => setStatusFilter("active")}>
+              {t("u.active")}
+            </DropdownItem>
+            <DropdownItem onClick={() => setStatusFilter("disable")}>
+              {t("u.disable")}
+            </DropdownItem>
           </Dropdown>
         </div>
 
@@ -265,7 +290,10 @@ export default function UserManagementPage() {
         {/* User Modal */}
         <UserModal
           isOpen={openModal}
-          onClose={() => { setOpenModal(false); setEditing(null); }}
+          onClose={() => {
+            setOpenModal(false);
+            setEditing(null);
+          }}
           onSubmit={handleSaveUser}
           initialData={editing}
           mode={mode}
