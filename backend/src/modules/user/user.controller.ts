@@ -147,4 +147,13 @@ export class UserController {
     if (!data) return { error: 'User not found' };
     return data;
   }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Get(':id')
+  @ApiOperation({ summary: 'Lấy thông tin người dùng theo ID (Admin)' })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 404, description: 'User không tồn tại' })
+  async getUserById(@Param('id') id: string) {
+    return this.userService.getUserById(id);
+  }
 }

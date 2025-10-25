@@ -167,4 +167,8 @@ export class UserService {
 
     return { addresses, shippingAddress };
   }
+
+  async getUserById(userId: string): Promise<User> {
+    return this.findById(userId);
+  }
 }

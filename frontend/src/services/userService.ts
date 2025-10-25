@@ -35,14 +35,20 @@ export const userService = {
 
   // ========== Admin ==========
   // Lấy danh sách tất cả người dùng (admin)
-  async getUsers(keySearch?: string, page?: number, limit?: number, status?: string | undefined, role?: string | undefined) {
+  async getUsers(
+    keySearch?: string,
+    page?: number,
+    limit?: number,
+    status?: string | undefined,
+    role?: string | undefined
+  ) {
     const res: AxiosResponse = await api.get(API_URL, {
       params: { keySearch, page, limit, status, role },
     });
     return res.data;
   },
 
-  // Cập nhật người dùng (admin)  
+  // Cập nhật người dùng (admin)
   async updateUser(id: string, data: any) {
     const res: AxiosResponse = await api.put(`${API_URL}/${id}`, data);
     return res.data;
@@ -52,5 +58,17 @@ export const userService = {
   async updateStatus(id: string, data: { status: "active" | "inactive" }) {
     const res: AxiosResponse = await api.patch(`${API_URL}/${id}/status`, data);
     return res.data;
+  },
+
+  // Lấy thông tin người dùng theo ID (Admin)
+  async getUserById(id: string) {
+    try {
+      const res: AxiosResponse = await api.get(`${API_URL}/${id}`);
+      return res.data;
+    } catch (error: any) {
+      throw new Error(
+        error?.response?.data?.message || "Failed to get user by ID"
+      );
+    }
   },
 };

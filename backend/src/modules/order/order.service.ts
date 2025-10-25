@@ -15,6 +15,7 @@ import {
   ReviewRequest,
   ReviewRequestStatus,
 } from 'src/schemas/request-review.schema';
+import { GetAllOrdersDto } from './dto/get-order-dto';
 
 @Injectable()
 export class OrderService {
@@ -287,5 +288,42 @@ export class OrderService {
     }
 
     return order;
+  }
+  async findAllOrders(dto: GetAllOrdersDto) {
+    const { status, userId } = dto;
+
+    const pageNum = Math.max(1, Number(dto.page) || 1);
+    const pageSize = Math.max(1, Math.min(100, Number(dto.limit) || 10));
+    const skip = (pageNum - 1) * pageSize;
+
+    const query: any = {};
+    if (status) query.status = status;
+    if (userId) query.user = userId;
+
+    const [orders, total] = await Promise.all([
+      this.orderModel
+        .find(query)
+        .populate([
+          { path: 'user', select: 'name email avatar role' },
+          {
+            path: 'items.book',
+            select:
+              'title author publisher price slug images variants description',
+          },
+        ])
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize)
+        .lean()
+        .exec(),
+      this.orderModel.countDocuments(query),
+    ]);
+
+    return {
+      items: orders,
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 }
