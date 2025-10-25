@@ -19,6 +19,7 @@ export const userService = {
   // Cập nhật thông tin người dùng
   async updateProfile(updateUserDto: {
     name?: string;
+    phone?: string;
     address?: string;
     avatar?: string;
     shippingAddress?: string;
