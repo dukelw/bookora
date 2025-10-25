@@ -7,6 +7,7 @@ import {
   Body,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { RatingService } from './rating.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
@@ -48,8 +49,12 @@ export class RatingController {
   }
 
   @Get(':bookId')
-  async getRatings(@Param('bookId') bookId: string) {
-    return this.ratingService.getRatings(bookId);
+  async getRatings(
+    @Param('bookId') bookId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.ratingService.getRatings(bookId, page, limit);
   }
 
   @Get(':bookId/average')
