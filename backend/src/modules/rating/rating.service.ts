@@ -50,10 +50,45 @@ export class RatingService {
     return rating;
   }
 
-  async getRatings(bookId: string) {
-    return this.ratingModel
-      .find({ book: new Types.ObjectId(bookId) })
-      .populate({ path: 'user', select: 'fullname email name avatar' });
+  async getRatings(
+    bookId: string,
+    page?: number | string,
+    limit?: number | string,
+  ) {
+    const filter = { book: new Types.ObjectId(bookId) };
+
+    const hasPagination = page !== undefined || limit !== undefined; // <-- ADD
+
+    if (!hasPagination) {
+      return this.ratingModel
+        .find(filter)
+        .populate({ path: 'user', select: 'fullname email name avatar' })
+        .sort({ createdAt: -1 });
+    }
+
+    const pageNum = Math.max(1, Number(page) || 1);
+    const pageSize = Math.max(1, Math.min(100, Number(limit) || 10));
+    const skip = (pageNum - 1) * pageSize;
+
+    const [items, total] = await Promise.all([
+      this.ratingModel
+        .find(filter)
+        .populate({ path: 'user', select: 'fullname email name avatar' })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize)
+        .lean()
+        .exec(),
+      this.ratingModel.countDocuments(filter),
+    ]);
+
+    return {
+      items,
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
   }
 
   async getAverageRating(bookId: string) {

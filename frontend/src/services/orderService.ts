@@ -25,7 +25,10 @@ export const orderService = {
   },
 
   // Lấy danh sách order của user
-  async getOrdersByUser(userId: string, { page = 1, limit = 10, status = "" } = {}) {
+  async getOrdersByUser(
+    userId: string,
+    { page = 1, limit = 10, status = "" } = {}
+  ) {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
@@ -47,6 +50,30 @@ export const orderService = {
     const res: AxiosResponse = await api.patch(`${API_URL}/${id}/status`, {
       status,
     });
+    return res.data;
+  },
+
+  async getAllOrders({
+    page = 1,
+    limit = 10,
+    status = "",
+    userId = "",
+  }: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    userId?: string;
+  } = {}) {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (status) params.append("status", status);
+    if (userId) params.append("userId", userId);
+
+    const res: AxiosResponse = await api.get(
+      `${API_URL}/all?${params.toString()}`
+    );
     return res.data;
   },
 };

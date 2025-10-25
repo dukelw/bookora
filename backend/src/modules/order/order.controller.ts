@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,6 +19,7 @@ import {
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order, OrderStatus } from 'src/schemas/order.schema';
+import { GetAllOrdersDto } from './dto/get-order-dto';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -34,6 +36,23 @@ export class OrderController {
   })
   async create(@Body() dto: CreateOrderDto): Promise<Order> {
     return this.orderService.create(dto);
+  }
+
+  @Get('all')
+  @ApiOperation({
+    summary: 'Lấy tất cả đơn hàng (phân trang, đầy đủ thông tin)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách tất cả đơn hàng',
+    schema: {
+      example: { items: [], total: 0, pageNum: 1, pageSize: 10 },
+    },
+  })
+  async getAll(
+    @Query(new ValidationPipe({ transform: true })) dto: GetAllOrdersDto,
+  ) {
+    return this.orderService.findAllOrders(dto);
   }
 
   @Get('user/:userId')
