@@ -134,4 +134,17 @@ export class UserController {
     if (!ok) return { error: 'Không thể xóa địa chỉ' };
     return { message: 'Xóa địa chỉ thành công' };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('addresses')
+  @ApiOperation({
+    summary: 'Lấy danh sách địa chỉ và địa chỉ giao hàng hiện tại',
+  })
+  async getAddresses(@Req() req: any) {
+    const data = await this.userService.getAddressesAndShippingAddress(
+      req.user._id,
+    );
+    if (!data) return { error: 'User not found' };
+    return data;
+  }
 }

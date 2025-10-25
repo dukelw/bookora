@@ -151,4 +151,20 @@ export class UserService {
     await user.save();
     return true;
   }
+
+  async getAddressesAndShippingAddress(
+    userId: string,
+  ): Promise<{ addresses: string[]; shippingAddress?: string } | null> {
+    const user = await this.userModel.findById(userId).lean();
+    if (!user) return null;
+
+    const addresses = Array.isArray(user.addresses)
+      ? user.addresses.map((a) => (a || '').trim()).filter(Boolean)
+      : [];
+
+    const shippingAddress =
+      ((user.shippingAddress || '') as string).trim() || undefined;
+
+    return { addresses, shippingAddress };
+  }
 }
