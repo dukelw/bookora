@@ -8,6 +8,7 @@ import {
   UseGuards,
   Req,
   Query,
+  Post,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
@@ -94,5 +95,43 @@ export class UserController {
   @ApiOperation({ summary: 'Cập nhật trạng thái ngưới dùng theo ID (Admin)' })
   async updateStatus(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
     return this.userService.updateStatus(id, dto.status);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-shipping-address')
+  @ApiOperation({ summary: 'Đổi địa chỉ giao hàng' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { address: { type: 'string' } },
+      required: ['address'],
+    },
+  })
+  async changeShippingAddress(
+    @Req() req: any,
+    @Body() body: { address: string },
+  ) {
+    const ok = await this.userService.changeShippingAddress(
+      req.user._id,
+      body.address,
+    );
+    if (!ok) return { error: 'Không thể đổi địa chỉ giao hàng' };
+    return { message: 'Cập nhật địa chỉ giao hàng thành công' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('remove-address')
+  @ApiOperation({ summary: 'Xóa một địa chỉ khỏi danh sách địa chỉ' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { address: { type: 'string' } },
+      required: ['address'],
+    },
+  })
+  async removeAddress(@Req() req: any, @Body() body: { address: string }) {
+    const ok = await this.userService.removeAddress(req.user._id, body.address);
+    if (!ok) return { error: 'Không thể xóa địa chỉ' };
+    return { message: 'Xóa địa chỉ thành công' };
   }
 }

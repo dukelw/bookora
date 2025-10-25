@@ -24,9 +24,14 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  async create(email: string, password: string, address: string) {
+  async create(email: string, password: string, address?: string) {
     const hash = await bcrypt.hash(password, 10);
-    const user = new this.userModel({ email, password: hash, address });
+    const user = new this.userModel({
+      email,
+      password: hash,
+      addresses: address ? [address] : [],
+      shippingAddress: address || undefined,
+    });
     return user.save();
   }
 
@@ -281,6 +286,8 @@ export class AuthService {
     let createdNew = false;
     let plainPassword = '';
 
+    // Trong registerFromCheckout: khi tạo user mới thì gán addresses và shippingAddress
+
     if (!user) {
       plainPassword = randomBytes(8).toString('hex');
       const hash = await bcrypt.hash(plainPassword, 10);
@@ -288,7 +295,8 @@ export class AuthService {
         email,
         name,
         phone,
-        address,
+        addresses: address ? [address] : [],
+        shippingAddress: address || undefined,
         password: hash,
         mustChangePassword: true,
       });

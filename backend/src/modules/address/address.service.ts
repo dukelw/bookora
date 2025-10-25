@@ -1,5 +1,8 @@
 import {
-  BadRequestException, ForbiddenException, Injectable, NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -27,12 +30,21 @@ export class AddressService {
 
   async create(userId: string, dto: CreateAddressDto) {
     const uid = new mongoose.Types.ObjectId(userId);
-    const count = await this.addressModel.countDocuments({ userId: uid, active: true });
-    if (count >= MAX_ADDRESSES_PER_USER) throw new BadRequestException('Address limit reached');
+    const count = await this.addressModel.countDocuments({
+      userId: uid,
+      active: true,
+    });
+    if (count >= MAX_ADDRESSES_PER_USER)
+      throw new BadRequestException('Address limit reached');
 
     const shouldBeDefault = dto.isDefault || count === 0;
     if (shouldBeDefault) {
-      await this.addressModel.updateMany({ userId: uid, isDefault: true }, { $set: { isDefault: false } }).exec();
+      await this.addressModel
+        .updateMany(
+          { userId: uid, isDefault: true },
+          { $set: { isDefault: false } },
+        )
+        .exec();
     }
 
     const doc = await this.addressModel.create({
@@ -46,9 +58,10 @@ export class AddressService {
   }
 
   private assertOwner(addr: Address, userId: string) {
-    const ownerId = addr.userId instanceof mongoose.Types.ObjectId
-      ? addr.userId
-      : new mongoose.Types.ObjectId(addr.userId as any);
+    const ownerId =
+      addr.userId instanceof mongoose.Types.ObjectId
+        ? addr.userId
+        : new mongoose.Types.ObjectId(addr.userId as any);
     const currentId = new mongoose.Types.ObjectId(userId);
     if (!ownerId.equals(currentId)) {
       throw new ForbiddenException('Address does not belong to current user');
@@ -57,7 +70,9 @@ export class AddressService {
 
   // chỉ lấy các key thực sự được truyền (không lấy undefined)
   private pickDefined<T extends object>(payload: T) {
-    return Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined));
+    return Object.fromEntries(
+      Object.entries(payload).filter(([, v]) => v !== undefined),
+    );
   }
 
   async update(userId: string, id: string, dto: UpdateAddressDto) {
@@ -67,10 +82,12 @@ export class AddressService {
 
     // Nếu yêu cầu đặt làm mặc định -> unset mặc định ở các địa chỉ khác trước
     if (dto.isDefault === true) {
-      await this.addressModel.updateMany(
-        { userId: addr.userId, isDefault: true },
-        { $set: { isDefault: false } },
-      ).exec();
+      await this.addressModel
+        .updateMany(
+          { userId: addr.userId, isDefault: true },
+          { $set: { isDefault: false } },
+        )
+        .exec();
     }
 
     // Chỉ cập nhật những trường có truyền trong body
@@ -96,7 +113,8 @@ export class AddressService {
     await addr.save();
 
     if (wasDefault) {
-      const latest = await this.addressModel.findOne({ userId: addr.userId, active: true })
+      const latest = await this.addressModel
+        .findOne({ userId: addr.userId, active: true })
         .sort({ updatedAt: -1 })
         .exec();
       if (latest) {
@@ -112,10 +130,12 @@ export class AddressService {
     if (!addr || !addr.active) throw new NotFoundException('Address not found');
     this.assertOwner(addr, userId);
 
-    await this.addressModel.updateMany(
-      { userId: addr.userId, isDefault: true },
-      { $set: { isDefault: false } },
-    ).exec();
+    await this.addressModel
+      .updateMany(
+        { userId: addr.userId, isDefault: true },
+        { $set: { isDefault: false } },
+      )
+      .exec();
 
     addr.isDefault = true;
     await addr.save();
@@ -127,7 +147,8 @@ export class AddressService {
    * Trả về snapshot để gắn vào Order.shippingAddress.
    */
   async guestCreate(email: string, dto: CreateAddressDto) {
-    if (!email) throw new BadRequestException('Email is required for guest checkout');
+    if (!email)
+      throw new BadRequestException('Email is required for guest checkout');
 
     let user = await this.userModel.findOne({ email }).exec();
     if (!user) {
@@ -138,10 +159,12 @@ export class AddressService {
         isAutoCreated: true,
         status: 'active',
       });
-      // TODO: gửi email kích hoạt nếu muốn
     }
 
-    const addr = await this.create(user._id.toString(), { ...dto, isDefault: true });
+    const addr = await this.create(user._id.toString(), {
+      ...dto,
+      isDefault: true,
+    });
 
     const snapshot = {
       name: addr.fullName,

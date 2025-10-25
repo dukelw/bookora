@@ -1,31 +1,43 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { AddressType } from 'src/schemas/address.schema';
 
 export class CreateAddressDto {
   @ApiProperty({ example: 'Nguyễn Văn A' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   fullName!: string;
 
   @ApiProperty({ example: '0987654321' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   phone!: string; // có thể thay bằng regex VN nếu muốn chặt hơn
 
   @ApiProperty({ example: 'TP. Hồ Chí Minh' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   province!: string;
 
   @ApiProperty({ example: 'Quận 1' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   district!: string;
 
   @ApiProperty({ example: 'Phường Bến Nghé' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   ward!: string;
 
   @ApiProperty({ example: '123 Lê Lợi' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   addressLine1!: string;
 
   @ApiProperty({ enum: AddressType, example: AddressType.HOME })
@@ -33,7 +45,9 @@ export class CreateAddressDto {
   addressType!: AddressType;
 
   @ApiPropertyOptional({ default: false })
-  @IsOptional() @Type(() => Boolean) @IsBoolean()
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
   isDefault?: boolean = false;
 }
 
@@ -48,14 +62,17 @@ export class UpdateAddressDto {
 
   @IsOptional() @IsEnum(AddressType) addressType?: AddressType;
 
-  @IsOptional() @Type(() => Boolean) @IsBoolean()
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
   isDefault?: boolean;
 }
 
 // Body cho guest checkout (public)
 export class GuestCreateBody {
   @ApiProperty({ example: 'guest@example.com' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   email!: string;
 
   @ApiProperty({ type: CreateAddressDto })
