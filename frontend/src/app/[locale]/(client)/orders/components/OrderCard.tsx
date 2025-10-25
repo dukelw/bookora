@@ -39,6 +39,22 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
     }
   };
 
+  const handleCancel = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    try {
+      const res = await orderService.updateOrderStatus(
+        order._id,
+        OrderStatus.CANCELLED
+      );
+      if (res) {
+        toast.success(t("updateOrderStatusSuccessfully"));
+      }
+    } catch (err: any) {
+      toast.error(err.message || t("updateOrderStatusFailed"));
+    }
+  };
+
   const handleRateSingleItem = (item: any) => {
     const mainImage =
       item.book.images?.find((img: any) => img.isMain)?.url ||
@@ -115,7 +131,7 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
         <div className="mt-3 flex justify-end gap-3">
           {order.status === OrderStatus.PENDING && (
             <button
-              onClick={(e) => e.stopPropagation()}
+              onClick={handleCancel}
               className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold 
                 rounded-full flex items-center gap-2 shadow-[0_0_10px_rgba(255,0,0,0.5)] 
                 hover:shadow-[0_0_15px_rgba(255,50,50,0.7)] transition-all"

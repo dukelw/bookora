@@ -16,3 +16,9 @@ export enum RatingStatus {
   COMPLETED = "completed",
   UNKNOWN = "unknown",
 }
+
+export enum UserRole {
+  ADMIN = "admin",
+  CUSTOMER = "customer",
+  UNKNOWN = "unknown",  
+}

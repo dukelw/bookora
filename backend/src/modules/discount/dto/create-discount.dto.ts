@@ -1,4 +1,13 @@
-import { IsNumber, IsString, IsBoolean, IsOptional, IsEnum, Length, Max, Min } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  IsBoolean,
+  IsOptional,
+  IsEnum,
+  Length,
+  Max,
+  Min,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { DiscountType } from 'src/schemas/discount.schema';
 
@@ -15,7 +24,6 @@ export class CreateDiscountDto {
   @ApiProperty({ enum: DiscountType, example: DiscountType.PERCENTAGE })
   @IsEnum(DiscountType)
   type: DiscountType;
-
 
   @ApiProperty({ example: 5, description: 'Số lượng mã giảm giá (max 10)' })
   @IsNumber()

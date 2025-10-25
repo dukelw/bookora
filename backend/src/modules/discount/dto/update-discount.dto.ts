@@ -4,7 +4,10 @@ import { PartialType } from '@nestjs/swagger';
 import { CreateDiscountDto } from './create-discount.dto';
 
 export class UpdateDiscountDto extends PartialType(CreateDiscountDto) {
-  @ApiPropertyOptional({ example: 60000, description: 'New discount value in VND' })
+  @ApiPropertyOptional({
+    example: 60000,
+    description: 'New discount value in VND',
+  })
   @IsOptional()
   @IsNumber()
   value?: number;

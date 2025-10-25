@@ -8,10 +8,12 @@ import { authService } from "@/services/authService";
 import { useTranslations } from "use-intl";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
+import { UserRole } from "@/enums";
 
 const UserDropdown = () => {
   const t = useTranslations("navbar");
   const { user, setUser, setTokens } = useAuthStore();
+
   const { setCart } = useCartStore();
   const router = useRouter();
 
@@ -40,6 +42,11 @@ const UserDropdown = () => {
         </>
       ) : (
         <>
+          {user.role === UserRole.ADMIN && (
+            <DropdownItem>
+              <Link href={`/dashboard`}>{t("dashboard")}</Link>
+            </DropdownItem>
+          )}
           <DropdownItem>
             <Link href={`/profile`}>{t("profile")}</Link>
           </DropdownItem>
