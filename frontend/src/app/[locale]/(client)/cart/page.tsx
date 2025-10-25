@@ -58,9 +58,9 @@ export default function CheckoutPage() {
     if (user?._id) {
       setFormData({
         name: user.name || "",
-        phone: user.phone || "",
+        phone: user.phone || user.phoneNumber || "",
         email: user.email || "",
-        address: user.address || "",
+        address: user.shippingAddress || "",
         city: user.city || "",
         note: "",
       });

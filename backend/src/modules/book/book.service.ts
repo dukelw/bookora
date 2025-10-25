@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, Types} from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { Book } from 'src/schemas/book.schema';
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
 import { RatingService } from '../rating/rating.service';
@@ -137,10 +137,10 @@ export class BookService {
 
     // Sort mapping
     const SORT_MAP: Record<BookSort, any> = {
-      [BookSort.NAME_ASC]:  { title: 1 },
+      [BookSort.NAME_ASC]: { title: 1 },
       [BookSort.NAME_DESC]: { title: -1 },
       [BookSort.PRICE_ASC]: { price: 1, title: 1 },
-      [BookSort.PRICE_DESC]:{ price: -1, title: 1 },
+      [BookSort.PRICE_DESC]: { price: -1, title: 1 },
       [BookSort.RELEASE_NEW]: { releaseYear: -1, createdAt: -1 },
       [BookSort.RELEASE_OLD]: { releaseYear: 1, createdAt: 1 },
       [BookSort.CREATED_NEW]: { createdAt: -1 },
@@ -177,7 +177,10 @@ export class BookService {
       publisher: b.publisher,
       price: b.price,
       releaseYear: b.releaseYear,
-      mainImage: (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url || null,
+      mainImage:
+        (b.images || []).find((i: any) => i.isMain)?.url ||
+        b.images?.[0]?.url ||
+        null,
       ...(useText ? { score: b.score } : {}),
     }));
 
@@ -212,7 +215,7 @@ export class BookService {
     if (from || to) {
       matchOrder.createdAt = {};
       if (from) matchOrder.createdAt.$gte = new Date(from);
-      if (to)   matchOrder.createdAt.$lte = new Date(to);
+      if (to) matchOrder.createdAt.$lte = new Date(to);
     }
 
     const pipeline: any[] = [
@@ -326,13 +329,14 @@ export class BookService {
     const docs = await this.bookModel
       .find(filter)
       .populate('category')
-      .sort({ createdAt: -1 })                // newest first based on createdAt
+      .sort({ createdAt: -1 }) // newest first based on createdAt
       .limit(Math.min(limit, 50))
       .lean()
       .exec();
 
     const items = docs.map((b: any) => {
-      const main = (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url;
+      const main =
+        (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url;
       return {
         _id: b._id,
         title: b.title,
@@ -347,7 +351,7 @@ export class BookService {
           ? b.category.map((c: any) => ({ _id: c._id, name: c.name }))
           : b.category
             ? [{ _id: b.category._id, name: b.category.name }]
-         : [],
+            : [],
       };
     });
 
@@ -379,7 +383,7 @@ export class BookService {
 
     pipeline.push(
       { $group: { _id: '$author', books: { $sum: 1 } } },
-      { $sort: { _id: 1 } },                  // sort theo tên tác giả A→Z
+      { $sort: { _id: 1 } }, // sort theo tên tác giả A→Z
       { $skip: skip },
       { $limit: Math.min(limit, 100) },
       { $project: { _id: 0, author: '$_id', books: 1 } },
@@ -388,19 +392,37 @@ export class BookService {
     const [items, totalAgg] = await Promise.all([
       this.bookModel.aggregate(pipeline).exec(),
       // tổng distinct authors (theo filter search)
-      this.bookModel.aggregate([
-        ...(search?.trim()
-          ? [{ $match: { author: { $exists: true, $ne: '', $regex: search.trim(), $options: 'i' } } }]
-          : [{ $match: { author: { $exists: true, $ne: '' } } }]),
-        { $group: { _id: '$author' } },
-        { $count: 'total' },
-      ]).exec(),
+      this.bookModel
+        .aggregate([
+          ...(search?.trim()
+            ? [
+                {
+                  $match: {
+                    author: {
+                      $exists: true,
+                      $ne: '',
+                      $regex: search.trim(),
+                      $options: 'i',
+                    },
+                  },
+                },
+              ]
+            : [{ $match: { author: { $exists: true, $ne: '' } } }]),
+          { $group: { _id: '$author' } },
+          { $count: 'total' },
+        ])
+        .exec(),
     ]);
 
     const total = totalAgg?.[0]?.total ?? 0;
     return {
       items,
-      meta: { page, limit: Math.min(limit, 100), total, totalPages: Math.ceil(total / limit) },
+      meta: {
+        page,
+        limit: Math.min(limit, 100),
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
 
@@ -433,13 +455,21 @@ export class BookService {
       publisher: b.publisher,
       price: b.price,
       releaseYear: b.releaseYear,
-      mainImage: (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url || null,
+      mainImage:
+        (b.images || []).find((i: any) => i.isMain)?.url ||
+        b.images?.[0]?.url ||
+        null,
       createdAt: b.createdAt,
     }));
 
     return {
       items,
-      meta: { page, limit: Math.min(limit, 50), total, totalPages: Math.ceil(total / limit) },
+      meta: {
+        page,
+        limit: Math.min(limit, 50),
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
 }

@@ -235,18 +235,39 @@ export class OrderService {
   }
 
   async updateStatus(id: string, status: Order['status']): Promise<Order> {
-    const order = await this.orderModel.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true },
-    );
+    const order = await this.orderModel.findById(id);
     if (!order) throw new NotFoundException('Order not found');
 
-    // ✅ Nếu đơn hàng chuyển sang hoàn tất
+    const wasCancelled = order.status === OrderStatus.CANCELLED;
+
+    // NEW: Nếu chuyển sang CANCELLED lần đầu => trả lại tồn kho + khôi phục discount
+    if (status === OrderStatus.CANCELLED && !wasCancelled) {
+      // Trả lại số lượng tồn kho cho từng variant trong đơn
+      await Promise.all(
+        order.items.map((item) =>
+          this.bookModel.updateOne(
+            { _id: item.book, 'variants._id': item.variantId },
+            { $inc: { 'variants.$.stock': item.quantity } },
+          ),
+        ),
+      );
+
+      // Khôi phục 1 lượt sử dụng của discount (nếu đơn có dùng mã)
+      if (order.discountCode) {
+        await this.discountService.rollbackUsage(
+          order.discountCode,
+          (order._id as Types.ObjectId).toString(),
+        );
+      }
+    }
+
+    // Cập nhật trạng thái đơn
+    order.status = status;
+    await order.save();
+
+    // Giữ nguyên logic tạo yêu cầu review khi COMPLETED
     if (status === OrderStatus.COMPLETED) {
-      // duyệt qua từng item trong đơn
       for (const item of order.items) {
-        // kiểm tra xem user này đã đánh giá sản phẩm đó chưa
         const existingRating = await this.reviewRequestModel.findOne({
           user: order.user,
           book: item.book,
@@ -254,7 +275,6 @@ export class OrderService {
           status: ReviewRequestStatus.COMPLETED,
         });
 
-        // nếu chưa có đánh giá => tạo yêu cầu đánh giá mới
         if (!existingRating) {
           await this.reviewRequestModel.create({
             order: order._id,

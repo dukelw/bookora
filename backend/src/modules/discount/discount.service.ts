@@ -109,4 +109,20 @@ export class DiscountService {
     await discount.save();
     return discount;
   }
+
+  async rollbackUsage(code: string, orderId: string) {
+    const discount = await this.discountModel.findOne({ code });
+    if (!discount) return null;
+
+    // Giảm usedCount (không âm)
+    discount.usedCount = Math.max((discount.usedCount || 0) - 1, 0);
+
+    // Gỡ orderId khỏi danh sách orders đã sử dụng mã
+    discount.orders = (discount.orders || []).filter(
+      (oid: Types.ObjectId) => oid.toString() !== String(orderId),
+    );
+
+    await discount.save();
+    return discount;
+  }
 }
