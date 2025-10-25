@@ -300,6 +300,9 @@
       "deleteConfirmMessage": "Are you sure you want to delete this product?"
     },
     "i": {
+      "detail": "Detail",
+      "stockDetail": "Stock Details",
+      "books": "items",
       "create": "Create Invoice",
       "createSuccess": "Invoice and inventory created successfully!",
       "createFail": "Failed to create invoice and inventory",

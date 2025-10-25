@@ -300,6 +300,9 @@
       "deleteConfirmMessage": "Bạn có chắc muốn xóa sản phẩm này không?"
     },
     "i": {
+      "detail": "Chi tiết",
+      "stockDetail": "Chi tiết tồn kho",
+      "books": "sản phẩm",
       "create": "Tạo hóa đơn",
       "createSuccess": "Tạo hóa đơn và tồn kho thành công!",
       "createFail": "Tạo hóa đơn và tồn kho thất bại",
