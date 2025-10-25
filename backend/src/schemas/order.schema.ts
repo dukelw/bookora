@@ -38,6 +38,9 @@ export class Order extends Document {
   totalAmount: number; // tổng tiền trước giảm
 
   @Prop({ default: 0 })
+  shippingFee?: number; // tổng tiền phí vận chuyển
+
+  @Prop({ default: 0 })
   discountAmount: number; // số tiền được giảm
 
   @Prop({ default: 0 })

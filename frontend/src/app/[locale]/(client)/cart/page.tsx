@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkoutStore";
 import { paymentService } from "@/services/paymentService";
-import { REDIRECT_URL } from "@/constants";
+import { REDIRECT_URL, SHIPPING_FEE } from "@/constants";
 import { clearGuestId, getOrCreateGuestId } from "@/lib/guest";
 import { authService } from "@/services/authService";
 import Loader from "@/components/loader/Loader";
@@ -82,7 +82,7 @@ export default function CheckoutPage() {
       : appliedDiscount.value
     : 0;
 
-  const shippingFee = 0;
+  const shippingFee = SHIPPING_FEE;
   const total = subtotal - discount + shippingFee;
 
   const handleSubmit = async () => {
@@ -161,6 +161,7 @@ export default function CheckoutPage() {
         totalAmount: subtotal,
         discountAmount: discount,
         finalAmount: total,
+        shippingFee,
         discountCode: appliedDiscount?.code || undefined,
         user: currentUser._id,
         paymentMethod,

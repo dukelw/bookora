@@ -8,6 +8,9 @@ interface PaymentInfoProps {
   payment: {
     paymentMethod: string;
     finalAmount: number;
+    totalAmount: number;
+    discountAmount: number;
+    shippingFee: number;
     status: string;
   };
 }
@@ -38,6 +41,27 @@ export default function OrderPaymentInfo({ payment }: PaymentInfoProps) {
             : payment.paymentMethod === "cod"
             ? t("cod")
             : payment.paymentMethod}
+        </p>
+
+        <p>
+          <strong className="text-gray-400">{t("totalAmount")}:</strong>{" "}
+          <span className="text-yellow-400 font-semibold">
+            {formatPrice(payment.totalAmount)}
+          </span>
+        </p>
+
+        <p>
+          <strong className="text-gray-400">{t("shippingFee")}:</strong>{" "}
+          <span className="text-yellow-400 font-semibold">
+            {formatPrice(payment.shippingFee)}
+          </span>
+        </p>
+
+        <p>
+          <strong className="text-gray-400">{t("discountAmount")}:</strong>{" "}
+          <span className="text-yellow-400 font-semibold">
+            {formatPrice(payment.discountAmount)}
+          </span>
         </p>
 
         <p>
