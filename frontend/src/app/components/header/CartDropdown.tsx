@@ -102,15 +102,15 @@ export default function CartDropdown({
                   >
                     {/* ảnh */}
                     <div className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden">
-                      <Image
+                      <img
                         src={
                           variant?.image ||
                           item?.book?.images?.[0]?.url ||
                           "/placeholder.png"
                         }
                         alt={item?.book?.title}
-                        fill
-                        className="object-cover"
+                        className="object-cover w-full h-full"
+                        loading="lazy"
                       />
                     </div>
 

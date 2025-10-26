@@ -94,13 +94,12 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
                flex flex-col gap-3 hover:scale-[1.02] transition-transform"
           >
             <div className="flex items-center gap-4">
-              <Image
+              <img
                 src={review.user?.avatar || FALLBACK_BOOK}
-                alt={"Avatar"}
-                width={56}
-                height={56}
-                className="rounded-full object-cover"
+                alt="Avatar"
+                className="w-14 h-14 rounded-full object-cover"
               />
+
               <div>
                 <h3 className="text-lg font-semibold">
                   {review.user?.name || "Ẩn danh"}

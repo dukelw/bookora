@@ -46,14 +46,13 @@ export default function BookList({ books, title }: BookListProps) {
             {/* Image */}
             <div className="relative h-48">
               {book?.images[0] ? (
-                <Image
+                <img
                   src={
                     book.images.find((img) => img.isMain)?.url ||
                     book.images[0].url
                   }
                   alt={book.title}
-                  fill
-                  className="object-cover"
+                  className="object-cover w-full h-full"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-400">

@@ -146,9 +146,7 @@ export default function BookDetailPage() {
         <div className="col-span-3 flex gap-6">
           <div className="flex-1">
             {/* Ảnh chính */}
-            <Image
-              width={600}
-              height={400}
+            <img
               src={mainImage}
               alt={book.title}
               className="w-full h-[400px] object-cover rounded-xl shadow-lg"
@@ -160,9 +158,7 @@ export default function BookDetailPage() {
                 ?.filter((img) => img.url !== mainImage)
                 .slice(0, 4)
                 .map((img) => (
-                  <Image
-                    width={80}
-                    height={80}
+                  <img
                     key={img._id}
                     src={img.url}
                     alt="thumb"

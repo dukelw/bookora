@@ -57,11 +57,11 @@ export default function StockDetailModal({
       key: "image",
       label: t("i.image"),
       render: (variant) => (
-        <Image
+        <img
           src={variant.image ?? FALLBACK_BOOK}
           alt="Ảnh minh họa"
-          width={50}
-          height={50}
+          width="50"
+          height="50"
           className="rounded-md object-cover"
         />
       ),

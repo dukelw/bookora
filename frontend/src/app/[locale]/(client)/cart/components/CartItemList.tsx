@@ -89,15 +89,14 @@ export default function CartItemList({
               onChange={() => toggleItem(item._id)}
             />
             <div className="w-20 h-20 relative">
-              <Image
+              <img
                 src={
                   variant?.image ||
                   item.book.images?.[0]?.url ||
                   "/placeholder.png"
                 }
                 alt={item.book.title}
-                fill
-                className="object-cover rounded-md"
+                className="w-full h-full object-cover rounded-md"
               />
             </div>
             <div className="flex-1">

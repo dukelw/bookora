@@ -55,11 +55,10 @@ export default function RatingDetailPage() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="flex flex-col md:flex-row bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
         <div className="relative w-full md:w-1/3 h-80 md:h-auto">
-          <Image
+          <img
             src={book.thumbnail || "/default-book.png"}
             alt={book.title}
-            fill
-            className="object-cover"
+            className="w-full h-full object-cover"
           />
         </div>
 
@@ -71,11 +70,9 @@ export default function RatingDetailPage() {
               <div className="mt-3 space-y-2">
                 {variant.image && (
                   <div className="w-32 h-32 rounded-lg overflow-hidden border border-gray-200">
-                    <Image
+                    <img
                       src={variant.image}
                       alt={variant.rarity || "Biến thể"}
-                      width={128}
-                      height={128}
                       className="object-cover w-full h-full"
                     />
                   </div>

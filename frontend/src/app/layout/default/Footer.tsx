@@ -21,16 +21,15 @@ import { footerImageService } from "@/services/footerImageService";
 
 const AppFooter = () => {
   const [inImages, setImages] = useState<
-    { image: string; 
-      title?: string;
-      link?: string;
-    }[]
+    { image: string; title?: string; link?: string }[]
   >([]);
   useEffect(() => {
     const fetchImages = async () => {
       try {
         const data = await footerImageService.getActive();
-        const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        const sorted = [...data].sort(
+          (a, b) => (a.order ?? 0) - (b.order ?? 0)
+        );
         setImages(sorted);
       } catch (err) {
         console.error("Failed to load footer images", err);
@@ -150,11 +149,10 @@ const AppFooter = () => {
               {inImages.map((img, i) => (
                 <div key={i} className="relative w-full aspect-square">
                   <a href={img.link} target="_blank" rel="noopener noreferrer">
-                    <Image
+                    <img
                       src={img.image}
                       alt={img.title || `Instagram ${i}`}
-                      fill
-                      className="object-cover rounded cursor-pointer"
+                      className="object-cover rounded cursor-pointer w-full h-full"
                     />
                   </a>
                 </div>
@@ -165,10 +163,7 @@ const AppFooter = () => {
 
         {/* Bottom bar */}
         <div className="text-center text-gray-500 text-sm border-t border-gray-800 py-4">
-          <FooterCopyright
-            by={t("copyright")}
-            year={2025}
-          />
+          <FooterCopyright by={t("copyright")} year={2025} />
         </div>
       </div>
     </Footer>

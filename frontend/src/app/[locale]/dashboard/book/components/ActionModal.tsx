@@ -480,12 +480,12 @@ export default function BookCreationForm({
                     <div className="mt-4 grid grid-cols-5 gap-2">
                       {previewUrls.map((img, idx) => (
                         <div key={idx} className="relative w-full h-20">
-                          <Image
+                          <img
                             src={img}
                             alt={`preview-${idx}`}
                             className="w-full h-full object-cover rounded border"
-                            fill
                           />
+
                           {!isDetail && (
                             <button
                               type="button"
@@ -660,9 +660,7 @@ export default function BookCreationForm({
                   >
                     <div className="flex-1">
                       {variant.image && (
-                        <Image
-                          width={40}
-                          height={40}
+                        <img
                           src={variant.image}
                           alt="variant"
                           className="inline-block w-12 h-12 object-cover rounded mr-4"

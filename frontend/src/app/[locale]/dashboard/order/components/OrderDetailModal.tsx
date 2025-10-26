@@ -24,14 +24,14 @@ export default function OrderDetailModal({
       key: "bookImage",
       label: "Ảnh",
       render: (item) => (
-        <Image
+        <img
           src={
             item?.book?.images?.find((img: any) => img.isMain)?.url ||
             "/images/fallback/default-book.png"
           }
           alt={item?.book?.title}
-          width={60}
-          height={60}
+          width="60"
+          height="60"
           className="rounded object-cover"
         />
       ),

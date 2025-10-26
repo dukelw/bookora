@@ -35,13 +35,12 @@ export default function SliderCarousel() {
       <Carousel slideInterval={5000}>
         {activeSliders?.map((slider) => (
           <div key={slider._id} className="relative w-full h-full">
-            <Image
+            <img
               src={slider.image}
               alt={slider.title}
-              fill
-              className="object-cover rounded-lg"
-              priority
+              className="object-cover rounded-lg w-full h-full"
             />
+
             <div className="absolute bottom-5 left-5 bg-black/50 p-2 rounded text-white">
               <h3 className="text-lg font-semibold">{slider.title}</h3>
               {slider.description && (

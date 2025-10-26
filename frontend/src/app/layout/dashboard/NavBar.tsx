@@ -96,12 +96,13 @@ const AppNavbar = ({ onToggleSidebar, isCollapsed }: AppNavbarProps) => {
           {/* Logo - chỉ hiện khi sidebar chưa collapse */}
           {!isCollapsed && (
             <NavbarBrand href="/">
-              <Image
+              <img
                 src="/images/logo/rectangle-logo.png"
                 alt="Setsail Logo"
-                width={240}
-                height={60}
+                width="240"
+                height="60"
                 className="h-15 w-auto"
+                loading="eager"
               />
             </NavbarBrand>
           )}

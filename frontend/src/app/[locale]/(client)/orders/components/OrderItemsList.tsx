@@ -37,15 +37,14 @@ export default function OrderItemsList({
           >
             <div className="flex gap-2 items-center flex-1 min-w-0">
               <div className="relative w-12 h-12 flex-shrink-0">
-                <Image
+                <img
                   src={
                     variant?.image ||
                     item.book?.images?.[0]?.url ||
                     "/placeholder.jpg"
                   }
                   alt={item.book?.title || "Book"}
-                  fill
-                  className="object-cover rounded border border-gray-700"
+                  className="w-full h-full object-cover rounded border border-gray-700"
                 />
               </div>
 

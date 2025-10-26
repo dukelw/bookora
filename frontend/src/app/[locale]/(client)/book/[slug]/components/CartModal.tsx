@@ -89,11 +89,9 @@ export default function CartModal({
                   onClick={() => toggleVariant(v)}
                 >
                   {/* ảnh */}
-                  <Image
+                  <img
                     src={v.image || "/images/logo/logo.png"}
                     alt={v.rarity}
-                    width={60}
-                    height={60}
                     className="rounded-md object-cover aspect-square w-14 h-14"
                   />
 
