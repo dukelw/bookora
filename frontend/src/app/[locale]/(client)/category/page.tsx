@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Book, Category } from "@/interfaces/Book";
 import { bookService } from "@/services/bookService";
 import BookList from "@/app/components/book/BookList";
 import Pagination from "@/components/pagination/pagination";
 import { categoryService } from "@/services/categoryService";
 import { MAX_LIMIT } from "@/constants";
+import Book from "@/interfaces/Book";
+import Category from "@/interfaces/Category";
 
 export default function CategoryPage() {
   const [books, setBooks] = useState<Book[]>([]);

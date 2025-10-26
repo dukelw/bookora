@@ -1,4 +1,4 @@
-import { Rating } from "@/interfaces/Rating";
+import Rating from "@/interfaces/Rating";
 import { api } from "@/lib/axios";
 import { AxiosResponse } from "axios";
 

@@ -1,4 +1,4 @@
-import { User } from "next-auth";
+import User from "@/models/User";
 
 export default interface Comment {
   _id: string;

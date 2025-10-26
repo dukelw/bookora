@@ -33,10 +33,10 @@ const UserDropdown = () => {
     >
       {!user ? (
         <>
-          <DropdownItem onClick={() => router.push("/signIn")}>
+          <DropdownItem onClick={() => router.push("/signin")}>
             {t("signIn")}
           </DropdownItem>
-          <DropdownItem onClick={() => router.push("/signUp")}>
+          <DropdownItem onClick={() => router.push("/signup")}>
             {t("signUp")}
           </DropdownItem>
         </>

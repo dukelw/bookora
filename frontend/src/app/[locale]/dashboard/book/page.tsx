@@ -24,13 +24,13 @@ import { formatCurrency } from "@/utils/format";
 import ActionModal from "./components/ActionModal";
 import { bookService } from "@/services/bookService";
 import { categoryService } from "@/services/categoryService";
-import { Book } from "@/interfaces/Book";
 import { toast } from "react-toastify";
 import BaseTable, { Column } from "@/components/table/BaseTable";
 import Pagination from "@/components/pagination/pagination";
 import ConfirmModal from "@/app/components/ui/modal/ConfirmModal";
 import { useTranslations } from "use-intl";
 import StockDetailModal from "./components/StockDetailModal";
+import Book from "@/interfaces/Book";
 
 export default function BookManagementPage() {
   const t = useTranslations("dashboard");

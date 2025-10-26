@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Book } from "@/interfaces/Book";
+import Book from "@/interfaces/Book";
 import { bookService } from "@/services/bookService";
 import { formatCurrency } from "@/utils/format";
 import { Button, Breadcrumb, BreadcrumbItem, HomeIcon } from "flowbite-react";

@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: bookora-mongo
+    restart: always
+    ports:
+      - "27018:27017" 
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - bookora-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: bookora-redis
+    restart: always
+    ports:
+      - "6380:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    networks:
+      - bookora-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bookora-backend
+    restart: always
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./backend/.env.pro
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/bookora  # ✅ fix ở đây
+      REDIS_HOST: redis
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - bookora-network
+
+  mail-service:
+    build:
+      context: ./mail-service
+      dockerfile: Dockerfile
+    container_name: mail-service
+    restart: always
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./mail-service/.env.pro
+    environment:
+      REDIS_HOST: redis
+    depends_on:
+      - redis
+    networks:
+      - bookora-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bookora-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env.pro
+    depends_on:
+      - backend
+    networks:
+      - bookora-network
+
+networks:
+  bookora-network:
+    driver: bridge
+
+volumes:
+  mongo_data:

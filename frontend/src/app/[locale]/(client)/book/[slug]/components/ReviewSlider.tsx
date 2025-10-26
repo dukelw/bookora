@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Rating } from "@/interfaces/Rating";
 import { ratingService } from "@/services/ratingService";
 import { FALLBACK_BOOK } from "@/constants";
 import { useSocket } from "@/app/hooks/useSocket";
 import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { Rating } from "@/interfaces/Rating";
 
 export default function ReviewSlider({ bookId }: { bookId: string }) {
   const [reviews, setReviews] = useState<Rating[]>([]);

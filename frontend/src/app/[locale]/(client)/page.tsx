@@ -5,9 +5,9 @@ import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 import { useTranslations } from "use-intl";
 import { useEffect, useState } from "react";
-import { Book } from "@/interfaces/Book";
 import { bookService } from "@/services/bookService";
 import BookList from "@/app/components/book/BookList";
+import Book from "@/interfaces/Book";
 
 export default function HomePage() {
   const [books, setBooks] = useState<Book[]>([]);

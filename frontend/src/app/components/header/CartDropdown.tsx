@@ -6,7 +6,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useRef } from "react";
 import { FaTrash } from "react-icons/fa";
 import { formatCurrency } from "@/utils/format";
-import { Cart } from "@/interfaces/Cart";
+import Cart from "@/interfaces/Cart";
 import { cartService } from "@/services/cartService";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "react-toastify";

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Cart } from "@/interfaces/Cart";
+import Cart from "@/interfaces/Cart";
 
 type CartState = {
   cart: Cart | null;

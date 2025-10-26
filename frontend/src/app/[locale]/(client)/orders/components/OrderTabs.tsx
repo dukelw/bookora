@@ -5,10 +5,10 @@ import { Tabs, TabItem } from "flowbite-react";
 import { orderService } from "@/services/orderService";
 import OrderCard from "./OrderCard";
 import { STATUS_MAP } from "@/constants";
-import { Order } from "@/interfaces/Order";
 import { useAuthStore } from "@/store/authStore";
 import { eventBus } from "@/utils/eventBus";
 import { useLocale, useTranslations } from "use-intl";
+import { Order } from "@/interfaces/Order";
 
 export default function OrderTabs() {
   const [orders, setOrders] = useState<Order[]>([]);

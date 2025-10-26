@@ -1,4 +1,4 @@
-export interface Rating {
+export default interface Rating {
   _id: string;
   book: string;
   user: {

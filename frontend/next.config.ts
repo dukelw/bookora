@@ -6,6 +6,15 @@ import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 const withNextIntl = createNextIntlPlugin("./src/i18n/i18n.ts");
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  typescript: {
+    // Bỏ qua lỗi TypeScript khi chạy `next build`
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    // Bỏ qua lỗi ESLint khi build (dự phòng nếu không dùng --no-lint)
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { FaShoppingCart } from "react-icons/fa";
 import Image from "next/image";
-import { BookVariant } from "@/interfaces/Book";
+import BookVariant from "@/interfaces/BookVariant";
 
 type Props = {
   bookId: string;

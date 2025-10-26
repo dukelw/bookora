@@ -3,7 +3,7 @@ import {
   ChevronRight,
   Plus,
   X,
-  Book,
+  Book as BookIcon,
   Package,
   Upload,
   Check,
@@ -11,12 +11,6 @@ import {
 import { categoryService } from "@/services/categoryService";
 import { bookVariantService } from "@/services/bookVariantService";
 import { bookService } from "@/services/bookService";
-import {
-  BookImage,
-  Book as BookInterface,
-  BookVariant,
-  Category,
-} from "@/interfaces/Book";
 import { Modal, ModalHeader } from "flowbite-react";
 import { uploadService } from "@/services/uploadService";
 import { toast } from "react-toastify";
@@ -24,13 +18,16 @@ import Image from "next/image";
 import MultiSelect from "@/components/MultiSelect";
 import { formatCurrency } from "@/utils/format";
 import { useTranslations } from "use-intl";
+import Category from "@/interfaces/Category";
+import Book from "@/interfaces/Book";
+import BookVariant from "@/interfaces/BookVariant";
 
 interface BookModalProps {
   mode?: "create" | "edit" | "detail";
   variantMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  defaultValues?: Partial<BookInterface>;
+  defaultValues?: Partial<Book>;
 }
 
 export default function BookCreationForm({
@@ -237,7 +234,9 @@ export default function BookCreationForm({
 
     setLoading(true);
     try {
-      await Promise.all(variants.map(v => bookVariantService.addVariant(createdBookId, v)));
+      await Promise.all(
+        variants.map((v) => bookVariantService.addVariant(createdBookId, v))
+      );
       toast.success(t("p.createVariantSuccess"));
       onClose(); // <-- tắt modal
     } catch (error) {
@@ -255,32 +254,44 @@ export default function BookCreationForm({
   };
 
   const getModalHeader = () => {
-    if(step === 1) {
-      return variantMode ? t("p.editBook") : 
-            mode === "create" ? t("p.createBook") :
-            mode === "edit" ? t("p.editBook") :
-            t("p.detailBook");
+    if (step === 1) {
+      return variantMode
+        ? t("p.editBook")
+        : mode === "create"
+        ? t("p.createBook")
+        : mode === "edit"
+        ? t("p.editBook")
+        : t("p.detailBook");
     }
-    if(step === 2) {
-      return variantMode ? t("p.editVariant") : 
-            mode === "create" ? t("p.createVariant") :
-            mode === "edit" ? t("p.editVariant") :
-            t("p.detailVariant");
+    if (step === 2) {
+      return variantMode
+        ? t("p.editVariant")
+        : mode === "create"
+        ? t("p.createVariant")
+        : mode === "edit"
+        ? t("p.editVariant")
+        : t("p.detailVariant");
     }
   };
 
   const getStepLabe = (stepNumber: 1 | 2) => {
-    if(stepNumber === 1) {
-      return variantMode ? t("p.editBook") : 
-            mode === "create" ? t("p.createBook") :
-            mode === "edit" ? t("p.editBook") :
-            t("p.detailBook");
+    if (stepNumber === 1) {
+      return variantMode
+        ? t("p.editBook")
+        : mode === "create"
+        ? t("p.createBook")
+        : mode === "edit"
+        ? t("p.editBook")
+        : t("p.detailBook");
     }
-    if(stepNumber === 2) {
-      return variantMode ? t("p.editVariant") : 
-            mode === "create" ? t("p.createVariant") :
-            mode === "edit" ? t("p.editVariant") :
-            t("p.detailVariant");
+    if (stepNumber === 2) {
+      return variantMode
+        ? t("p.editVariant")
+        : mode === "create"
+        ? t("p.createVariant")
+        : mode === "edit"
+        ? t("p.editVariant")
+        : t("p.detailVariant");
     }
     return "";
   };
@@ -301,7 +312,7 @@ export default function BookCreationForm({
                 step >= 1 ? "bg-blue-600 text-white" : "bg-gray-200"
               }`}
             >
-              {step > 1 ? <Check size={16} /> : <Book size={16} />}
+              {step > 1 ? <Check size={16} /> : <BookIcon size={16} />}
             </div>
             <span className="ml-2 font-medium">{getStepLabe(1)}</span>
           </div>
@@ -475,7 +486,7 @@ export default function BookCreationForm({
                             className="w-full h-full object-cover rounded border"
                             fill
                           />
-                          {!isDetail && ( 
+                          {!isDetail && (
                             <button
                               type="button"
                               onClick={() => removeImage(idx)}
@@ -523,7 +534,10 @@ export default function BookCreationForm({
             {/* Variant Input Form */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="text-lg font-medium mb-5">{t("p.addVariant")}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6" onKeyDown={handleKeyPress}>
+              <div
+                className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                onKeyDown={handleKeyPress}
+              >
                 <div>
                   <label className="block text-md font-medium text-gray-700 mb-2">
                     {t("p.rarity")} *
@@ -617,14 +631,16 @@ export default function BookCreationForm({
                 </div>
               </div>
 
-              {!isDetail && <button
-                type="button"
-                onClick={addVariantToList}
-                className="mt-8 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center"
-              >
-                <Plus size={20} className="mr-3" />
-                {t("p.addToList")}
-              </button>}
+              {!isDetail && (
+                <button
+                  type="button"
+                  onClick={addVariantToList}
+                  className="mt-8 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center"
+                >
+                  <Plus size={20} className="mr-3" />
+                  {t("p.addToList")}
+                </button>
+              )}
             </div>
 
             {/* Variants List */}
@@ -661,7 +677,9 @@ export default function BookCreationForm({
                         {formatCurrency(variant.price)}
                       </span>
                       <span className="mx-2">•</span>
-                      <span>{t("p.stock")} {variant.stock}</span>
+                      <span>
+                        {t("p.stock")} {variant.stock}
+                      </span>
                       {variant.isbn && (
                         <>
                           <span className="mx-2">•</span>
@@ -671,12 +689,14 @@ export default function BookCreationForm({
                         </>
                       )}
                     </div>
-                    {!isDetail && <button
-                      onClick={() => removeVariant(index)}
-                      className="p-1 text-red-600 hover:bg-red-100 rounded"
-                    >
-                      <X size={16} />
-                    </button>}
+                    {!isDetail && (
+                      <button
+                        onClick={() => removeVariant(index)}
+                        className="p-1 text-red-600 hover:bg-red-100 rounded"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
                   </div>
                 ))
               )}
@@ -690,8 +710,9 @@ export default function BookCreationForm({
                   type="button"
                   onClick={() => setStep(1)}
                   disabled={variantMode}
-                  className="px-6 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50">
-                    {t("back")}
+                  className="px-6 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50"
+                >
+                  {t("back")}
                 </button>
                 <button
                   type="button"

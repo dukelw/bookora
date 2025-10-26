@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Category } from "@/interfaces/Book";
+import Category from "@/interfaces/Category";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -16,7 +16,8 @@ export const useCategoryStore = create<CategoryState>()(
     (set) => ({
       category: null,
       categoryId: null,
-      setCategory: (category, categoryId) => set({ category, categoryId: categoryId || category._id }),
+      setCategory: (category, categoryId) =>
+        set({ category, categoryId: categoryId || category._id }),
       setCategoryId: (categoryId) => set({ categoryId }),
       clearCategory: () => set({ category: null, categoryId: null }),
     }),
