@@ -90,10 +90,14 @@ export default function BookList({ books, title }: BookListProps) {
                 ))}
               </div>
             </div>
-            <p className="text-sm text-gray-600 px-4 pb-4 text-right">
-              {t("sold")}:{" "}
-              <span className="font-semibold text-orange-600">{book.sold}</span>
-            </p>
+            {book.sold && (
+              <p className="text-sm text-gray-600 px-4 pb-4 text-right">
+                {t("sold")}:{" "}
+                <span className="font-semibold text-orange-600">
+                  {book.sold}
+                </span>
+              </p>
+            )}
           </div>
         ))}
       </div>
