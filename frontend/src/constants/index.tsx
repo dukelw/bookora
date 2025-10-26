@@ -40,6 +40,7 @@ export const DASHBOARD_SIDEBAR_ITEMS: SidebarItem[] = [
   { label: "userManagement", path: "/dashboard/user" },
   { label: "orderManagement", path: "/dashboard/order" },
   { label: "discountManagement", path: "/dashboard/discount" },
+  { label: "sliderCollectionManagement", path: "/dashboard/collection" },
   { label: "footerImageManagement", path: "/dashboard/footer-image" },
 ];
 

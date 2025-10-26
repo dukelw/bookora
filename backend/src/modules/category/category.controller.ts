@@ -58,7 +58,7 @@ export class CategoryController {
   async findAll(
     @Query('keySearch') keySearch?: string,
     @Query('pageNum') pageNum = 1,
-    @Query('pageSize') pageSize = 10,
+    @Query('pageSize') pageSize = 100000,
   ) {
     return this.categoryService.findAll(keySearch, +pageNum, +pageSize);
   }

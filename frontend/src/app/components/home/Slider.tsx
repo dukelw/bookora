@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { Carousel } from "flowbite-react";
-import { useSliderStore } from "@/store/sliderStore";
-import { sliderService } from "@/services/sliderService";
+import { collectionService } from "@/services/collectionService";
 
 interface Slider {
   _id: string;
@@ -19,7 +17,7 @@ export default function SliderCarousel() {
 
   useEffect(() => {
     const handleGetActiveCollection = async () => {
-      const activeCollection = await sliderService.getActiveCollection();
+      const activeCollection = await collectionService.getActiveCollections();
       console.log(activeCollection);
       if (activeCollection) {
         setActiveSliders(activeCollection.sliders);

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import User from "@/interfaces/User";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import User from "~/models/User";
 
 type AuthState = {
   user: User | null;

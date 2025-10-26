@@ -22,8 +22,35 @@ export class SliderCollectionService {
     return collection.save();
   }
 
-  async findAll() {
-    return this.collectionModel.find().populate('sliders').exec();
+  async findAll(searchKey?: string, page = 1, limit = 10) {
+    const filter: any = {};
+
+    if (searchKey) {
+      filter.$or = [
+        { name: { $regex: searchKey, $options: 'i' } }, // tìm theo tên collection
+        { description: { $regex: searchKey, $options: 'i' } }, // nếu có mô tả
+      ];
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.collectionModel
+        .find(filter)
+        .populate('sliders')
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.collectionModel.countDocuments(filter),
+    ]);
+
+    return {
+      items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string) {
@@ -57,9 +84,19 @@ export class SliderCollectionService {
     const collection = await this.collectionModel.findById(id);
     if (!collection) throw new NotFoundException('Collection not found');
 
+    // Nếu bật active = true → tắt active của tất cả collection khác
+    if (active) {
+      await this.collectionModel.updateMany(
+        { _id: { $ne: id } }, // khác id hiện tại
+        { $set: { isActive: false } },
+      );
+    }
+
+    // Cập nhật trạng thái collection hiện tại
     collection.isActive = active;
     await collection.save();
 
+    // Cập nhật tất cả slider trong collection này
     await this.sliderModel.updateMany(
       { _id: { $in: collection.sliders } },
       { isActive: active },

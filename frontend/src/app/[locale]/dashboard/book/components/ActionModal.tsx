@@ -47,6 +47,7 @@ export default function BookCreationForm({
     defaultValues ? defaultValues._id : ""
   );
   const [selected, setSelected] = useState<typeof categories>([]);
+  const [addingVariant, setAddingVariant] = useState(false);
 
   // Step 1 - Book form data
   const [bookData, setBookData] = useState({
@@ -75,7 +76,6 @@ export default function BookCreationForm({
 
   useEffect(() => {
     if (defaultValues && categories.length > 0) {
-      // Map category ids hoặc objects sang object đầy đủ từ categories
       const selectedCategories = (defaultValues.category || [])
         .map((c) => {
           const id = typeof c === "string" ? c : c._id;
@@ -88,7 +88,7 @@ export default function BookCreationForm({
         title: defaultValues.title || "",
         author: defaultValues.author || "",
         publisher: defaultValues.publisher || "",
-        category: selectedCategories, // giữ object đầy đủ, có thể map sang _id khi submit
+        category: selectedCategories,
         description: defaultValues.description || "",
         releaseYear: defaultValues.releaseYear || new Date().getFullYear(),
         images: (defaultValues.images as any) || [],
@@ -186,14 +186,16 @@ export default function BookCreationForm({
       return;
     }
 
+    setAddingVariant(true); // <-- bắt đầu loading
+
     let imageUrl = "";
-    console.log(imageFile);
     if (imageFile) {
       try {
         const res = await uploadService.uploadFile(imageFile);
         imageUrl = res;
       } catch (error) {
         toast.error(t("p.uploadImageFail"));
+        setAddingVariant(false); // <-- dừng loading khi lỗi
         return;
       }
     }
@@ -215,6 +217,7 @@ export default function BookCreationForm({
       image: "",
     });
     setImageFile(null);
+    setAddingVariant(false); // <-- kết thúc loading
   };
 
   const removeVariant = (id: number) => {
@@ -635,10 +638,20 @@ export default function BookCreationForm({
                 <button
                   type="button"
                   onClick={addVariantToList}
+                  disabled={addingVariant}
                   className="mt-8 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center"
                 >
-                  <Plus size={20} className="mr-3" />
-                  {t("p.addToList")}
+                  {addingVariant ? (
+                    <>
+                      <span className="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
+                      {t("processing")}
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={20} className="mr-3" />
+                      {t("p.addToList")}
+                    </>
+                  )}
                 </button>
               )}
             </div>

@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { SliderCollectionService } from './slider-collection.service';
 import { CreateSliderCollectionDto } from './dto/create-slider-collection.dto';
@@ -27,9 +28,14 @@ export class SliderCollectionController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lấy danh sách collection' })
-  findAll() {
-    return this.service.findAll();
+  @ApiOperation({ summary: 'Lấy danh sách bộ sưu tập (có phân trang)' })
+  @ApiResponse({ status: 200, description: 'Danh sách bộ sưu tập trả về' })
+  findAll(
+    @Query('keySearch') searchKey?: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.service.findAll(searchKey, +page, +limit);
   }
 
   @Get('active')

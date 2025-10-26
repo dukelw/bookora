@@ -22,3 +22,8 @@ export enum UserRole {
   CUSTOMER = "customer",
   UNKNOWN = "unknown",  
 }
+
+export enum ActiveAndInactiveStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}

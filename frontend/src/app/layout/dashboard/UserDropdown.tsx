@@ -28,20 +28,20 @@ const UserDropdown = () => {
     >
       {!user ? (
         <>
-          <DropdownItem>
-            <Link href={`/signin`}>{t("signIn")}</Link>
+          <DropdownItem onClick={() => router.push("/signin")}>
+            {t("signIn")}
           </DropdownItem>
-          <DropdownItem>
-            <Link href={`/signup`}>{t("signUp")}</Link>
+          <DropdownItem onClick={() => router.push("/signup")}>
+            {t("signUp")}
           </DropdownItem>
         </>
       ) : (
         <>
-          <DropdownItem>
-            <Link href={`/profile`}>{t("profile")}</Link>
+          <DropdownItem onClick={() => router.push("/profile")}>
+            {t("profile")}
           </DropdownItem>
-          <DropdownItem>
-            <Link href={`/orders`}>{t("orderHistory")}</Link>
+          <DropdownItem onClick={() => router.push("/orders")}>
+            {t("orderHistory")}
           </DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={handleLogout}>{t("logout")}</DropdownItem>
