@@ -34,7 +34,10 @@ export default function BestsellersPage() {
   useEffect(() => {
     const loadFilters = async () => {
       try {
-        const [catRes, bookRes] = await Promise.all([categoryService.getCategories(), bookService.getBooks()]);
+        const [catRes, bookRes] = await Promise.all([
+          categoryService.getCategories(),
+          bookService.getBooks(),
+        ]);
         setCategoryOptions(catRes.items || []);
 
         const authorSet = new Set<string>();
@@ -67,14 +70,30 @@ export default function BestsellersPage() {
       };
 
       const res = await bookService.getBestSellers(params);
-      const mapped = (res.items || []).map((b: any) => ({
-        ...b,
-        category: Array.isArray(b.category) ? b.category : b.category ? [b.category] : [],
-        images: b.mainImage ? [{ url: b.mainImage, isMain: true }] : [],
-      }));
+      const items = res.items || [];
 
-      setBooks(mapped);
-      setTotalItems(res.meta?.count || res.items.length);
+      const enriched = await Promise.all(
+        items.map(async (b: any) => {
+          try {
+            const detail = await bookService.getBook(b._id);
+            return {
+              ...detail,
+              sold: b.sold, // giữ lại số sold từ danh sách gốc
+            };
+          } catch (err) {
+            console.error(`Failed to fetch book ${b._id}`, err);
+            return {
+              ...b,
+              category: [],
+              images: b.mainImage ? [{ url: b.mainImage, isMain: true }] : [],
+            };
+          }
+        })
+      );
+
+      // 3️⃣ Cập nhật state
+      setBooks(enriched);
+      setTotalItems(res.meta?.count || items.length);
       setCurrentPage(page);
     } catch (error) {
       console.error("Failed to fetch bestsellers:", error);
@@ -90,10 +109,14 @@ export default function BestsellersPage() {
       <div className="mx-auto w-full flex items-center justify-between bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl px-6 py-4 shadow-md overflow-hidden mb-6">
         <div className="flex items-center gap-3">
           <div>
-            <h2 className="text-xl font-semibold tracking-wide">{b("bestsellers")}</h2>
+            <h2 className="text-xl font-semibold tracking-wide">
+              {b("bestsellers")}
+            </h2>
             <p className="text-sm text-cyan-100">{b("bestsellerTitle")}</p>
           </div>
-          <span className="px-3 py-1 text-xs font-semibold bg-cyan-100 text-cyan-700 rounded-full">{b("hot")}</span>
+          <span className="px-3 py-1 text-xs font-semibold bg-cyan-100 text-cyan-700 rounded-full">
+            {b("hot")}
+          </span>
         </div>
         <span className="text-sm text-gray-100 italic">{b("lastUpdate")}</span>
       </div>
@@ -161,9 +184,16 @@ export default function BestsellersPage() {
   function FilterInputs({ mobile = false }: { mobile?: boolean }) {
     return (
       <div
-        className={`${ mobile ? "grid grid-cols-2 sm:grid-cols-3 gap-4 w-full" : "flex flex-col gap-4 w-full" }`}>
+        className={`${
+          mobile
+            ? "grid grid-cols-2 sm:grid-cols-3 gap-4 w-full"
+            : "flex flex-col gap-4 w-full"
+        }`}
+      >
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("sort")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("sort")}
+          </label>
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value as "desc" | "asc")}
@@ -174,7 +204,9 @@ export default function BestsellersPage() {
           </select>
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("fromDate")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("fromDate")}
+          </label>
           <input
             type="date"
             value={from}
@@ -183,7 +215,9 @@ export default function BestsellersPage() {
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("toDate")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("toDate")}
+          </label>
           <input
             type="date"
             value={to}
@@ -192,7 +226,9 @@ export default function BestsellersPage() {
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("category")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("category")}
+          </label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -200,12 +236,16 @@ export default function BestsellersPage() {
           >
             <option value="">{b("all")}</option>
             {categoryOptions.map((c) => (
-              <option key={c._id} value={c._id}>{c.name}</option>
+              <option key={c._id} value={c._id}>
+                {c.name}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("author")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("author")}
+          </label>
           <select
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
@@ -213,12 +253,16 @@ export default function BestsellersPage() {
           >
             <option value="">{b("all")}</option>
             {authorOptions.map((a) => (
-              <option key={a} value={a}>{a}</option>
+              <option key={a} value={a}>
+                {a}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("publisher")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("publisher")}
+          </label>
           <select
             value={publisher}
             onChange={(e) => setPublisher(e.target.value)}
@@ -226,7 +270,9 @@ export default function BestsellersPage() {
           >
             <option value="">{b("all")}</option>
             {publisherOptions.map((p) => (
-              <option key={p} value={p}>{p}</option>
+              <option key={p} value={p}>
+                {p}
+              </option>
             ))}
           </select>
         </div>

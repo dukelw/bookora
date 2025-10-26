@@ -13,6 +13,7 @@ import { NewReleasesQueryDto } from './dto/book-newreleases.dto';
 import { Order, OrderStatus } from 'src/schemas/order.schema';
 import { ListBooksQueryDto, BookSort } from './dto/list-books.dto';
 import { AuthorsQueryDto, BooksByAuthorQueryDto } from './dto/author.dto';
+import { buildCategoryInList } from 'src/helpers';
 
 @Injectable()
 export class BookService {
@@ -210,7 +211,9 @@ export class BookService {
     } = q;
 
     const matchOrder: any = {
-      status: { $in: [OrderStatus.PAID, OrderStatus.SHIPPED] },
+      status: {
+        $in: [OrderStatus.PAID, OrderStatus.SHIPPED, OrderStatus.COMPLETED],
+      },
     };
     if (from || to) {
       matchOrder.createdAt = {};
@@ -243,8 +246,10 @@ export class BookService {
 
     // filter theo category/author/publisher nếu có
     const bookMatch: any = {};
-    if (category && mongoose.Types.ObjectId.isValid(category)) {
-      bookMatch['book.category'] = new mongoose.Types.ObjectId(category);
+
+    if (category) {
+      const inList = buildCategoryInList(category);
+      bookMatch['book.category'] = { $in: inList };
     }
     if (author) bookMatch['book.author'] = author;
     if (publisher) bookMatch['book.publisher'] = publisher;
@@ -320,9 +325,12 @@ export class BookService {
 
     const filter: any = {};
     if (start) filter.createdAt = { $gte: start };
-    if (category && mongoose.Types.ObjectId.isValid(category)) {
-      filter.category = new mongoose.Types.ObjectId(category);
+
+    if (category) {
+      const inList = buildCategoryInList(category);
+      filter.category = { $in: inList };
     }
+
     if (author) filter.author = author;
     if (publisher) filter.publisher = publisher;
 

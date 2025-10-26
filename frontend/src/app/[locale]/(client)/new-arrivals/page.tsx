@@ -18,7 +18,13 @@ export default function NewArrivalsPage() {
   const [limit, setLimit] = useState(12);
 
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
-  const [from, setFrom] = useState("");
+  const [from, setFrom] = useState(() => {
+    const today = new Date();
+    const oneMonthAgo = new Date(today);
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+    return oneMonthAgo.toISOString().split("T")[0]; 
+  });
+
   const [days, setDays] = useState(30);
 
   const [category, setCategory] = useState<string>("");
@@ -34,7 +40,10 @@ export default function NewArrivalsPage() {
   useEffect(() => {
     const loadFilters = async () => {
       try {
-        const [catRes, bookRes] = await Promise.all([categoryService.getCategories(), bookService.getBooks()]);
+        const [catRes, bookRes] = await Promise.all([
+          categoryService.getCategories(),
+          bookService.getBooks(),
+        ]);
         setCategoryOptions(catRes.items || []);
 
         const authorSet = new Set<string>();
@@ -67,11 +76,16 @@ export default function NewArrivalsPage() {
       };
 
       const res = await bookService.getNewReleases(params);
-      const sortedItems = sortOrder === "oldest" ? [...res.items].reverse() : res.items;
+      const sortedItems =
+        sortOrder === "oldest" ? [...res.items].reverse() : res.items;
       const mapped = sortedItems.map((b: any) => {
         return {
           ...b,
-          category: Array.isArray(b.category) ? b.category : b.category ? [b.category] : [],
+          category: Array.isArray(b.category)
+            ? b.category
+            : b.category
+            ? [b.category]
+            : [],
           images: b.mainImage ? [{ url: b.mainImage, isMain: true }] : [],
         };
       });
@@ -93,10 +107,14 @@ export default function NewArrivalsPage() {
       <div className="mx-auto w-full flex items-center justify-between bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl px-6 py-4 shadow-md overflow-hidden mb-6">
         <div className="flex items-center gap-3">
           <div>
-            <h2 className="text-xl font-semibold tracking-wide">{b("newArrivals")}</h2>
+            <h2 className="text-xl font-semibold tracking-wide">
+              {b("newArrivals")}
+            </h2>
             <p className="text-sm text-cyan-100">{b("title")}</p>
           </div>
-          <span className="px-3 py-1 text-xs font-semibold bg-cyan-100 text-cyan-700 rounded-full">{b("new")}</span>
+          <span className="px-3 py-1 text-xs font-semibold bg-cyan-100 text-cyan-700 rounded-full">
+            {b("new")}
+          </span>
         </div>
         <span className="text-sm text-gray-100 italic">{b("lastUpdate")}</span>
       </div>
@@ -163,9 +181,17 @@ export default function NewArrivalsPage() {
 
   function FilterInputs({ mobile = false }: { mobile?: boolean }) {
     return (
-      <div className={`${ mobile ? "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full" : "flex flex-col gap-4 w-full" }`} >
+      <div
+        className={`${
+          mobile
+            ? "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
+            : "flex flex-col gap-4 w-full"
+        }`}
+      >
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("sort")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("sort")}
+          </label>
           <select
             value={sortOrder}
             onChange={(e) =>
@@ -178,7 +204,9 @@ export default function NewArrivalsPage() {
           </select>
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("fromDate")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("fromDate")}
+          </label>
           <input
             type="date"
             value={from}
@@ -187,7 +215,9 @@ export default function NewArrivalsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("daysRange")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("daysRange")}
+          </label>
           <input
             type="number"
             value={days}
@@ -196,7 +226,9 @@ export default function NewArrivalsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("category")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("category")}
+          </label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -204,12 +236,16 @@ export default function NewArrivalsPage() {
           >
             <option value="">{b("all")}</option>
             {categoryOptions.map((c) => (
-              <option key={c._id} value={c._id}>{c.name}</option>
+              <option key={c._id} value={c._id}>
+                {c.name}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("author")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("author")}
+          </label>
           <select
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
@@ -217,12 +253,16 @@ export default function NewArrivalsPage() {
           >
             <option value="">{b("all")}</option>
             {authorOptions.map((a) => (
-              <option key={a} value={a}>{a}</option>
+              <option key={a} value={a}>
+                {a}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm text-gray-600 mb-1">{b("publisher")}</label>
+          <label className="block text-sm text-gray-600 mb-1">
+            {b("publisher")}
+          </label>
           <select
             value={publisher}
             onChange={(e) => setPublisher(e.target.value)}
@@ -230,7 +270,9 @@ export default function NewArrivalsPage() {
           >
             <option value="">{b("all")}</option>
             {publisherOptions.map((p) => (
-              <option key={p} value={p}>{p}</option>
+              <option key={p} value={p}>
+                {p}
+              </option>
             ))}
           </select>
         </div>

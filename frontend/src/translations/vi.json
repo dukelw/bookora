@@ -5,6 +5,7 @@
     "typeToSearch": "Nhập để tìm kiếm ..."
   },
   "user": {
+    "phone": "Số điện thoại",
     "loginRequired": "Bạn cần đăng nhập để truy cập trang này.",
     "info": "Thông tin cá nhân",
     "changePassword": "Đổi mật khẩu",
@@ -146,6 +147,7 @@
     "placeholderMessage": "Nhập nội dung bạn cần gửi"
   },
   "cart": {
+    "noValidVoucher": "Mã voucher không hợp lệ.",
     "processingOrder": "Đang xử lý đơn hàng...",
     "loadError": "Không thể tải giỏ hàng. Vui lòng thử lại.",
     "updateError": "Có lỗi xảy ra khi cập nhật giỏ hàng.",
@@ -222,6 +224,9 @@
     "followOrder": "Xem đơn hàng của tôi"
   },
   "book": {
+    "noBooks": "Không có sách nào",
+    "noImage": "Không có ảnh",
+    "sold": "Đã bán",
     "newArrivals": "Sách Mới Phát Hành",
     "title": "Khám phá những tựa sách mới nhất",
     "new": "Mới ra mắt",

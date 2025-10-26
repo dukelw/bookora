@@ -40,6 +40,7 @@
     "note": "Note"
   },
   "user": {
+    "phone": "Phone Number",
     "loginRequired": "You must be logged in to access this page.",
     "info": "Personal Information",
     "changePassword": "Change Password",
@@ -181,6 +182,7 @@
     "placeholderMessage": "Enter the content you want to send"
   },
   "cart": {
+    "noValidVoucher": "Invalid voucher code.",
     "processingOrder": "Processing your order...",
     "loadError": "Unable to load cart. Please try again.",
     "updateError": "Failed to update cart.",
@@ -222,6 +224,9 @@
     "followOrder": "View my orders"
   },
   "book": {
+    "noBooks": "No books available",
+    "noImage": "No Image",
+    "sold": "Sold",
     "newArrivals": "Newly Released Books",
     "title": "Explore newly updated books",
     "new": "New launched",

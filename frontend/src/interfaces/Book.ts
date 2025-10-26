@@ -16,5 +16,6 @@ export default interface Book {
   variants?: any[];
   createdAt?: string;
   updatedAt?: string;
+  sold?: number;
   __v?: number;
 }

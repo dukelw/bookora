@@ -77,7 +77,10 @@ export class BookController {
 
   @Get('authors/:author')
   @ApiOperation({ summary: 'Lấy sách theo tên tác giả (case-insensitive)' })
-  getBooksByAuthor(@Param('author') author: string, @Query() q: BooksByAuthorQueryDto) {
+  getBooksByAuthor(
+    @Param('author') author: string,
+    @Query() q: BooksByAuthorQueryDto,
+  ) {
     // author có thể chứa dấu/space → FE nhớ encodeURIComponent khi gọi
     return this.bookService.getBooksByAuthor(author, q);
   }

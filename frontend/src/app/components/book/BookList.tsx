@@ -3,9 +3,10 @@
 import React from "react";
 import Image from "next/image";
 import { FaShoppingCart } from "react-icons/fa";
-import { Book } from "@/interfaces/Book";
 import { useRouter } from "next/navigation";
 import { useBookStore } from "@/store/bookStore";
+import Book from "@/interfaces/Book";
+import { useTranslations } from "use-intl";
 
 interface BookListProps {
   books: Book[];
@@ -15,8 +16,9 @@ interface BookListProps {
 export default function BookList({ books, title }: BookListProps) {
   const router = useRouter();
   const { setBookId } = useBookStore();
+  const t = useTranslations("book");
   if (!books || books.length === 0) {
-    return <p className="text-center text-gray-500">No books available</p>;
+    return <p className="text-center text-gray-500">{t("noBooks")}</p>;
   }
 
   const handleGoToDetail = async (book: Book) => {
@@ -55,7 +57,7 @@ export default function BookList({ books, title }: BookListProps) {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-400">
-                  No Image
+                  {t("noImage")}
                 </div>
               )}
 
@@ -89,6 +91,10 @@ export default function BookList({ books, title }: BookListProps) {
                 ))}
               </div>
             </div>
+            <p className="text-sm text-gray-600 px-4 pb-4 text-right">
+              {t("sold")}:{" "}
+              <span className="font-semibold text-orange-600">{book.sold}</span>
+            </p>
           </div>
         ))}
       </div>
