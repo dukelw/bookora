@@ -1,40 +1,22 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { Injectable } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
+import bull from 'bull';
 import { SendMailDto } from './dto/send-mail.dto';
 
 @Injectable()
 export class MailService {
-  private transporter;
-
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  }
+  constructor(@InjectQueue('mail') private readonly mailQueue: bull.Queue) {}
 
   async sendMail(dto: SendMailDto) {
-    try {
-      const greeting = dto.name ? `Gửi anh/chị ${dto.name},<br><br>` : '';
+    // Producer: đẩy job sang mail-service
+    const job = await this.mailQueue.add('send', dto, {
+      attempts: 5,
+      backoff: { type: 'exponential', delay: 5000 },
+      removeOnComplete: true,
+      removeOnFail: false,
+      timeout: 30_000,
+    });
 
-      const mailOptions = {
-        from: `"Bookora Store" <${process.env.SMTP_FROM}>`,
-        to: dto.to,
-        subject: dto.subject,
-        html: `${greeting}${dto.content}`,
-      };
-
-      const info = await this.transporter.sendMail(mailOptions);
-      return { message: 'Mail sent successfully', info };
-    } catch (err) {
-      throw new InternalServerErrorException(
-        'Failed to send email: ' + err.message,
-      );
-    }
+    return { enqueued: true, jobId: job.id };
   }
 }
