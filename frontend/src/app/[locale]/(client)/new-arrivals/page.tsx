@@ -21,8 +21,8 @@ export default function NewArrivalsPage() {
   const [from, setFrom] = useState(() => {
     const today = new Date();
     const oneMonthAgo = new Date(today);
-    oneMonthAgo.setMonth(today.getMonth() - 1);
-    return oneMonthAgo.toISOString().split("T")[0]; 
+    oneMonthAgo.setMonth(today.getMonth() - 2);
+    return oneMonthAgo.toISOString().split("T")[0];
   });
 
   const [days, setDays] = useState(30);
