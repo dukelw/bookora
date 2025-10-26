@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { RatingModule } from './modules/rating/rating.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './modules/upload/cloudinary/cloudinary.module';
 import { MongoDBModule } from './modules/databases/mongodb/mongodb.module';
@@ -23,10 +23,27 @@ import { AddressModule } from './modules/address/address.module';
 import { ReviewRequestModule } from './modules/review-request/review-request.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        redis: {
+          host: config.get('REDIS_HOST') || '127.0.0.1',
+          port: parseInt(config.get('REDIS_PORT') || '6379', 10),
+          password: config.get('REDIS_PASSWORD') || undefined,
+        },
+        prefix: config.get('BULL_PREFIX') || 'queues',
+        defaultJobOptions: {
+          removeOnComplete: 1000,
+          removeOnFail: 1000,
+        },
+      }),
+      inject: [ConfigService],
+    }),
     MongoDBModule,
     UserModule,
     AuthModule,

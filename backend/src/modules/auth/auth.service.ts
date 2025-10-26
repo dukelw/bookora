@@ -153,20 +153,6 @@ export class AuthService {
     return otp;
   }
 
-  private getTransporter() {
-    const host = this.configService.get('SMTP_HOST');
-    const port = parseInt(this.configService.get('SMTP_PORT') || '587', 10);
-    const user = this.configService.get('SMTP_USER');
-    const pass = this.configService.get('SMTP_PASS');
-
-    return nodemailer.createTransport({
-      host,
-      port,
-      secure: false,
-      auth: { user, pass },
-    });
-  }
-
   async sendResetOtp(email: string) {
     const user = await this.userModel.findOne({ email });
     if (!user) {
@@ -182,19 +168,15 @@ export class AuthService {
 
     await user.save();
 
-    try {
-      const transporter = this.getTransporter();
-      await transporter.sendMail({
-        from: this.configService.get('SMTP_FROM') || 'no-reply@example.com',
-        to: email,
-        subject: 'OTP khôi phục mật khẩu',
-        text: `Mã OTP của bạn là ${otp}. Mã sẽ hết hạn sau 10 phút.`,
-        html: `<p>Mã OTP của bạn là <b>${otp}</b>. Mã sẽ hết hạn sau 10 phút.</p>`,
-      });
-      console.log('>>> Sending mail to', email);
-    } catch (err) {
-      console.error('Mail send error', err);
-    }
+    const mailDto: SendMailDto = {
+      to: email,
+      subject: 'OTP khôi phục mật khẩu',
+      content: `<p>Mã OTP của bạn là <b>${otp}</b>. Mã sẽ hết hạn sau 10 phút.</p>`,
+    };
+
+    // Đẩy job sang mail-service
+    await this.mailService.sendMail(mailDto);
+
     return true;
   }
 
@@ -285,8 +267,6 @@ export class AuthService {
     let user = await this.userModel.findOne({ email });
     let createdNew = false;
     let plainPassword = '';
-
-    // Trong registerFromCheckout: khi tạo user mới thì gán addresses và shippingAddress
 
     if (!user) {
       plainPassword = randomBytes(8).toString('hex');
