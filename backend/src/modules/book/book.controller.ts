@@ -45,7 +45,7 @@ export class BookController {
     return this.bookService.findAll(searchKey, +page, +limit);
   }
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Lấy danh sách theo filter (có phân trang)' })
   getBooks(@Query() q: ListBooksQueryDto) {
     return this.bookService.list(q);

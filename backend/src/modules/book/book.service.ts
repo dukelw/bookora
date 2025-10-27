@@ -446,29 +446,38 @@ export class BookService {
     const [docs, total] = await Promise.all([
       this.bookModel
         .find(filter)
+        .populate('category', '_id name') // ✅ thêm populate category
         .sort({ createdAt: -1, title: 1 })
         .skip(skip)
         .limit(Math.min(limit, 50))
         .lean()
-        .collation({ locale: 'vi', strength: 1 }) // sort tên chuẩn Tiếng Việt
+        .collation({ locale: 'vi', strength: 1 })
         .exec(),
       this.bookModel.countDocuments(filter),
     ]);
 
-    const items = docs.map((b: any) => ({
-      _id: b._id,
-      title: b.title,
-      slug: b.slug,
-      author: b.author,
-      publisher: b.publisher,
-      price: b.price,
-      releaseYear: b.releaseYear,
-      mainImage:
-        (b.images || []).find((i: any) => i.isMain)?.url ||
-        b.images?.[0]?.url ||
-        null,
-      createdAt: b.createdAt,
-    }));
+    const items = docs.map((b: any) => {
+      const main =
+        (b.images || []).find((i: any) => i.isMain)?.url || b.images?.[0]?.url;
+
+      return {
+        _id: b._id,
+        title: b.title,
+        slug: b.slug,
+        author: b.author,
+        publisher: b.publisher,
+        price: b.price,
+        releaseYear: b.releaseYear,
+        mainImage: main || null,
+        images: Array.isArray(b.images) ? b.images : [], // ✅ thêm images
+        category: Array.isArray(b.category)
+          ? b.category.map((c: any) => ({ _id: c._id, name: c.name }))
+          : b.category
+          ? [{ _id: b.category._id, name: b.category.name }]
+          : [], // ✅ thêm category
+        createdAt: b.createdAt,
+      };
+    });
 
     return {
       items,
