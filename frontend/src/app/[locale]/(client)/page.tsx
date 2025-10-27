@@ -1,40 +1,33 @@
 "use client";
 
+import React from "react";
 import SliderCarousel from "@/app/components/home/Slider";
-import { useAuthStore } from "@/store/authStore";
-import Image from "next/image";
 import { useTranslations } from "use-intl";
-import { useEffect, useState } from "react";
-import { bookService } from "@/services/bookService";
-import BookList from "@/app/components/book/BookList";
-import Book from "@/interfaces/Book";
+import NewArrivalsPage from "./new-arrivals/page";
+import BestsellersPage from "./bestsellers/page";
+import CategoryPage from "./category/page";
 
 export default function HomePage() {
-  const [books, setBooks] = useState<Book[]>([]);
-  const { user } = useAuthStore();
   const t = useTranslations("home");
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      const res = await bookService.getBooks();
-      setBooks(res.items || []);
-    };
-    fetchBooks();
-  }, []);
-
   return (
-    <div className="p-6 flex flex-col items-center justify-center min-h-[70vh]">
+    <div className="p-6 flex flex-col items-center min-h-[70vh]">
       {/* Slider nằm ngoài shadow */}
-      <div className="w-full mb-6">
+      <div className="w-full mb-10">
         <SliderCarousel />
       </div>
 
-      {/* Các BookList nằm trong khung shadow */}
-      <div className="flex flex-col items-center justify-center w-full">
-        <div className="rounded-xl shadow-lg p-10 w-full">
-          <BookList title="New Products" books={books} />
-          <BookList title="Best Seller" books={books} />
-          <BookList title="Recommend" books={books} />
+      <div className="flex flex-col w-full gap-16">
+        <div className="rounded-2xl shadow-xl">
+          <NewArrivalsPage />
+        </div>
+
+        <div className="rounded-2xl shadow-xl">
+          <BestsellersPage />
+        </div>
+
+        <div className="rounded-2xl shadow-xl">
+          <CategoryPage />
         </div>
       </div>
     </div>

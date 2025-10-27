@@ -50,6 +50,7 @@ const AppNavbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [keyword, setKeyword] = useState("");
 
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
@@ -216,8 +217,12 @@ const AppNavbar = () => {
       </Navbar>
 
       {/* Search modal */}
-      <SearchModal isOpen={isSearchOpen} onClose={toggleSearch} />
-
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={toggleSearch}
+        keyword={keyword}
+        setKeyword={setKeyword}
+      />
       {/* Menu drawer */}
       <MenuDrawer
         isOpen={isDrawerOpen}

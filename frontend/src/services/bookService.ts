@@ -41,12 +41,12 @@ export const bookService = {
     return res.data;
   },
 
-  async getBestSellers(params?: { limit?: number; from?: string; to?: string; category?: string; author?: string; publisher?: string; }) {
+  async getBestSellers(params?: { page?: number; limit?: number; from?: string; to?: string; category?: string; author?: string; publisher?: string; }) {
     const res: AxiosResponse = await api.get(`${API_URL}/best-sellers`, {params});
     return res.data;
   },
 
-  async getNewReleases(params?: { limit?: number; from?: string; days?: number; category?: string; author?: string; publisher?: string; }) {
+  async getNewReleases(params?: { page?: number; limit?: number; from?: string; days?: number; category?: string; author?: string; publisher?: string; }) {
     const res: AxiosResponse = await api.get(`${API_URL}/new-releases`, {params});
     return res.data;
   },
