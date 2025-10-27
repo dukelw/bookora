@@ -589,5 +589,12 @@
     "fetchFailed": "Failed to load comments",
     "fetchReplyFailed": "Failed to load replies",
     "reply": "Reply"
+  },
+  "authors": {
+    "fetchAuthorFailed": "Could not load the list of authors.",
+    "fetchBook": "Could not load the list of books.",
+    "placeholderSearch": "Search by author name...",
+    "title": "Books by",
+    "all": "All"
   }
 }

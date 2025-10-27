@@ -590,5 +590,12 @@
     "fetchFailed": "Không thể tải bình luận",
     "fetchReplyFailed": "Không thể tải trả lời",
     "reply": "Trả lời"
+  },
+  "authors": {
+    "fetchAuthorFailed": "Không thể tải danh sách tác giả.",
+    "fetchBook": "Không thể tải danh sách sách.",
+    "placeholderSearch": "Tìm theo tên tác giả...",
+    "title": "Sách của",
+    "all": "Tất cả"
   }
 }
