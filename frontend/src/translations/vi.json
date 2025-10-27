@@ -4,6 +4,16 @@
     "welcomeBack": "Chào mừng trở lại",
     "typeToSearch": "Nhập để tìm kiếm ..."
   },
+  "rating": {
+    "fetchError": "Không thể tải đánh giá",
+    "loading": "Đang tải...",
+    "variant": "Biến thể",
+    "unknown": "Không rõ",
+    "price": "Giá",
+    "star": "sao",
+    "noComment": "Chưa có bình luận nào",
+    "noRating": "Bạn chưa đánh giá biến thể này"
+  },
   "user": {
     "phone": "Số điện thoại",
     "loginRequired": "Bạn cần đăng nhập để truy cập trang này.",

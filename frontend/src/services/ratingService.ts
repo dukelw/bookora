@@ -47,6 +47,25 @@ export const ratingService = {
     }
   },
 
+  // 🧍‍♀️ Lấy đánh giá của user hiện tại cho 1 biến thể cụ thể
+  async getUserRating(
+    bookId: string,
+    variantId: string
+  ): Promise<Rating | null> {
+    try {
+      const res: AxiosResponse<Rating> = await api.get(
+        `${API_URL}/${bookId}/variant/${variantId}/me`
+      );
+      return res.data;
+    } catch (error: any) {
+      if (error?.response?.status === 404) return null;
+      throw new Error(
+        error?.response?.data?.message ||
+          "Không thể lấy đánh giá của bạn cho biến thể này"
+      );
+    }
+  },
+
   // ✍️ Thêm mới đánh giá
   async addRating(bookId: string, dto: CreateRatingDto): Promise<Rating> {
     try {

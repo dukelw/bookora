@@ -2,7 +2,9 @@
 import { RatingStatus } from "@/enums";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useTranslations } from "use-intl";
+import RatingViewModal from "./RatingViewModal";
 
 export default function OrderItemsList({
   items,
@@ -13,6 +15,8 @@ export default function OrderItemsList({
   const t = useTranslations("order");
 
   const displayItems = showAll ? items : items.slice(0, 2);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   return (
     <div className="text-sm text-gray-300 space-y-2">
@@ -26,7 +30,9 @@ export default function OrderItemsList({
           if (item.reviewStatus === RatingStatus.PENDING) {
             onRate?.(item);
           } else if (item.reviewStatus === RatingStatus.COMPLETED) {
-            router.push(`/rating/view?bookId=${item.book?._id}`);
+            // router.push(`/rating/view?bookId=${item.book?._id}`);
+            setSelectedItem(item);
+            setShowViewModal(true);
           }
         };
 
@@ -83,6 +89,15 @@ export default function OrderItemsList({
         <span className="text-xs text-gray-500 block text-right mt-1">
           +{items.length - 2} {t("otherItem")}
         </span>
+      )}
+
+      {selectedItem && (
+        <RatingViewModal
+          show={showViewModal}
+          onClose={() => setShowViewModal(false)}
+          bookId={selectedItem.book?._id}
+          variantId={selectedItem.variantId}
+        />
       )}
     </div>
   );

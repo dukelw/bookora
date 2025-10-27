@@ -4,6 +4,16 @@
     "welcomeBack": "Welcome back",
     "typeToSearch": "Enter key to search..."
   },
+  "rating": {
+    "fetchError": "Failed to load your rating",
+    "loading": "Loading...",
+    "variant": "Variant",
+    "unknown": "Unknown",
+    "price": "Price",
+    "star": "star",
+    "noComment": "No comment",
+    "noRating": "You haven't rated this variant yet"
+  },
   "order": {
     "shippingFee": "Shipping Fee",
     "pending": "Pending",

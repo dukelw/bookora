@@ -12,7 +12,7 @@ import {
 import { RatingService } from './rating.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 @ApiBearerAuth()
 @Controller('rating')
@@ -35,6 +35,21 @@ export class RatingController {
   ) {
     const userId = req.user._id;
     return this.ratingService.addRating(bookId, userId, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':bookId/variant/:variantId/me')
+  @ApiOperation({ summary: 'Get my rating for a specific book variant' })
+  @ApiOkResponse({
+    description: 'Returns book, variant, and my rating (if any).',
+  })
+  async getMyVariantRating(
+    @Param('bookId') bookId: string,
+    @Param('variantId') variantId: string,
+    @Req() req,
+  ) {
+    const userId = req.user._id;
+    return this.ratingService.getUserVariantRating(bookId, variantId, userId);
   }
 
   @UseGuards(JwtAuthGuard)
