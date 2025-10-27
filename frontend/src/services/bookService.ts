@@ -50,7 +50,27 @@ export const bookService = {
     const res: AxiosResponse = await api.get(`${API_URL}/new-releases`, {params});
     return res.data;
   },
-  
+
+  async getAuthors(params?: {
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const res: AxiosResponse = await api.get(`${API_URL}/authors`, { params });
+    return res.data;
+  },
+
+  async getBooksByAuthor(
+    author: string,
+    params?: { page?: number; limit?: number }
+  ) {
+    const res: AxiosResponse = await api.get(
+      `${API_URL}/authors/${encodeURIComponent(author)}`,
+      { params }
+    );
+    return res.data;
+  },
+
   async getBook(id: string) {
     const res: AxiosResponse = await api.get(`${API_URL}/${id}`);
     return res.data;
