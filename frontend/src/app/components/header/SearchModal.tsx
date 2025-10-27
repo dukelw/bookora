@@ -28,7 +28,7 @@ const SearchModal = ({
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      if (keyword.trim()) {
+      if (keyword && keyword.trim()) {
         fetchBooks(keyword);
       } else {
         setBooks([]);
