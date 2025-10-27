@@ -24,6 +24,7 @@ import { ReviewRequestModule } from './modules/review-request/review-request.mod
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { BullModule } from '@nestjs/bull';
+import { StatisticsModule } from './modules/statistic/statistic.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { BullModule } from '@nestjs/bull';
     ReviewRequestModule,
     WishlistModule,
     CommentModule,
+    StatisticsModule,
   ],
 })
 export class AppModule {}

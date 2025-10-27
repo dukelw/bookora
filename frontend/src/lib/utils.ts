@@ -1,7 +1,6 @@
-// lib/utils.ts
-import { clsx } from "clsx";
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function cn(...inputs: any[]) {
-  return clsx(...inputs);
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }

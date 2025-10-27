@@ -2,7 +2,6 @@
 
 import { Dropdown, DropdownDivider, DropdownItem } from "flowbite-react";
 import { FaUser } from "react-icons/fa";
-import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import { authService } from "@/services/authService";
 import { useTranslations } from "use-intl";
@@ -43,7 +42,7 @@ const UserDropdown = () => {
       ) : (
         <>
           {user.role === UserRole.ADMIN && (
-            <DropdownItem onClick={() => router.push("/dashboard")}>
+            <DropdownItem onClick={() => router.push("/dashboard/statistic")}>
               {t("dashboard")}
             </DropdownItem>
           )}

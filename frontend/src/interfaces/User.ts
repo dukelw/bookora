@@ -10,6 +10,7 @@ export default interface User {
   address: string;
   password: string;
   phone?: string;
+  role?: string;
   createdAt: string; // Date in ISO string format
   updatedAt: string; // Date in ISO string format
   isActive: boolean;
