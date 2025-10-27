@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Modal, ModalBody, Spinner } from "flowbite-react";
 import { Search } from "lucide-react";
 import { bookService } from "@/services/bookService";
-import Image from "next/image";
 import { useBookStore } from "@/store/bookStore";
 
 interface SearchModalProps {
@@ -85,14 +84,13 @@ const SearchModal = ({
                 className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-md cursor-pointer transition"
               >
                 <div className="relative w-10 h-14 flex-shrink-0">
-                  <Image
+                  <img
                     src={
                       book.images?.find((img: any) => img.isMain)?.url ||
                       "/images/fallback/book-fallback.png"
                     }
                     alt={book.title}
-                    fill
-                    className="object-cover rounded"
+                    className="w-full h-full object-cover rounded"
                   />
                 </div>
                 <div className="text-left">

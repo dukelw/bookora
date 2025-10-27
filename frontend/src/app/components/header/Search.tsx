@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { TextInput, Spinner } from "flowbite-react";
 import { useTranslations } from "use-intl";
 import { bookService } from "@/services/bookService";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useBookStore } from "@/store/bookStore";
 
@@ -89,14 +88,13 @@ const SearchBar = () => {
                 onClick={() => handleSelectBook(book._id)}
               >
                 <div className="relative w-10 h-14 flex-shrink-0">
-                  <Image
+                  <img
                     src={
                       book.images?.find((img: any) => img.isMain)?.url ||
                       "/images/fallback/book-fallback.png"
                     }
                     alt={book.title}
-                    fill
-                    className="object-cover rounded"
+                    className="w-full h-full object-cover rounded"
                   />
                 </div>
                 <div className="text-left">
