@@ -58,6 +58,7 @@
     "contactSupport": "Hỗ trợ liên hệ"
   },
   "auth": {
+    "fullnamePlaceholder": "John Doe",
     "or": "Hoặc",
     "addressPlaceholder": "366 Hồ Chí Minh City",
     "emailPlaceholder": "toi@email.com",

@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/JwtPayload';
 import { randomBytes } from 'crypto';
 import { UserService } from '../user/user.service';
-import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { MailService } from '../mail/mail.service';
@@ -24,9 +23,15 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  async create(email: string, password: string, address?: string) {
+  async create(
+    fullname: string,
+    email: string,
+    password: string,
+    address?: string,
+  ) {
     const hash = await bcrypt.hash(password, 10);
     const user = new this.userModel({
+      name: fullname,
       email,
       password: hash,
       addresses: address ? [address] : [],

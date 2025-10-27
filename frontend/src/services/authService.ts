@@ -6,12 +6,13 @@ import axios, { AxiosResponse } from "axios";
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
 
 export const authService = {
-  async signUp(email: string, password: string, address: string) {
+  async signUp(fullname: string, email: string, password: string, address: string) {
     try {
       const response: AxiosResponse = await axios.post(`${API_URL}/signup`, {
         email,
         address,
         password,
+        fullname,
       });
 
       return response;

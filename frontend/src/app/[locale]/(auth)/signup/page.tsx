@@ -24,10 +24,12 @@ import { loginWithGithub, loginWithGoogle } from "@/lib/actions/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { FiHome } from "react-icons/fi";
+import { UserIcon } from "lucide-react";
 
 export default function SignUp() {
   const t = useTranslations("auth");
   const [email, setEmail] = useState("");
+  const [fullname, setFullname] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [agree, setAgree] = useState(true);
@@ -35,6 +37,7 @@ export default function SignUp() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const router = useRouter();
 
+  const isFullnameValid = fullname.trim().length > 0;
   const isEmailValid = /^\S+@\S+\.\S+$/.test(email);
   const isPasswordValid = password.length >= 6;
   const isAddressValid = address.length > 0;
@@ -48,7 +51,7 @@ export default function SignUp() {
 
     setSubmitting(true);
     try {
-      const data = await authService.signUp(email, password, address);
+      const data = await authService.signUp(fullname, email, password, address);
       if (data) router.push("/signin");
     } catch (err: any) {
       console.error(err);
@@ -104,6 +107,26 @@ export default function SignUp() {
 
         {/* Normal signup form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Fullname */}
+          <div>
+            <Label htmlFor="fullname" />
+            <TextInput
+              id="fullname"
+              type="text"
+              placeholder={t("fullnamePlaceholder")}
+              icon={UserIcon}
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
+              color={
+                !fullname ? undefined : isFullnameValid ? "success" : "failure"
+              }
+              required
+            />
+            {!isFullnameValid && fullname && (
+              <p className="text-xs text-red-600 mt-1">{t("required")}</p>
+            )}
+          </div>
+
           {/* Email */}
           <div>
             <Label htmlFor="email" />

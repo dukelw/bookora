@@ -120,10 +120,7 @@ export default function BookManagementPage() {
     {
       key: "price",
       label: t("p.price"),
-      render: (book) =>
-        formatCurrency(
-          book.variants?.find((v) => v.rarity === "common")?.price ?? 0
-        ),
+      render: (book) => formatCurrency(book?.variants[0]?.price ?? 0),
     },
     { key: "releaseYear", label: t("p.releaseYear") },
     {

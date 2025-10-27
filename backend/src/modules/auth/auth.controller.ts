@@ -41,6 +41,7 @@ export class AuthController {
   @ApiBody({ type: RegisterAuthDto })
   async register(@Body() body: RegisterAuthDto) {
     const auth = await this.authService.create(
+      body.fullname,
       body.email,
       body.password,
       body.address,

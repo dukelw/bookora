@@ -93,6 +93,7 @@
     "contactSupport": "Contact Support"
   },
   "auth": {
+    "fullnamePlaceholder": "John Doe",
     "or": "Or",
     "addressPlaceholder": "366 New York City",
     "emailPlaceholder": "your@email.com",
