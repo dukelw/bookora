@@ -556,5 +556,45 @@
       "deleteConfirmTitle": "Delete Confirmation",
       "deleteConfirmMessage": "Are you sure you want to delete this discount?"
     }
+  },
+  "comment": {
+    "title": "Comments",
+    "titleAll": "All Comments",
+    "noComment": "No comments yet for this product.",
+    "load": "Load...",
+    "loadMore": "Load more comments",
+    "viewAll": "View all {count} comments",
+    "noMore": "No more comments",
+    "deleteConfirmTitle": "Delete Comment",
+    "deleteConfirmMsg": "Are you sure you want to delete this comment? This action cannot be undone.",
+    "deleteConfirm": "Confirm Delete",
+    "cancel": "Cancel",
+    "send": "Send",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save",
+    "replyingTo": "Replying to @{name}",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "replyHide": "↑ Hide replies",
+    "replyShow": "↓ {count} replies",
+    "enterContent": "Add a comment...",
+    "loginToLike": "Please log in to like a comment",
+    "likeFailed": "Failed to like comments",
+    "emptyContent": "Please enter some text",
+    "createFailed": "Failed to send comment",
+    "updateFailed": "Failed to update",
+    "deleteSuccess": "Deleted comment!",
+    "deleteFailed": "Failed to delete comment",
+    "fetchFailed": "Failed to load comments",
+    "fetchReplyFailed": "Failed to load replies",
+    "reply": "Reply"
+  },
+  "authors": {
+    "fetchAuthorFailed": "Could not load the list of authors.",
+    "fetchBook": "Could not load the list of books.",
+    "placeholderSearch": "Search by author name...",
+    "title": "Books by",
+    "all": "All"
   }
 }
