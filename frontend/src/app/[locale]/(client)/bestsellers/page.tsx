@@ -105,7 +105,7 @@ export default function BestsellersPage() {
   }, [limit, category, author, publisher, sortOrder]);
 
   return (
-    <div className="p-6 flex flex-col items-center min-h-[70vh] w-[85%] mx-auto">
+    <div className="p-6 flex flex-col items-center min-h-[70vh] max-w-7xl mx-auto">
       <div className="mx-auto w-full flex items-center justify-between bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl px-6 py-4 shadow-md overflow-hidden mb-6">
         <div className="flex items-center gap-3">
           <div>

@@ -81,25 +81,33 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
           return (
             <div key={item.path}>
               {item.subItems ? (
-                // 🔽 Nếu có con -> render button toggle
                 <button
                   onClick={() => toggleItem(item.path)}
-                  className={`w-full flex items-center gap-3 p-3 my-2 rounded transition-colors ${
-                    isCollapsed ? "justify-center" : "justify-between"
-                  } ${isActive ? "bg-cyan text-white" : "hover:bg-gray-100"}`}
+                  className={`w-full flex items-center gap-3 p-3 my-2 rounded transition-colors font-light
+                  ${isCollapsed ? "justify-center" : "justify-between"}
+                  ${
+                    isActive
+                      ? "bg-cyan text-white font-semibold"
+                      : "hover:bg-gray-100"
+                  }
+                `}
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-md">{ICONS[item.path]}</span>
                     {!isCollapsed && <span>{t(item.label)}</span>}
                   </div>
                   {!isCollapsed &&
-                    (isOpen ? <FaChevronDown /> : <FaChevronRight />)}
+                    (isOpen ? (
+                      <FaChevronDown className="text-gray-500 text-sm" />
+                      ) : (
+                      <FaChevronRight className="text-gray-500 text-sm" />
+                    ))}
                 </button>
               ) : (
                 // 🔽 Nếu không có con -> render Link
                 <Link
                   href={item.path}
-                  className={`flex items-center gap-3 p-3 my-2 rounded transition-colors ${
+                  className={`flex items-center gap-3 p-3 my-2 rounded transition-colors font-light ${
                     isCollapsed ? "justify-center" : ""
                   } ${isActive ? "bg-cyan text-white" : "hover:bg-gray-100"}`}
                 >
@@ -120,12 +128,12 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
                         key={sub.path}
                         href={sub.path}
                         className={`block p-2 rounded text-sm cursor-pointer
-                          ${
-                            isSubActive
-                              ? "bg-cyan text-white"
-                              : "text-gray-600 hover:bg-gray-100"
-                          }
-                        `}
+                        ${
+                          isSubActive
+                            ? "bg-cyan text-white font-semibold"
+                            : "text-gray-600 hover:bg-gray-100"
+                        }
+                      `}
                       >
                         {t(sub.label)}
                       </Link>
