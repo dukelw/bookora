@@ -50,7 +50,7 @@ export const bookService = {
     const res: AxiosResponse = await api.get(`${API_URL}/new-releases`, {params});
     return res.data;
   },
-  
+
   async getBook(id: string) {
     const res: AxiosResponse = await api.get(`${API_URL}/${id}`);
     return res.data;

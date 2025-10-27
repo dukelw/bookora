@@ -50,4 +50,9 @@ export const commentService = {
     );
     return res.data;
   },
+
+  async toggleLike(id: string, userId: string): Promise<any> {
+    const res: AxiosResponse = await api.put(`${API_URL}/${id}/like/${userId}`);
+    return res.data;
+  },
 };

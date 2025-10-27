@@ -133,6 +133,11 @@ export class CommentService {
     else comment.likes.splice(index, 1);
 
     await comment.save();
-    return comment;
+    return this.commentModel
+      .findById(comment._id)
+      .populate('user', 'name avatar')
+      .populate('parentComment', 'user content')
+      .lean()
+      .exec();
   }
 }

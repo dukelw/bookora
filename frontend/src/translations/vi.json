@@ -557,5 +557,38 @@
       "deleteConfirmTitle": "Xác nhận xóa",
       "deleteConfirmMessage": "Bạn có chắc muốn xóa mã giảm giá này không?"
     }
+  },
+  "comment": {
+    "title": "Bình luận",
+    "titleAll": "Tất cả bình luận",
+    "noComment": "Chưa có bình luận nào về sản phẩm này.",
+    "load": "Đang tải...",
+    "loadMore": "Xem thêm bình luận",
+    "viewAll": "Xem tất cả {count} bình luận",
+    "noMore": "Đã hết bình luận",
+    "deleteConfirmTitle": "Xóa bình luận",
+    "deleteConfirmMsg": "Bạn có chắc muốn xóa bình luận này? Hành động không thể hoàn tác.",
+    "deleteConfirm": "Xác nhận xóa",
+    "cancel": "Hủy",
+    "send": "Gửi",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "save": "Lưu",
+    "replyingTo": "Đang trả lời @{name}",
+    "newest": "Mới nhất",
+    "oldest": "Cũ nhất",
+    "replyHide": "↑ Ẩn trả lời",
+    "replyShow": "↓ {count} trả lời",
+    "enterContent": "Thêm bình luận...",
+    "loginToLike": "Vui lòng đăng nhập để thích bình luận",
+    "likeFailed": "Không thể thích bình luận",
+    "emptyContent": "Vui lòng nhập nội dung",
+    "createFailed": "Gửi bình luận thất bại",
+    "updateFailed": "Cập nhật thất bại",
+    "deleteSuccess": "Đã xóa bình luận!",
+    "deleteFailed": "Không thể xóa bình luận",
+    "fetchFailed": "Không thể tải bình luận",
+    "fetchReplyFailed": "Không thể tải trả lời",
+    "reply": "Trả lời"
   }
 }
