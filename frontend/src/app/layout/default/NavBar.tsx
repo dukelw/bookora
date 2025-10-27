@@ -21,7 +21,6 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import LanguageSwitcher from "../../components/header/LanguageSwitcher";
-import Image from "next/image";
 import SearchBar from "@/app/components/header/Search";
 import { usePathname } from "next/navigation";
 import { navItems } from "@/constants";
@@ -129,7 +128,7 @@ const AppNavbar = () => {
       <Navbar fluid className="bg-white shadow-md shadow-gray-200/60 px-4">
         {/* Logo */}
         <NavbarBrand href="/">
-          <Image
+          <img
             src="/images/logo/rectangle-logo.png"
             alt="Setsail Logo"
             width={240}

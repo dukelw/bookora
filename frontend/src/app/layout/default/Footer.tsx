@@ -13,7 +13,6 @@ import {
   FaUser,
   FaPaperPlane,
 } from "react-icons/fa";
-import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -47,7 +46,7 @@ const AppFooter = () => {
           <div>
             {/* Logo & Slogan */}
             <div className="flex flex-col items-center text-center mb-4">
-              <Image
+              <img
                 src="/images/logo/rectangle-logo.png"
                 alt="Bookora Logo"
                 width={240}
