@@ -84,7 +84,11 @@ export class AuthService {
   }
 
   generateTokens(user: UserDocument) {
-    const payload = { sub: user._id.toString(), email: user.email };
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    };
 
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
@@ -107,11 +111,11 @@ export class AuthService {
 
       // Tạo token mới
       const newAccessToken = this.jwtService.sign(
-        { sub: user._id.toString(), email: user.email },
+        { sub: user._id.toString(), email: user.email, role: user.role },
         { expiresIn: '15m' },
       );
       const newRefreshToken = this.jwtService.sign(
-        { sub: user._id.toString(), email: user.email },
+        { sub: user._id.toString(), email: user.email, role: user.role },
         { expiresIn: '7d' },
       );
 
