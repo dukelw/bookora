@@ -59,6 +59,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Đăng nhập auth' })
   @ApiBody({ type: LoginAuthDto })
   async login(@Body() body: LoginAuthDto) {
+    console.log('JWT SECRET', process.env.JWT_SECRET);
     const auth = await this.authService.validateAuth(body.email, body.password);
     if (!auth) throw new BadRequestException('Invalid credentials');
     if (auth.status === 'disable')
