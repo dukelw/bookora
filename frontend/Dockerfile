@@ -9,6 +9,7 @@ RUN npm ci
 
 # Copy toàn bộ source
 COPY . .
+COPY .env.pro .env.production
 
 # Build Next.js (nếu lỗi, build sẽ dừng ở đây)
 RUN npm run build

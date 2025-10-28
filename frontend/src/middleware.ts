@@ -3,7 +3,7 @@ import { jwtVerify } from "jose";
 import { locales, defaultLocale } from "@/i18n/config";
 import { UserRole } from "./enums";
 
-const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "your-fallback-secret";
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "testkey";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -44,10 +44,13 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
+    console.log("Token", token);
+    console.log("JWT Secret", JWT_SECRET);
     const { payload } = await jwtVerify(
       token,
       new TextEncoder().encode(JWT_SECRET)
     );
+    console.log("Payload", payload);
 
     // --- 4️⃣ Kiểm tra quyền admin ---
     if (
