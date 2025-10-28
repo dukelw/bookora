@@ -17,6 +17,14 @@ export interface CreateRatingDto {
   variant?: VariantSnapshotDto; // thêm phần này
 }
 
+export interface RatingListResponse {
+  items: Rating[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages?: number;
+}
+
 export const ratingService = {
   // 🧠 Lấy tất cả đánh giá của 1 quyển sách
   async getRatings(bookId: string): Promise<Rating[]> {
@@ -30,6 +38,15 @@ export const ratingService = {
         error?.response?.data?.message || "Không thể lấy danh sách đánh giá"
       );
     }
+  },
+
+  async getAllRatings( bookId: string, page?: number, limit?: number ): Promise<RatingListResponse> { 
+    try { 
+      const res: AxiosResponse<RatingListResponse> = await api.get( `${API_URL}/${bookId}`, { params: { page, limit } } ); 
+      return res.data
+    } catch (error: any) { 
+      throw new Error( error?.response?.data?.message || "Không thể lấy danh sách đánh giá" ); 
+    } 
   },
 
   // 🧍‍♀️ Lấy đánh giá của chính user đang đăng nhập cho 1 sách

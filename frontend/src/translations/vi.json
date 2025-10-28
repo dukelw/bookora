@@ -12,7 +12,29 @@
     "price": "Giá",
     "star": "sao",
     "noComment": "Chưa có bình luận nào",
-    "noRating": "Bạn chưa đánh giá biến thể này"
+    "reviewsTitle": "Đánh giá",
+    "viewAll": "Xem tất cả",
+    "fetchRatingError": "Không thể lấy đánh giá",
+    "fetchSlugError": "Không thể lấy slug của sách",
+    "fetchBookError": "Không có thông tin sách",
+    "noRating": "Bạn chưa đánh giá biến thể này",
+    "backToDetail": "Quay lại",
+    "allReviewsFor": "Tất cả đánh giá cho",
+    "reviews": "đánh giá",
+    "noReview": "Chưa có đánh giá nào.",
+    "anonymous": "Người dùng ẩn danh",
+    "noVariant": "Không có",
+    "filterByVariant": "Lọc theo biến thể",
+    "allVariants": "Tất cả biến thể",
+    "notFoundBook": "Không tìm thấy sách để đánh giá...",
+    "selectStarWarning": "Hãy chọn số sao trước khi gửi nha!",
+    "submitSuccess": "Gửi đánh giá thành công!",
+    "submitError": "Không thể gửi đánh giá, thử lại sau!",
+    "variantName": "Tên biến thể",
+    "noVariantInfo": "Không có thông tin biến thể",
+    "stars": "sao",
+    "placeholderComment": "Viết cảm nhận của bạn...",
+    "submit": "Gửi đánh giá"
   },
   "user": {
     "phone": "Số điện thoại",
@@ -194,6 +216,7 @@
     "payWithCod": "Thanh toán khi nhận hàng"
   },
   "order": {
+    "title": "Đơn hàng của bạn",
     "shippingFee": "Phí vận chuyển",
     "totalAmount": "Tổng số tiền",
     "discountAmount": "Số tiền giảm",

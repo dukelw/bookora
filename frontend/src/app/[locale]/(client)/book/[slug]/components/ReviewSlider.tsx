@@ -1,21 +1,24 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { ratingService } from "@/services/ratingService";
 import { FALLBACK_BOOK } from "@/constants";
 import { useSocket } from "@/app/hooks/useSocket";
 import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
-import { Rating } from "@/interfaces/Rating";
+import Rating from "@/interfaces/Rating";
+import { useRouter } from "next/navigation";
+import { bookService } from "@/services/bookService";
+import { useTranslations } from "use-intl";
 
 export default function ReviewSlider({ bookId }: { bookId: string }) {
+  const t = useTranslations("rating");
   const [reviews, setReviews] = useState<Rating[]>([]);
   const [average, setAverage] = useState<{ avgStars: number; count: number }>({
     avgStars: 0,
     count: 0,
   });
   const socket = useSocket();
-
+  const router = useRouter();
   useEffect(() => {
     if (!bookId || !socket) return;
 
@@ -27,7 +30,7 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
         const avg = await ratingService.getAverageRating(bookId);
         setAverage(avg);
       } catch (err) {
-        console.error("Không thể lấy đánh giá:", err);
+        console.error(t("fetchRatingError"), err);
       }
     };
 
@@ -43,15 +46,24 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
 
   if (!reviews.length) return null;
 
+  const handleViewAll = async () => {
+    try {
+      const book = await bookService.getBook(bookId);
+      if (book?.slug) router.push(`/all-rating/${book.slug}`);
+    } catch (error) {
+      console.error(t("fetchSlugError"), error);
+    }
+  };
+  
   return (
     <div className="mt-10 overflow-hidden relative">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Đánh giá</h2>
+        <h2 className="text-2xl font-bold">{t("reviewsTitle")}</h2>
         <button
-          onClick={() => console.log("Xem tất cả review của", bookId)}
+          onClick={handleViewAll}
           className="text-yellow-400 font-medium hover:underline"
         >
-          Xem tất cả
+          {t("viewAll")}
         </button>
       </div>
 
@@ -73,7 +85,7 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
         </span>
 
         <span className="text-gray-500 text-sm">
-          ({average.count} đánh giá)
+          ({average.count} {t("reviews")})
         </span>
       </div>
       {/* Track chính */}
@@ -102,10 +114,10 @@ export default function ReviewSlider({ bookId }: { bookId: string }) {
 
               <div>
                 <h3 className="text-lg font-semibold">
-                  {review.user?.name || "Ẩn danh"}
+                  {review.user?.name || t("anonymous")}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Biến thể: {review.variant?.rarity || "Không có"}
+                  {t("variant")}: {review.variant?.rarity || t("noVariant")}
                 </p>
                 <div className="flex text-yellow-400">
                   {Array.from({ length: review.stars }).map((_, i) => (

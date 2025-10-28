@@ -1,17 +1,17 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { toast } from "react-toastify";
 import { ratingService } from "@/services/ratingService";
 import { useRatingStore } from "@/store/ratingStore";
 import { useSocket } from "@/app/hooks/useSocket";
 import { reviewRequestService } from "@/services/reviewReviewService";
+import { useTranslations } from "use-intl";
 
 export default function RatingDetailPage() {
+  const t = useTranslations("rating");
   const router = useRouter();
-  const { currentBookToRate, clearBookToRate, reviewRequest } =
-    useRatingStore();
+  const { currentBookToRate, clearBookToRate, reviewRequest } = useRatingStore();
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
   const socket = useSocket();
@@ -19,7 +19,7 @@ export default function RatingDetailPage() {
   if (!currentBookToRate)
     return (
       <div className="text-gray-500 p-6 text-center">
-        Không tìm thấy sách để đánh giá...
+        {t("notFoundBook")}
       </div>
     );
 
@@ -27,7 +27,7 @@ export default function RatingDetailPage() {
   const variant = book.variant;
 
   const handleSubmit = async () => {
-    if (!stars) return toast.warning("Hãy chọn số sao trước khi gửi nha!");
+    if (!stars) return toast.warning(t("selectStarWarning"));
 
     try {
       const res = await ratingService.addRating(book.bookId, {
@@ -39,15 +39,13 @@ export default function RatingDetailPage() {
         socket.emit("ratingUpdate", { bookId: book.bookId });
         await reviewRequestService.markAsComplete(reviewRequest);
 
-        // ❌ Xóa sách này khỏi danh sách booksToRate
         clearBookToRate(book.bookId);
-
-        toast.success("Gửi đánh giá thành công!");
+        toast.success(t("submitSuccess"));
         router.push("/orders");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Không thể gửi đánh giá, thử lại sau!");
+      toast.error(t("submitError"));
     }
   };
 
@@ -72,26 +70,27 @@ export default function RatingDetailPage() {
                   <div className="w-32 h-32 rounded-lg overflow-hidden border border-gray-200">
                     <img
                       src={variant.image}
-                      alt={variant.rarity || "Biến thể"}
+                      alt={variant.rarity || t("variant")}
                       className="object-cover w-full h-full"
                     />
                   </div>
                 )}
                 <p className="text-gray-600 text-sm">
-                  <span className="font-medium">Tên biến thể:</span>{" "}
-                  {variant.rarity || "Không rõ"}
+                  <span className="font-medium">{t("variantName")}:</span>{" "}
+                  {variant.rarity || t("unknown")}
                 </p>
                 {variant.price && (
                   <p className="text-gray-800 text-lg font-semibold">
-                    Giá: {variant.price.toLocaleString()}₫
+                    {t("price")}: {variant.price.toLocaleString()}₫
                   </p>
                 )}
               </div>
             ) : (
-              <p className="text-gray-500 mt-2">Không có thông tin biến thể</p>
+              <p className="text-gray-500 mt-2">{t("noVariantInfo")}</p>
             )}
           </div>
 
+          {/* Chọn số sao */}
           <div className="flex flex-col items-center mt-4">
             <div className="flex gap-2 justify-center mb-2">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -106,13 +105,15 @@ export default function RatingDetailPage() {
                 </button>
               ))}
             </div>
-            <span className="text-gray-600 text-sm">{stars} / 5 sao</span>
+            <span className="text-gray-600 text-sm">
+              {stars} / 5 {t("stars")}
+            </span>
           </div>
 
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Viết cảm nhận của bạn..."
+            placeholder={t("placeholderComment")}
             className="w-full h-32 bg-gray-50 border border-gray-300 text-gray-800 rounded-xl p-4 outline-none focus:ring-2 focus:ring-green-500 resize-none"
           />
 
@@ -121,7 +122,7 @@ export default function RatingDetailPage() {
               onClick={handleSubmit}
               className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full transition"
             >
-              Gửi đánh giá
+              {t("submit")}
             </button>
           </div>
         </div>
