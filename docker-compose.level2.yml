@@ -26,14 +26,12 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: bookora-backend
     restart: always
-    ports:
-      - "4000:4000"
+    ports: []
     env_file:
       - ./backend/.env.pro
     environment:
-      MONGODB_URI: mongodb://mongo:27017/bookora
+      MONGODB_URI: mongodb://mongo:27017/bookora 
       REDIS_HOST: redis
     depends_on:
       - mongo
@@ -71,6 +69,18 @@ services:
     depends_on:
       - backend
     networks:
+      - bookora-network
+  
+  nginx: 
+    image: nginx:alpine 
+    container_name: bookora-nginx 
+    ports: 
+      - "4000:80" 
+    volumes: 
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro 
+    depends_on: 
+      - backend 
+    networks: 
       - bookora-network
 
 networks:
