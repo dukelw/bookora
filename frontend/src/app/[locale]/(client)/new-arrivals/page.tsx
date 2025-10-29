@@ -67,6 +67,7 @@ export default function NewArrivalsPage() {
   const fetchNewBooks = async (page = 1, limit = 10) => {
     try {
       const params: any = {
+        page,
         limit,
         days,
         ...(from && { from }),
@@ -100,7 +101,7 @@ export default function NewArrivalsPage() {
 
   useEffect(() => {
     fetchNewBooks(currentPage, limit);
-  }, [limit, from, days, category, author, publisher, sortOrder]);
+  }, [limit, from, days, category, author, publisher, sortOrder, currentPage]);
 
   return (
     <div className="p-6 flex flex-col items-center min-h-[70vh] max-w-7xl mx-auto">

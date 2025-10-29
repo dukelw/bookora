@@ -60,6 +60,7 @@ export default function BestsellersPage() {
   const fetchBestsellers = async (page = 1, limit = 12) => {
     try {
       const params: any = {
+        page,
         limit,
         sort: sortOrder,
         ...(from && { from }),
@@ -102,7 +103,7 @@ export default function BestsellersPage() {
 
   useEffect(() => {
     fetchBestsellers(currentPage, limit);
-  }, [limit, category, author, publisher, sortOrder]);
+  }, [limit, category, author, publisher, sortOrder, currentPage]);
 
   return (
     <div className="p-6 flex flex-col items-center min-h-[70vh] max-w-7xl mx-auto">
