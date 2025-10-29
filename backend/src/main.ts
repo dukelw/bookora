@@ -3,11 +3,17 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
+import * as os from 'os';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use((req, res, next) => {
+    console.log('Request handled by: ', os.hostname());
+    next();
+  });
 
   console.log(process.env.CLIENT_URL);
   const allowedOrigins = [
