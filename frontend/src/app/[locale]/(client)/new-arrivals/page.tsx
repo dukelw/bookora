@@ -91,8 +91,8 @@ export default function NewArrivalsPage() {
       });
 
       setBooks(mapped);
-      setTotalItems(res.meta?.count || res.items.length);
-      setCurrentPage(page);
+      setTotalItems(res.meta?.total);
+      setCurrentPage(res.meta.page);
     } catch (error) {
       console.error("Failed to fetch new arrivals:", error);
     }

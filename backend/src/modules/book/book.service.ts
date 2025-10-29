@@ -198,10 +198,10 @@ export class BookService {
     };
   }
 
-  // BEST SELLERS via aggregation from orders
   async getBestSellers(q: BestSellersQueryDto) {
     const {
       limit = 12,
+      page = 1,
       from,
       to,
       category,
@@ -221,10 +221,9 @@ export class BookService {
       if (to) matchOrder.createdAt.$lte = new Date(to);
     }
 
-    const pipeline: any[] = [
+    const pipelineBase: any[] = [
       { $match: matchOrder },
       { $unwind: '$items' },
-      // gom theo book để tính tổng sold
       {
         $group: {
           _id: '$items.book',
@@ -232,7 +231,6 @@ export class BookService {
           lastOrderAt: { $max: '$createdAt' },
         },
       },
-      // join sang books
       {
         $lookup: {
           from: 'books',
@@ -244,22 +242,18 @@ export class BookService {
       { $unwind: '$book' },
     ];
 
-    // filter theo category/author/publisher nếu có
     const bookMatch: any = {};
-
     if (category) {
       const inList = buildCategoryInList(category);
       bookMatch['book.category'] = { $in: inList };
     }
     if (author) bookMatch['book.author'] = author;
     if (publisher) bookMatch['book.publisher'] = publisher;
-    if (Object.keys(bookMatch).length) pipeline.push({ $match: bookMatch });
+    if (Object.keys(bookMatch).length) pipelineBase.push({ $match: bookMatch });
 
-    // tính mainImage & tổng stock để lọc out-of-stock
-    pipeline.push(
+    pipelineBase.push(
       {
         $addFields: {
-          // mainImage: lấy ảnh có isMain=true, fallback ảnh đầu
           mainImageArr: {
             $filter: {
               input: '$book.images',
@@ -283,14 +277,24 @@ export class BookService {
       },
     );
 
-    // exclude out-of-stock nếu không cho phép
     if (includeOutOfStock !== 'true') {
-      pipeline.push({ $match: { totalStock: { $gt: 0 } } });
+      pipelineBase.push({ $match: { totalStock: { $gt: 0 } } });
     }
 
-    // sort & project
-    pipeline.push(
+    // Đếm tổng số best sellers (trước khi phân trang)
+    const totalResult = await this.orderModel
+      .aggregate([...pipelineBase, { $count: 'total' }])
+      .exec();
+
+    const total = totalResult[0]?.total || 0;
+    const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
+
+    // Lấy danh sách trang hiện tại
+    const pipeline = [
+      ...pipelineBase,
       { $sort: { sold: -1, lastOrderAt: -1 } },
+      { $skip: skip },
       { $limit: Math.min(limit, 50) },
       {
         $project: {
@@ -305,17 +309,34 @@ export class BookService {
           sold: 1,
         },
       },
-    );
+    ];
 
     const items = await this.orderModel.aggregate(pipeline).exec();
-    return { items, meta: { count: items.length, limit: Math.min(limit, 50) } };
+
+    return {
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        count: items.length,
+      },
+    };
   }
 
-  // --- NEW RELEASES via createdAt window ---
   async getNewReleases(q: NewReleasesQueryDto) {
-    const { limit = 12, from, days = 30, category, author, publisher } = q;
+    const {
+      limit = 12,
+      page = 1,
+      from,
+      days = 30,
+      category,
+      author,
+      publisher,
+    } = q;
 
-    // Decide start date: `from` (ISO) takes precedence; else use `days` window
+    // Xác định ngày bắt đầu: ưu tiên `from`, nếu không có thì lấy `days` gần đây
     let start: Date | undefined;
     if (from) {
       start = new Date(from);
@@ -334,10 +355,17 @@ export class BookService {
     if (author) filter.author = author;
     if (publisher) filter.publisher = publisher;
 
+    // Tính skip và count tổng
+    const skip = (page - 1) * limit;
+
+    const total = await this.bookModel.countDocuments(filter);
+    const totalPages = Math.ceil(total / limit);
+
     const docs = await this.bookModel
       .find(filter)
       .populate('category')
-      .sort({ createdAt: -1 }) // newest first based on createdAt
+      .sort({ createdAt: -1 })
+      .skip(skip)
       .limit(Math.min(limit, 50))
       .lean()
       .exec();
@@ -366,8 +394,11 @@ export class BookService {
     return {
       items,
       meta: {
+        total,
+        page,
+        limit,
+        totalPages,
         count: items.length,
-        limit: Math.min(limit, 50),
         from: start?.toISOString(),
         now: new Date().toISOString(),
       },
@@ -473,8 +504,8 @@ export class BookService {
         category: Array.isArray(b.category)
           ? b.category.map((c: any) => ({ _id: c._id, name: c.name }))
           : b.category
-          ? [{ _id: b.category._id, name: b.category.name }]
-          : [], // ✅ thêm category
+            ? [{ _id: b.category._id, name: b.category.name }]
+            : [], // ✅ thêm category
         createdAt: b.createdAt,
       };
     });

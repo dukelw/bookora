@@ -93,8 +93,8 @@ export default function BestsellersPage() {
 
       // 3️⃣ Cập nhật state
       setBooks(enriched);
-      setTotalItems(res.meta?.count || items.length);
-      setCurrentPage(page);
+      setTotalItems(res.meta?.total);
+      setCurrentPage(res.meta.page);
     } catch (error) {
       console.error("Failed to fetch bestsellers:", error);
     }
