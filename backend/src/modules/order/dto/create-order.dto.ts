@@ -4,6 +4,8 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsInt,
+  Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -85,4 +87,16 @@ export class CreateOrderDto {
   @ApiProperty({ description: 'ID cart liên quan' })
   @IsString()
   cart: string;
+
+  @ApiPropertyOptional({ default: 0 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  loyaltyPointsUsed?: number;
+
+  @ApiPropertyOptional({ default: 0 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  loyaltyDiscountAmount?: number;
 }
