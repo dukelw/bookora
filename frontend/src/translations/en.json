@@ -37,6 +37,8 @@
     "submit": "Submit review"
   },
   "order": {
+    "loyaltyAmount": "Loyalty Point",
+    "tax": "Tax",
     "title": "Your Orders",
     "shippingFee": "Shipping Fee",
     "pending": "Pending",
@@ -217,6 +219,9 @@
     "placeholderMessage": "Enter the content you want to send"
   },
   "cart": {
+    "tax": "Tax",
+    "loyaltyPointsUsed": "Loyalty point",
+    "loyaltyPointsAmount": "Loyalty amount",
     "noValidVoucher": "Invalid voucher code.",
     "processingOrder": "Processing your order...",
     "loadError": "Unable to load cart. Please try again.",
@@ -252,11 +257,30 @@
     "payWithCod": "Pay when receive"
   },
   "payment": {
-    "createOrderSuccessfully": "Order created successfully!",
     "cantCreateOrder": "Unable to create order. Please try again.",
-    "orderSuccessfully": "Order placed successfully!",
-    "orderSuccessMessage": "Thank you for your purchase! You can track your order in the order history page.",
-    "followOrder": "View my orders"
+    "followOrder": "View my orders",
+    "createOrderSuccessfully": "Order created successfully!",
+    "noOrderInfo": "No order information available.",
+    "goToHomePage": "Go to homepage",
+    "orderSuccessfully": "Order Successful!",
+    "orderSuccessMessage": "Your order has been placed successfully. Thank you for shopping with us!",
+    "orderInformation": "Order Information",
+    "productName": "Product Name",
+    "quantity": "Quantity",
+    "price": "Price",
+    "total": "Total",
+    "normalVersion": "Standard Version",
+    "totalValue": "Total value",
+    "discount": "Discount",
+    "loyaltyPointUse": "Loyalty points used",
+    "feeShip": "Shipping fee",
+    "receiverInformation": "Receiver Information",
+    "name": "Name",
+    "email": "Email",
+    "phoneNumber": "Phone Number",
+    "paymentMethod": "Payment Method",
+    "shippingAddress": "Shipping Address",
+    "note": "Note"
   },
   "book": {
     "noBooks": "No books available",

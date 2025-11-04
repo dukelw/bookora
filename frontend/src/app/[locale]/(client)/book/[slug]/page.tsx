@@ -192,18 +192,13 @@ export default function BookDetailPage() {
               </div>
             </div>
 
-            import WishlistButton from "@/app/components/wishlist/WishlistButton";
-            import { FaShoppingCart } from "react-icons/fa";
-
-            // ...
-
             {/* Nút hành động */}
             <div className="flex gap-4 mt-6">
               <div className="flex gap-4 mt-6">
                 <WishlistButton
-                bookId={book._id}
-                className="p-2 border rounded-lg hover:bg-red-50 transition"
-                size={18}
+                  bookId={book._id}
+                  className="p-2 border rounded-lg hover:bg-red-50 transition"
+                  size={18}
                 />
                 <button
                   onClick={() => setIsCartModalOpen(true)}

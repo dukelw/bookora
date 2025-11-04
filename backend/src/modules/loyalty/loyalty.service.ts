@@ -6,12 +6,9 @@ import { Order } from 'src/schemas/order.schema';
 import {
   LoyaltyTransaction,
   LoyaltyTransactionDocument,
-  LoyaltyTransactionSchema,
   LoyaltyTxType,
 } from 'src/schemas/loyalty-transaction.schema';
-
-export const VND_PER_POINT = 1000;
-export const EARN_RATE = 0.1; // 10%
+import { EARN_RATE, VND_PER_POINT } from 'src/constant';
 
 @Injectable()
 export class LoyaltyService {
@@ -26,7 +23,11 @@ export class LoyaltyService {
     const uid = new Types.ObjectId(userId as any);
     const u = await this.userModel.findById(uid).select('loyaltyPoints').lean();
     const points = u?.loyaltyPoints || 0;
-    return { points, vndPerPoint: VND_PER_POINT, vndValue: points * VND_PER_POINT };
+    return {
+      points,
+      vndPerPoint: VND_PER_POINT,
+      vndValue: points * VND_PER_POINT,
+    };
   }
 
   // Cộng điểm khi đơn PAID/SHIPPED lần đầu
@@ -35,10 +36,14 @@ export class LoyaltyService {
     orderId: Types.ObjectId,
     finalAmountVnd: number,
   ): Promise<number> {
-    const points = Math.floor((Math.max(0, finalAmountVnd) * EARN_RATE) / VND_PER_POINT);
+    const points = Math.floor(
+      (Math.max(0, finalAmountVnd) * EARN_RATE) / VND_PER_POINT,
+    );
     if (points <= 0) return 0;
 
-    await this.userModel.updateOne({ _id: userId }, { $inc: { loyaltyPoints: points } }).exec();
+    await this.userModel
+      .updateOne({ _id: userId }, { $inc: { loyaltyPoints: points } })
+      .exec();
     await this.txModel.create({
       user: userId,
       order: orderId,
@@ -66,7 +71,9 @@ export class LoyaltyService {
     const usable = Math.min(want, u.loyaltyPoints);
     if (usable <= 0) return 0;
 
-    await this.userModel.updateOne({ _id: userId }, { $inc: { loyaltyPoints: -usable } }).exec();
+    await this.userModel
+      .updateOne({ _id: userId }, { $inc: { loyaltyPoints: -usable } })
+      .exec();
     await this.txModel.create({
       user: userId,
       order: orderId || undefined,
@@ -88,7 +95,9 @@ export class LoyaltyService {
     const p = Math.max(0, Number(points || 0));
     if (p <= 0) return 0;
 
-    await this.userModel.updateOne({ _id: userId }, { $inc: { loyaltyPoints: p } }).exec();
+    await this.userModel
+      .updateOne({ _id: userId }, { $inc: { loyaltyPoints: p } })
+      .exec();
     await this.txModel.create({
       user: userId,
       order: orderId,
@@ -114,7 +123,13 @@ export class LoyaltyService {
     if (q.type) filter.type = q.type;
 
     const [items, total] = await Promise.all([
-      this.txModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean().exec(),
+      this.txModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
       this.txModel.countDocuments(filter),
     ]);
 

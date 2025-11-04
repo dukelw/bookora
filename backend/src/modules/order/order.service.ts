@@ -17,8 +17,9 @@ import {
 } from 'src/schemas/request-review.schema';
 import { GetAllOrdersDto } from './dto/get-order-dto';
 
-import { LoyaltyService, VND_PER_POINT } from '../loyalty/loyalty.service';
+import { LoyaltyService } from '../loyalty/loyalty.service';
 import { User } from 'src/schemas/user.schema';
+import { SHIPPING_FEE, VND_PER_POINT } from 'src/constant';
 
 @Injectable()
 export class OrderService {
@@ -50,7 +51,9 @@ export class OrderService {
       selectedSet.has(String((i as any)._id)),
     );
     if (!selectedCartItems.length) {
-      throw new BadRequestException('No selected items in cart to create order');
+      throw new BadRequestException(
+        'No selected items in cart to create order',
+      );
     }
 
     // 3) Chuẩn hoá item + check tồn/giá mới nhất
@@ -60,7 +63,8 @@ export class OrderService {
         const bookId = bookDoc?._id ? String(bookDoc._id) : String(bookDoc);
 
         const freshBook = await this.bookModel.findById(bookId).lean();
-        if (!freshBook) throw new NotFoundException(`Book not found: ${bookId}`);
+        if (!freshBook)
+          throw new NotFoundException(`Book not found: ${bookId}`);
 
         const freshVariant = freshBook.variants.find(
           (v: any) => String(v._id) === i.variantId,
@@ -114,15 +118,18 @@ export class OrderService {
     }
 
     // 7) Final trước loyalty
-    const shippingFee = Number(dto.shippingFee || 0);
+    const shippingFee = Number(dto.shippingFee || SHIPPING_FEE);
     const finalBefore = Math.max(0, subtotal - discountAmount + shippingFee);
 
     // 8) Loyalty: tính số điểm dùng & trừ
     const uid = new Types.ObjectId(dto.user as any);
-    const user = await this.userModel.findById(uid).select('loyaltyPoints').lean();
+    const user = await this.userModel
+      .findById(uid)
+      .select('loyaltyPoints')
+      .lean();
     if (!user) throw new BadRequestException('User not found');
 
-    const requested = Math.max(0, Number((dto as any).loyaltyPointsUsed || 0));
+    const requested = Math.max(0, Number(dto.loyaltyPointsUsed || 0));
     const maxByMoney = Math.floor(finalBefore / VND_PER_POINT);
     const used = Math.min(requested, user.loyaltyPoints, maxByMoney);
 
@@ -130,7 +137,9 @@ export class OrderService {
       await this.loyaltyService.redeem(uid, null, used); // reserve: trừ ngay
     }
 
-    const loyaltyDiscountAmount = used * VND_PER_POINT;
+    const loyaltyDiscountAmount = !isNaN(used * VND_PER_POINT)
+      ? used * VND_PER_POINT
+      : 0;
     const finalAmount = Math.max(0, finalBefore - loyaltyDiscountAmount);
 
     // 9) Tạo đơn (1 lần, không redeclare)
@@ -147,8 +156,8 @@ export class OrderService {
       shippingFee,
       discountAmount,
       finalAmount,
-      loyaltyPointsUsed: used,
-      loyaltyDiscountAmount,
+      loyaltyPointsUsed: Number(used) || 0,
+      loyaltyDiscountAmount: Number(loyaltyDiscountAmount),
       loyaltyPointsEarned: 0, // sẽ cộng khi PAID/SHIPPED
     };
     const createdOrder = await this.orderModel.create(createPayload);
@@ -215,7 +224,7 @@ export class OrderService {
               r.variantId === item.variantId,
           );
 
-        return {
+          return {
             ...(typeof (item as any).toObject === 'function'
               ? (item as any).toObject()
               : { ...item }),

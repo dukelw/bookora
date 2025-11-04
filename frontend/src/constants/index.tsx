@@ -89,3 +89,5 @@ export const STATUS_MAP = {
 };
 
 export const SHIPPING_FEE = 30000; // 30,000 VND
+
+export const TAX = 0; // 30,000 VND

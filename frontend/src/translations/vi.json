@@ -181,6 +181,9 @@
     "placeholderMessage": "Nhập nội dung bạn cần gửi"
   },
   "cart": {
+    "tax": "Thuế",
+    "loyaltyPointsUsed": "Điểm tích lũy",
+    "loyaltyPointsAmount": "Số tiền giảm theo điểm",
     "noValidVoucher": "Mã voucher không hợp lệ.",
     "processingOrder": "Đang xử lý đơn hàng...",
     "loadError": "Không thể tải giỏ hàng. Vui lòng thử lại.",
@@ -216,6 +219,8 @@
     "payWithCod": "Thanh toán khi nhận hàng"
   },
   "order": {
+    "loyaltyAmount": "Giảm giá bởi điểm",
+    "tax": "Thuế",
     "title": "Đơn hàng của bạn",
     "shippingFee": "Phí vận chuyển",
     "totalAmount": "Tổng số tiền",
@@ -252,11 +257,30 @@
     "note": "Ghi chú"
   },
   "payment": {
-    "createOrderSuccessfully": "Tạo đơn hàng thành công!",
     "cantCreateOrder": "Không thể tạo đơn hàng. Vui lòng thử lại.",
     "orderSuccessfully": "Đặt hàng thành công!",
     "orderSuccessMessage": "Cảm ơn bạn đã mua hàng! Bạn có thể theo dõi đơn hàng trong trang lịch sử đơn hàng.",
-    "followOrder": "Xem đơn hàng của tôi"
+    "followOrder": "Xem đơn hàng của tôi",
+    "createOrderSuccessfully": "Tạo đơn hàng thành công!",
+    "noOrderInfo": "Không có thông tin đơn hàng.",
+    "goToHomePage": "Về trang chủ",
+    "orderInformation": "Thông tin đơn hàng",
+    "productName": "Tên sản phẩm",
+    "quantity": "Số lượng",
+    "price": "Giá",
+    "total": "Thành tiền",
+    "normalVersion": "Phiên bản thường",
+    "totalValue": "Tổng giá trị",
+    "discount": "Giảm giá",
+    "loyaltyPointUse": "Điểm thưởng đã dùng",
+    "feeShip": "Phí vận chuyển",
+    "receiverInformation": "Thông tin người nhận",
+    "name": "Họ tên",
+    "email": "Email",
+    "phoneNumber": "Số điện thoại",
+    "paymentMethod": "Phương thức thanh toán",
+    "shippingAddress": "Địa chỉ nhận hàng",
+    "note": "Ghi chú"
   },
   "book": {
     "noBooks": "Không có sách nào",
