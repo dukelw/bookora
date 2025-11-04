@@ -263,6 +263,15 @@
     "viewDetails": "View details",
     "removeError": "Failed to remove from wishlist"
   },
+  "pagination": {
+    "showing": "Showing",
+    "of": "of",
+    "page": "per page",
+    "prev": "Previous",
+    "next": "Next",
+    "goTo": "Go to page",
+    "go": "Go"
+  },
   "payment": {
     "cantCreateOrder": "Unable to create order. Please try again.",
     "followOrder": "View my orders",

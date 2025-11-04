@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { use, useMemo, useState } from "react";
+import { useTranslations } from "use-intl";
 
 interface Props {
   totalItems: number;
@@ -19,6 +20,7 @@ export default function Pagination({
 }: Props) {
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const [jumpInput, setJumpInput] = useState<string>("");
+  const t = useTranslations("pagination");
 
   // compute showing range
   const range = useMemo(() => {
@@ -84,18 +86,18 @@ export default function Pagination({
     >
       {/* Showing X of Y */}
       <div className="flex items-center gap-2 text-sm text-gray-700">
-        <span className="text-gray-500">Showing</span>
+        <span className="text-gray-500">{t("showing")}</span>
         <span className="font-medium">{range.from}</span>
         <span className="text-gray-500">-</span>
         <span className="font-medium">{range.to}</span>
-        <span className="text-gray-500">of</span>
+        <span className="text-gray-500">{t("of")}</span>
         <span className="font-medium">{totalItems}</span>
       </div>
 
       {/* Page size select */}
       {onPageSizeChange && (
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">/ page</label>
+          <label className="text-sm text-gray-600">/ {t("page")}</label>
           <input
             type="number"
             min={1}
@@ -118,7 +120,7 @@ export default function Pagination({
                 : "bg-white text-gray-700 border border-gray-200 hover:bg-green-50"
             }`}
         >
-          Prev
+          {t("prev")}
         </button>
 
         <div className="flex items-center gap-1">{renderPageNumbers()}</div>
@@ -133,7 +135,7 @@ export default function Pagination({
                 : "bg-white text-gray-700 border border-gray-200 hover:bg-green-50"
             }`}
         >
-          Next
+          {t("next")}
         </button>
 
         {/* Quick jump input */}
@@ -142,19 +144,19 @@ export default function Pagination({
             type="number"
             min={1}
             max={totalPages}
-            placeholder="Go to"
+            placeholder={t("goTo")}
             value={jumpInput}
             onChange={(e) => setJumpInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleGoto();
             }}
-            className="w-20 h-8 px-2 rounded border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 !text-green-600"
+            className="w-28 h-8 px-2 rounded border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 !text-green-600"
           />
           <button
             onClick={() => handleGoto()}
             className="h-8 px-3 rounded bg-green-600 text-white text-sm hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-300"
           >
-            Go
+            {t("go")}
           </button>
         </div>
       </div>

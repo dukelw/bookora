@@ -263,6 +263,15 @@
     "viewDetails": "Xem chi tiết",
     "removeError": "Xóa khỏi wishlist thất bại"
   },
+  "pagination": {
+    "showing": "Hiển thị",
+    "of": "trên tổng",
+    "page": "mỗi trang",
+    "prev": "Trước",
+    "next": "Sau",
+    "goTo": "Tới trang",
+    "go": "Đi"
+  },
   "payment": {
     "cantCreateOrder": "Không thể tạo đơn hàng. Vui lòng thử lại.",
     "orderSuccessfully": "Đặt hàng thành công!",
