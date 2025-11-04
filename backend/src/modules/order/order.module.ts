@@ -6,17 +6,20 @@ import { CartModule } from '../cart/cart.module';
 import { Order, OrderSchema } from 'src/schemas/order.schema';
 import { DiscountModule } from '../discount/discount.module';
 import { Book, BookSchema } from 'src/schemas/book.schema';
+import { User, UserSchema } from 'src/schemas/user.schema';
 import { ReviewRequestModule } from '../review-request/review-request.module';
-
+import { LoyaltyModule } from '../loyalty/loyalty.module';
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Order.name, schema: OrderSchema },
       { name: Book.name, schema: BookSchema },
+      { name: User.name,  schema: UserSchema  },
     ]),
     CartModule,
     DiscountModule,
     ReviewRequestModule,
+    LoyaltyModule,
   ],
   controllers: [OrderController],
   providers: [OrderService],

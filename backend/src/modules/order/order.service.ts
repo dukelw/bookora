@@ -17,6 +17,9 @@ import {
 } from 'src/schemas/request-review.schema';
 import { GetAllOrdersDto } from './dto/get-order-dto';
 
+import { LoyaltyService, VND_PER_POINT } from '../loyalty/loyalty.service';
+import { User } from 'src/schemas/user.schema';
+
 @Injectable()
 export class OrderService {
   constructor(
@@ -24,66 +27,55 @@ export class OrderService {
     @InjectModel(ReviewRequest.name)
     private reviewRequestModel: Model<ReviewRequest>,
     @InjectModel(Book.name) private bookModel: Model<Book>,
+    @InjectModel(User.name) private userModel: Model<User>,
     private readonly cartService: CartService,
     private readonly discountService: DiscountService,
+    private readonly loyaltyService: LoyaltyService,
   ) {}
 
-  // replace the create method with the following (uses (i as any)._id where needed)
-
   async create(dto: CreateOrderDto): Promise<Order> {
-    // 1. Lấy cart thật từ DB
+    // 1) Cart thật
     const cart = await this.cartService.getCart(dto.user);
     if (!cart) throw new NotFoundException('Cart not found');
 
-    // Ensure dto.selectedItems exists and is an array of cart item _id strings.
+    // 2) Xác định cartItem được chọn
     const selectedIds =
       Array.isArray(dto.selectedItems) && dto.selectedItems.length
         ? dto.selectedItems.map((id: any) => String(id))
         : [];
-
-    // If no selectedIds provided, assume all items are selected (backwards compatible)
     const selectedSet = selectedIds.length
       ? new Set(selectedIds)
       : new Set(cart.items.map((i: any) => String((i as any)._id)));
-
-    // Filter cart items to only those selected
     const selectedCartItems = cart.items.filter((i: any) =>
       selectedSet.has(String((i as any)._id)),
     );
-
     if (!selectedCartItems.length) {
-      throw new BadRequestException(
-        'No selected items in cart to create order',
-      );
+      throw new BadRequestException('No selected items in cart to create order');
     }
 
-    // 2. Lấy và validate các item đã chọn (check stock & prepare order items)
+    // 3) Chuẩn hoá item + check tồn/giá mới nhất
     const items = await Promise.all(
       selectedCartItems.map(async (i: any) => {
-        // i.book may be populated (object) or an ObjectId
         const bookDoc = i.book as any;
         const bookId = bookDoc?._id ? String(bookDoc._id) : String(bookDoc);
 
-        // Always fetch fresh book & variant from DB to ensure up-to-date stock/prices
         const freshBook = await this.bookModel.findById(bookId).lean();
-        if (!freshBook)
-          throw new NotFoundException(`Book not found: ${bookId}`);
+        if (!freshBook) throw new NotFoundException(`Book not found: ${bookId}`);
 
         const freshVariant = freshBook.variants.find(
           (v: any) => String(v._id) === i.variantId,
         );
-        if (!freshVariant)
+        if (!freshVariant) {
           throw new BadRequestException(
             `Variant not found in DB for book ${bookId}`,
           );
-
+        }
         if (freshVariant.stock < i.quantity) {
           throw new BadRequestException(
             `Not enough stock for "${freshBook.title}" (variant ${freshVariant.rarity})`,
           );
         }
 
-        // Prepare order item (include cartItemId as string)
         return {
           book: freshBook._id,
           variantId: i.variantId,
@@ -95,7 +87,7 @@ export class OrderService {
       }),
     );
 
-    // 3. Trừ stock
+    // 4) Trừ tồn
     await Promise.all(
       items.map((item) =>
         this.bookModel.updateOne(
@@ -105,29 +97,44 @@ export class OrderService {
       ),
     );
 
-    // 4. Tính subtotal (chỉ cho các item đã chọn)
+    // 5) Subtotal
     const subtotal = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
 
-    // 5. Áp dụng discount nếu có (áp dụng lên subtotal các item đã chọn)
+    // 6) Discount
     let discountAmount = 0;
     if (dto.discountCode) {
       const { discount } = await this.discountService.validateAndApply(
         dto.discountCode,
         subtotal,
       );
-
       discountAmount =
         discount.type === DiscountType.PERCENTAGE
           ? Math.floor(subtotal * (discount.value / 100))
           : discount.value;
     }
 
-    // 6. Tính finalAmount
-    const { shippingFee } = dto;
-    const finalAmount = subtotal - discountAmount + shippingFee;
+    // 7) Final trước loyalty
+    const shippingFee = Number(dto.shippingFee || 0);
+    const finalBefore = Math.max(0, subtotal - discountAmount + shippingFee);
 
-    // 7. Tạo order (chỉ chứa items đã chọn)
-    const order = new this.orderModel({
+    // 8) Loyalty: tính số điểm dùng & trừ
+    const uid = new Types.ObjectId(dto.user as any);
+    const user = await this.userModel.findById(uid).select('loyaltyPoints').lean();
+    if (!user) throw new BadRequestException('User not found');
+
+    const requested = Math.max(0, Number((dto as any).loyaltyPointsUsed || 0));
+    const maxByMoney = Math.floor(finalBefore / VND_PER_POINT);
+    const used = Math.min(requested, user.loyaltyPoints, maxByMoney);
+
+    if (used > 0) {
+      await this.loyaltyService.redeem(uid, null, used); // reserve: trừ ngay
+    }
+
+    const loyaltyDiscountAmount = used * VND_PER_POINT;
+    const finalAmount = Math.max(0, finalBefore - loyaltyDiscountAmount);
+
+    // 9) Tạo đơn (1 lần, không redeclare)
+    const createPayload: any = {
       ...dto,
       items: items.map((i) => ({
         book: i.book,
@@ -140,30 +147,32 @@ export class OrderService {
       shippingFee,
       discountAmount,
       finalAmount,
-    });
+      loyaltyPointsUsed: used,
+      loyaltyDiscountAmount,
+      loyaltyPointsEarned: 0, // sẽ cộng khi PAID/SHIPPED
+    };
+    const createdOrder = await this.orderModel.create(createPayload);
 
-    const savedOrder = await order.save();
-
-    // 8. Cập nhật discount nếu có
+    // 10) Ghi nhận dùng discount
     if (dto.discountCode) {
       await this.discountService.markAsUsed(
         dto.discountCode,
-        (savedOrder._id as Types.ObjectId).toString(),
+        (createdOrder._id as Types.ObjectId).toString(),
       );
     }
 
-    // 9. Xóa các item đã đặt khỏi cart (dựa trên selected cart item _id)
+    // 11) Xoá item khỏi cart
     if (selectedCartItems.length > 0) {
-      const selectedCartItemIds = selectedCartItems.map((i: any) =>
-        String((i as any)._id),
+      const selectedCartItemIds = new Set(
+        selectedCartItems.map((i: any) => String((i as any)._id)),
       );
       cart.items = cart.items.filter(
-        (i: any) => !selectedCartItemIds.includes(String((i as any)._id)),
+        (i: any) => !selectedCartItemIds.has(String((i as any)._id)),
       );
       await cart.save();
     }
 
-    return savedOrder;
+    return createdOrder;
   }
 
   async findAllByUser(
@@ -192,7 +201,6 @@ export class OrderService {
       this.orderModel.countDocuments(query),
     ]);
 
-    // ✅ Nếu là đơn completed thì enrich thêm trạng thái đánh giá
     const enrichedOrders = await Promise.all(
       orders.map(async (order) => {
         const reviewRequests = await this.reviewRequestModel.find({
@@ -207,7 +215,7 @@ export class OrderService {
               r.variantId === item.variantId,
           );
 
-          return {
+        return {
             ...(typeof (item as any).toObject === 'function'
               ? (item as any).toObject()
               : { ...item }),
@@ -241,11 +249,12 @@ export class OrderService {
     const order = await this.orderModel.findById(id);
     if (!order) throw new NotFoundException('Order not found');
 
-    const wasCancelled = order.status === OrderStatus.CANCELLED;
+    const prevStatus = order.status;
+    const switchingToCancelledFirstTime =
+      status === OrderStatus.CANCELLED && prevStatus !== OrderStatus.CANCELLED;
 
-    // NEW: Nếu chuyển sang CANCELLED lần đầu => trả lại tồn kho + khôi phục discount
-    if (status === OrderStatus.CANCELLED && !wasCancelled) {
-      // Trả lại số lượng tồn kho cho từng variant trong đơn
+    // 1) Huỷ lần đầu: trả tồn + rollback discount + hoàn điểm nếu chưa PAID/SHIPPED
+    if (switchingToCancelledFirstTime) {
       await Promise.all(
         order.items.map((item) =>
           this.bookModel.updateOne(
@@ -255,20 +264,45 @@ export class OrderService {
         ),
       );
 
-      // Khôi phục 1 lượt sử dụng của discount (nếu đơn có dùng mã)
       if (order.discountCode) {
         await this.discountService.rollbackUsage(
           order.discountCode,
           (order._id as Types.ObjectId).toString(),
         );
       }
+
+      if (
+        prevStatus !== OrderStatus.PAID &&
+        prevStatus !== OrderStatus.SHIPPED &&
+        (order.loyaltyPointsUsed || 0) > 0
+      ) {
+        await this.loyaltyService.refund(
+          order.user as any as Types.ObjectId,
+          order._id as any as Types.ObjectId,
+          order.loyaltyPointsUsed,
+        );
+      }
     }
 
-    // Cập nhật trạng thái đơn
+    // 2) Gán trạng thái
     order.status = status;
+
+    // 3) PAID/SHIPPED lần đầu -> cộng điểm
+    if (
+      (status === OrderStatus.PAID || status === OrderStatus.SHIPPED) &&
+      (order.loyaltyPointsEarned || 0) === 0
+    ) {
+      const earned = await this.loyaltyService.earn(
+        order.user as any as Types.ObjectId,
+        order._id as any as Types.ObjectId,
+        Math.max(0, order.finalAmount || 0),
+      );
+      order.loyaltyPointsEarned = earned;
+    }
+
     await order.save();
 
-    // Giữ nguyên logic tạo yêu cầu review khi COMPLETED
+    // 4) COMPLETED -> tạo request review nếu chưa có
     if (status === OrderStatus.COMPLETED) {
       for (const item of order.items) {
         const existingRating = await this.reviewRequestModel.findOne({
@@ -291,6 +325,7 @@ export class OrderService {
 
     return order;
   }
+
   async findAllOrders(dto: GetAllOrdersDto) {
     const { status, userId } = dto;
 
