@@ -12,7 +12,11 @@ type Props = {
   size?: number;
 };
 
-export default function WishlistButton({ bookId, className = "", size = 18 }: Props) {
+export default function WishlistButton({
+  bookId,
+  className = "",
+  size = 18,
+}: Props) {
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [inWishlist, setInWishlist] = useState<boolean>(false);
@@ -42,7 +46,6 @@ export default function WishlistButton({ bookId, className = "", size = 18 }: Pr
       const res = await wishlistService.toggle(bookId);
       setInWishlist(res.inWishlist);
       window.dispatchEvent(new CustomEvent("wishlist:changed"));
-      toast.success(res.inWishlist ? "Đã thêm vào yêu thích" : "Đã gỡ khỏi yêu thích");
     } catch (e: any) {
       const msg = e?.response?.data?.message || "Thao tác wishlist thất bại";
       toast.error(msg);
@@ -59,7 +62,11 @@ export default function WishlistButton({ bookId, className = "", size = 18 }: Pr
       className={`inline-flex items-center justify-center ${className}`}
       title={inWishlist ? "Bỏ yêu thích" : "Thêm vào yêu thích"}
     >
-      {inWishlist ? <FaHeart size={size} className="text-red-500" /> : <FaRegHeart size={size} />}
+      {inWishlist ? (
+        <FaHeart size={size} className="text-red-500" />
+      ) : (
+        <FaRegHeart size={size} />
+      )}
     </button>
   );
 }

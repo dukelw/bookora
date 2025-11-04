@@ -256,6 +256,13 @@
     "address": "Địa chỉ",
     "note": "Ghi chú"
   },
+  "wishlist": {
+    "title": "Danh sách yêu thích",
+    "loading": "Đang tải danh sách...",
+    "empty": "Danh sách yêu thích trống.",
+    "viewDetails": "Xem chi tiết",
+    "removeError": "Xóa khỏi wishlist thất bại"
+  },
   "payment": {
     "cantCreateOrder": "Không thể tạo đơn hàng. Vui lòng thử lại.",
     "orderSuccessfully": "Đặt hàng thành công!",

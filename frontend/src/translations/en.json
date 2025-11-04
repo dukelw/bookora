@@ -256,6 +256,13 @@
     "payWithVNPay": "Using VNPay",
     "payWithCod": "Pay when receive"
   },
+  "wishlist": {
+    "title": "My Wishlist",
+    "loading": "Loading wishlist...",
+    "empty": "Your wishlist is empty.",
+    "viewDetails": "View details",
+    "removeError": "Failed to remove from wishlist"
+  },
   "payment": {
     "cantCreateOrder": "Unable to create order. Please try again.",
     "followOrder": "View my orders",

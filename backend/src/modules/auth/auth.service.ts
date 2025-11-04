@@ -90,7 +90,7 @@ export class AuthService {
       role: user.role,
     };
 
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '30m' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     // Không lưu refresh token hiện tại, chỉ gửi cho client
@@ -112,7 +112,7 @@ export class AuthService {
       // Tạo token mới
       const newAccessToken = this.jwtService.sign(
         { sub: user._id.toString(), email: user.email, role: user.role },
-        { expiresIn: '15m' },
+        { expiresIn: '30m' },
       );
       const newRefreshToken = this.jwtService.sign(
         { sub: user._id.toString(), email: user.email, role: user.role },

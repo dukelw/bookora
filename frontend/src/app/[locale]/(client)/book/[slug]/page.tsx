@@ -59,30 +59,6 @@ export default function BookDetailPage() {
     router.push(`/category/${category.slug}`);
   };
 
-  // const handleAddToCart = async (
-  //   items: { variant: BookVariant; quantity: number }[]
-  // ) => {
-  //   try {
-  //     await Promise.all(
-  //       items.map((item) =>
-  //         cartService.addToCart({
-  //           userId: user._id,
-  //           bookId: bookId ?? "",
-  //           variantId: item.variant._id,
-  //           quantity: item.quantity,
-  //         })
-  //       )
-  //     );
-
-  //     // 🚀 Sau khi thêm, fetch lại giỏ hàng để store cập nhật
-  //     const updatedCart = await cartService.getCart(user._id);
-  //     setCart(updatedCart);
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("Có lỗi khi thêm giỏ hàng");
-  //   }
-  // };
-
   const handleAddToCart = async (
     items: { variant: BookVariant; quantity: number }[]
   ) => {

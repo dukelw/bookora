@@ -58,7 +58,7 @@ export default function Pagination({
 
     return pages.map((p, idx) =>
       p === "..." ? (
-        <span key={`e-${idx}`} className="px-2 text-sm">
+        <span key={`e-${idx}`} className="px-2 text-sm !text-green-600">
           {p}
         </span>
       ) : (
@@ -101,7 +101,7 @@ export default function Pagination({
             min={1}
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="w-16 h-8 px-2 rounded border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+            className="w-16 h-8 px-2 rounded border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 !text-green-600"
           />
         </div>
       )}
@@ -148,7 +148,7 @@ export default function Pagination({
             onKeyDown={(e) => {
               if (e.key === "Enter") handleGoto();
             }}
-            className="w-20 h-8 px-2 rounded border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+            className="w-20 h-8 px-2 rounded border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 !text-green-600"
           />
           <button
             onClick={() => handleGoto()}
