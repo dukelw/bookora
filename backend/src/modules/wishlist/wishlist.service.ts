@@ -1,9 +1,18 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Wishlist } from 'src/schemas/wishlist.schema';
 import { Book } from 'src/schemas/book.schema';
-import { AddWishlistDto, BulkWishlistDto, WishlistQueryDto } from './dto/wishlist.dto';
+import {
+  AddWishlistDto,
+  BulkWishlistDto,
+  WishlistQueryDto,
+} from './dto/wishlist.dto';
 
 @Injectable()
 export class WishlistService {
@@ -18,64 +27,74 @@ export class WishlistService {
     const skip = (page - 1) * limit;
 
     const [items, total] = await Promise.all([
-      this.wishlistModel.aggregate([
-        { $match: { user: uid } },
-        { $sort: { createdAt: -1 } },
-        { $skip: skip },
-        { $limit: Math.min(limit, 50) },
-        {
-          $lookup: {
-            from: 'books',
-            localField: 'book',
-            foreignField: '_id',
-            as: 'book',
+      this.wishlistModel
+        .aggregate([
+          { $match: { user: uid } },
+          { $sort: { createdAt: -1 } },
+          { $skip: skip },
+          { $limit: Math.min(limit, 50) },
+          {
+            $lookup: {
+              from: 'books',
+              localField: 'book',
+              foreignField: '_id',
+              as: 'book',
+            },
           },
-        },
-        { $unwind: '$book' },
-        {
-          $addFields: {
-            mainImageArr: {
-              $filter: {
-                input: '$book.images',
-                as: 'img',
-                cond: { $eq: ['$$img.isMain', true] },
+          { $unwind: '$book' },
+          {
+            $addFields: {
+              mainImageArr: {
+                $filter: {
+                  input: '$book.images',
+                  as: 'img',
+                  cond: { $eq: ['$$img.isMain', true] },
+                },
               },
             },
           },
-        },
-        {
-          $addFields: {
-            mainImage: {
-              $cond: [
-                { $gt: [{ $size: '$mainImageArr' }, 0] },
-                { $arrayElemAt: ['$mainImageArr.url', 0] },
-                { $arrayElemAt: ['$book.images.url', 0] },
-              ],
+          {
+            $addFields: {
+              mainImage: {
+                $cond: [
+                  { $gt: [{ $size: '$mainImageArr' }, 0] },
+                  { $arrayElemAt: ['$mainImageArr.url', 0] },
+                  { $arrayElemAt: ['$book.images.url', 0] },
+                ],
+              },
             },
           },
-        },
-        {
-          $project: {
-            _id: 0,
-            wishlistId: '$_id',
-            addedAt: '$createdAt',
-            book: {
-              _id: '$book._id',
-              title: '$book.title',
-              slug: '$book.slug',
-              author: '$book.author',
-              publisher: '$book.publisher',
-              price: '$book.price',
-              releaseYear: '$book.releaseYear',
-              mainImage: '$mainImage',
+          {
+            $project: {
+              _id: 0,
+              wishlistId: '$_id',
+              addedAt: '$createdAt',
+              book: {
+                _id: '$book._id',
+                title: '$book.title',
+                slug: '$book.slug',
+                author: '$book.author',
+                publisher: '$book.publisher',
+                price: '$book.price',
+                releaseYear: '$book.releaseYear',
+                mainImage: '$mainImage',
+              },
             },
           },
-        },
-      ]).exec(),
+        ])
+        .exec(),
       this.wishlistModel.countDocuments({ user: uid }),
     ]);
 
-    return { items, meta: { page, limit: Math.min(limit, 50), total, totalPages: Math.ceil(total / limit) } };
+    return {
+      items,
+      meta: {
+        page,
+        limit: Math.min(limit, 50),
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async add(userId: string, dto: AddWishlistDto) {
@@ -102,9 +121,13 @@ export class WishlistService {
     const bids = dto.bookIds.map((id) => new mongoose.Types.ObjectId(id));
 
     // lọc bỏ book đã có trong wishlist để không lỗi unique
-    const existing = await this.wishlistModel.find({ user: uid, book: { $in: bids } }, { book: 1 }).lean();
+    const existing = await this.wishlistModel
+      .find({ user: uid, book: { $in: bids } }, { book: 1 })
+      .lean();
     const existingIds = new Set(existing.map((d) => d.book.toString()));
-    const toInsert = bids.filter((id) => !existingIds.has(id.toString())).map((book) => ({ user: uid, book }));
+    const toInsert = bids
+      .filter((id) => !existingIds.has(id.toString()))
+      .map((book) => ({ user: uid, book }));
     if (!toInsert.length) return { success: true, inserted: 0 };
 
     await this.wishlistModel.insertMany(toInsert);
@@ -121,14 +144,19 @@ export class WishlistService {
   async removeMany(userId: string, dto: BulkWishlistDto) {
     const uid = new mongoose.Types.ObjectId(userId);
     const bids = dto.bookIds.map((id) => new mongoose.Types.ObjectId(id));
-    const res = await this.wishlistModel.deleteMany({ user: uid, book: { $in: bids } }).exec();
+    const res = await this.wishlistModel
+      .deleteMany({ user: uid, book: { $in: bids } })
+      .exec();
     return { success: true, deleted: res.deletedCount ?? 0 };
   }
 
   async toggle(userId: string, dto: AddWishlistDto) {
     const uid = new mongoose.Types.ObjectId(userId);
     const bid = new mongoose.Types.ObjectId(dto.bookId);
-    const found = await this.wishlistModel.findOne({ user: uid, book: bid }).lean().exec();
+    const found = await this.wishlistModel
+      .findOne({ user: uid, book: bid })
+      .lean()
+      .exec();
     if (found) {
       await this.wishlistModel.deleteOne({ _id: found._id }).exec();
       return { inWishlist: false };

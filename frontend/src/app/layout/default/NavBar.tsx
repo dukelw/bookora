@@ -35,17 +35,19 @@ import { cartService } from "@/services/cartService";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
 import { eventBus } from "@/utils/eventBus";
+import useWishlistCount from "@/hooks/useWishlistCount";
 
 const AppNavbar = () => {
   const { user } = useAuthStore();
   const { cart, setCart } = useCartStore();
-  const wishlistCount = 2;
+//   const wishlistCount = 2;
 
   const pathname = usePathname();
   const t = useTranslations("navbar");
 
   const segments = pathname.split("/").filter(Boolean);
   const locale = segments[0] || "en";
+  const wishlistCount = useWishlistCount();
   const currentPath = "/" + (segments[1] ?? "");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -179,14 +181,19 @@ const AppNavbar = () => {
           </div>
 
           {/* Wishlist */}
-          <div className="relative cursor-pointer">
+          <Link
+            href={`/${locale}/wishlist`}
+            className="relative cursor-pointer"
+            prefetch
+            title="Wishlist"
+          >
             <FaHeart className="text-xl hover:text-cyan transition-colors" />
             {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                 {wishlistCount}
               </span>
             )}
-          </div>
+          </Link>
 
           {/* Cart */}
           <div className="relative">

@@ -1,11 +1,13 @@
 "use client";
 
+import { TAX } from "@/constants";
 import { OrderStatus } from "@/enums";
 import React from "react";
 import { useTranslations } from "use-intl";
 
 interface PaymentInfoProps {
   payment: {
+    loyaltyDiscountAmount: number;
     paymentMethod: string;
     finalAmount: number;
     totalAmount: number;
@@ -61,6 +63,20 @@ export default function OrderPaymentInfo({ payment }: PaymentInfoProps) {
           <strong className="text-gray-400">{t("discountAmount")}:</strong>{" "}
           <span className="text-yellow-400 font-semibold">
             {formatPrice(payment.discountAmount)}
+          </span>
+        </p>
+
+        <p>
+          <strong className="text-gray-400">{t("loyaltyAmount")}:</strong>{" "}
+          <span className="text-yellow-400 font-semibold">
+            {formatPrice(payment.loyaltyDiscountAmount)}
+          </span>
+        </p>
+
+        <p>
+          <strong className="text-gray-400">{t("tax")}:</strong>{" "}
+          <span className="text-yellow-400 font-semibold">
+            {formatPrice(TAX)}
           </span>
         </p>
 

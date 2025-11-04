@@ -25,6 +25,7 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { BullModule } from '@nestjs/bull';
 import { StatisticsModule } from './modules/statistic/statistic.module';
+import { LoyaltyModule } from './modules/loyalty/loyalty.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { StatisticsModule } from './modules/statistic/statistic.module';
     WishlistModule,
     CommentModule,
     StatisticsModule,
+    LoyaltyModule,
   ],
 })
 export class AppModule {}

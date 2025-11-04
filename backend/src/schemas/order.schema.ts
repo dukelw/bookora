@@ -52,6 +52,15 @@ export class Order extends Document {
   @Prop({ type: String, required: false })
   discountCode?: string; // mã giảm giá (nếu có)
 
+  @Prop({ default: 0 })
+  loyaltyPointsUsed: number;
+
+  @Prop({ default: 0 })
+  loyaltyDiscountAmount: number;
+
+  @Prop({ default: 0 })
+  loyaltyPointsEarned: number;
+
   @Prop({ type: String, required: true })
   user: string; // ID user đặt đơn
 

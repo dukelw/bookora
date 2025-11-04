@@ -1,7 +1,12 @@
 "use client";
+import { TAX } from "@/constants";
 import { formatCurrency } from "@/utils/format";
 
 interface CartSummaryProps {
+  loyaltyPointsUsed: {
+    points: number;
+    vndValue: number;
+  };
   subtotal: number;
   shippingFee: number;
   discount: number;
@@ -11,6 +16,7 @@ interface CartSummaryProps {
 }
 
 export default function CartSummary({
+  loyaltyPointsUsed,
   subtotal,
   shippingFee,
   discount,
@@ -34,6 +40,18 @@ export default function CartSummary({
       <div className="flex justify-between text-sm text-red-400 mb-2">
         <span>{t("discount")}</span>
         <span>-{formatCurrency(discount)}</span>
+      </div>
+      <div className="flex justify-between text-sm text-red-400 mb-2">
+        <span>{t("loyaltyPointsUsed")}</span>
+        <span>-{loyaltyPointsUsed.points}</span>
+      </div>
+      <div className="flex justify-between text-sm text-red-400 mb-2">
+        <span>{t("loyaltyPointsAmount")}</span>
+        <span>-{formatCurrency(loyaltyPointsUsed.vndValue)}</span>
+      </div>
+      <div className="flex justify-between text-sm mb-2">
+        <span>{t("tax")}</span>
+        <span>{formatCurrency(TAX)}</span>
       </div>
       <div className="flex justify-between font-bold text-lg">
         <span>{t("grandTotal")}</span>

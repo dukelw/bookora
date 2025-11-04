@@ -20,6 +20,7 @@ import Category from "@/interfaces/Category";
 import BookVariant from "@/interfaces/BookVariant";
 import CommentSection from "./components/CommentSection";
 import { getOrCreateGuestId } from "@/lib/guest";
+import WishlistButton from "@/app/components/wishlist/WishlistButton";
 
 export default function BookDetailPage() {
   const { bookId } = useBookStore();
@@ -57,30 +58,6 @@ export default function BookDetailPage() {
     setCategory(category);
     router.push(`/category/${category.slug}`);
   };
-
-  // const handleAddToCart = async (
-  //   items: { variant: BookVariant; quantity: number }[]
-  // ) => {
-  //   try {
-  //     await Promise.all(
-  //       items.map((item) =>
-  //         cartService.addToCart({
-  //           userId: user._id,
-  //           bookId: bookId ?? "",
-  //           variantId: item.variant._id,
-  //           quantity: item.quantity,
-  //         })
-  //       )
-  //     );
-
-  //     // 🚀 Sau khi thêm, fetch lại giỏ hàng để store cập nhật
-  //     const updatedCart = await cartService.getCart(user._id);
-  //     setCart(updatedCart);
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("Có lỗi khi thêm giỏ hàng");
-  //   }
-  // };
 
   const handleAddToCart = async (
     items: { variant: BookVariant; quantity: number }[]
@@ -194,9 +171,11 @@ export default function BookDetailPage() {
             {/* Nút hành động */}
             <div className="flex gap-4 mt-6">
               <div className="flex gap-4 mt-6">
-                <button className="p-2 border rounded-lg text-red-500 hover:bg-red-50 transition">
-                  <FaHeart />
-                </button>
+                <WishlistButton
+                  bookId={book._id}
+                  className="p-2 border rounded-lg hover:bg-red-50 transition"
+                  size={18}
+                />
                 <button
                   onClick={() => setIsCartModalOpen(true)}
                   className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white rounded-lg shadow hover:bg-cyan-700 transition"

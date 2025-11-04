@@ -16,6 +16,8 @@ import { REDIRECT_URL, SHIPPING_FEE } from "@/constants";
 import { clearGuestId, getOrCreateGuestId } from "@/lib/guest";
 import { authService } from "@/services/authService";
 import Loader from "@/components/loader/Loader";
+import { loyaltyService } from "@/services/loyaltyService";
+import LoyaltyBalance from "@/interfaces/LoyaltyBalance";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
@@ -35,6 +37,11 @@ export default function CheckoutPage() {
     note: "",
   });
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [loyaltyPoint, setLoyaltyPoint] = useState<LoyaltyBalance>({
+    points: 0,
+    vndValue: 0,
+    vndPerPoint: 1000,
+  });
 
   // helper lấy ownerId (userId nếu login, else guestId)
   const getOwnerId = () => user?._id || getOrCreateGuestId();
@@ -51,9 +58,17 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleGetLoyaltyPoint = async () => {
+    const res = await loyaltyService.getBalance();
+    if (res) {
+      setLoyaltyPoint(res);
+    }
+  };
+
   // Khi component mount hoặc user đổi (login/ logout), fetch cart
   useEffect(() => {
     handleGetCart();
+    handleGetLoyaltyPoint();
     // populate form data when user exists
     if (user?._id) {
       setFormData({
@@ -83,7 +98,7 @@ export default function CheckoutPage() {
     : 0;
 
   const shippingFee = SHIPPING_FEE;
-  const total = subtotal - discount + shippingFee;
+  const total = subtotal - discount + shippingFee - loyaltyPoint.vndValue;
 
   const handleSubmit = async () => {
     try {
@@ -149,6 +164,8 @@ export default function CheckoutPage() {
           return {
             book: i.book._id,
             variantId: i.variantId,
+            variant,
+            bookDetail: i.book,
             quantity: i.quantity,
             price: variant?.price || 0,
             finalPrice: variant?.price || 0,
@@ -167,6 +184,8 @@ export default function CheckoutPage() {
         paymentMethod,
         shippingAddress: formData,
         cart: cart._id,
+        loyaltyPointsUsed: loyaltyPoint.points,
+        loyaltyDiscountAmount: loyaltyPoint.vndValue,
       };
 
       setCheckout(payload);
@@ -243,6 +262,7 @@ export default function CheckoutPage() {
           />
 
           <CartSummary
+            loyaltyPointsUsed={loyaltyPoint}
             subtotal={subtotal}
             shippingFee={shippingFee}
             discount={discount}

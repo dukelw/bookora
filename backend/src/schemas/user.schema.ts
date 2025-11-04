@@ -43,6 +43,9 @@ export class User {
 
   @Prop({ type: String, enum: ['active', 'disable'], default: 'active' })
   status: string;
+
+  @Prop({ type: Number, default: 0 })
+  loyaltyPoints: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,10 +1,23 @@
 import {
-  Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards, UnauthorizedException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { WishlistService } from './wishlist.service';
-import { AddWishlistDto, BulkWishlistDto, WishlistQueryDto } from './dto/wishlist.dto';
+import {
+  AddWishlistDto,
+  BulkWishlistDto,
+  WishlistQueryDto,
+} from './dto/wishlist.dto';
 
 @ApiTags('Wishlist')
 @ApiBearerAuth()
@@ -16,7 +29,10 @@ export class WishlistController {
   private userIdFromReq(req: any): string {
     const u = req?.user ?? {};
     const id = u._id || u.id || u.userId || u.sub || u.uid;
-    if (!id) throw new UnauthorizedException('Missing user. Click "Authorize" and provide a Bearer token.');
+    if (!id)
+      throw new UnauthorizedException(
+        'Missing user. Click "Authorize" and provide a Bearer token.',
+      );
     return String(id);
   }
 
