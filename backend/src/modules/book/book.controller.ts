@@ -45,6 +45,12 @@ export class BookController {
     return this.bookService.findAll(searchKey, +page, +limit);
   }
 
+  @Post('reindex')
+  async reindex() {
+    await this.bookService.reindexAll();
+    return { ok: true };
+  }
+
   @Get('all')
   @ApiOperation({ summary: 'Lấy danh sách theo filter (có phân trang)' })
   getBooks(@Query() q: ListBooksQueryDto) {
