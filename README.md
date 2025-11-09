@@ -329,3 +329,4 @@ server {
 
 - Level 2: Nginx map `./nginx.conf` vào `/etc/nginx/conf.d/default.conf` và publish cổng `4000:80`.
 - Level 3: `docker-stack.yml` dùng `configs` để mount `nginx.conf` vào container.
+-
