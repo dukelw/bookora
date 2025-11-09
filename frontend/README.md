@@ -1,29 +1,21 @@
-1.1 Các nhiệm vụ cơ bản khi thực hiện hệ thống bán sách
-Để xây dựng một hệ thống bán sách trực tuyến hoàn chỉnh, cần thực hiện các nhiệm vụ cơ bản sau:
-	Phân tích yêu cầu
-	Thu thập yêu cầu người dùng: tìm hiểu nhu cầu và hành vi của khách hàng trong việc tìm kiếm, lựa chọn và mua sách trực tuyến; đồng thời khảo sát yêu cầu quản lý từ phía quản trị viên.
-	Xác định mục tiêu của hệ thống: cung cấp nền tảng trực tuyến giúp khách hàng dễ dàng truy cập, tìm kiếm, chọn mua, thanh toán và theo dõi đơn hàng; hỗ trợ quản trị viên quản lý kho, đơn hàng, người dùng và doanh thu.
-	Xác định các đối tượng sử dụng: gồm hai nhóm chính — khách hàng và quản trị viên hệ thống 
-	Thiết kế yêu cầu
-	Xây dựng mô hình cơ sở dữ liệu gồm các thực thể chính như: người dùng, khách hàng, sách, tác giả, thể loại, giỏ hàng, đơn hàng, mã giảm giá, bình luận, đánh giá, tồn kho và bảng tích điểm.
-	Thiết kế mối quan hệ giữa các thực thể (theo sơ đồ ERD).
-	Thiết kế kiến trúc hệ thống với ba phần chính: giao diện người dùng (frontend), xử lý nghiệp vụ (backend) và cơ sở dữ liệu (database).
-	Thiết kế giao diện hướng tới đơn giản, dễ sử dụng, hỗ trợ đa ngôn ngữ và hiển thị rõ ràng danh mục sách, giỏ hàng, đơn hàng.
-	Triển khai hệ thống
-	Cài đặt cơ sở dữ liệu theo mô hình thiết kế.
-	Phát triển các chức năng chính:
-	Đăng ký, đăng nhập và quản lý tài khoản người dùng (cập nhật thông tin, phân quyền).
-	Quản lý thông tin sách, tác giả, thể loại.
-	Tìm kiếm, lọc và xem chi tiết sách.
-	Thêm vào giỏ hàng, đặt mua và thanh toán.
-	Quản lý đơn hàng, mã giảm giá và tích điểm.
-	Đánh giá, bình luận và phản hồi về sách.
-	Quản lý dữ liệu và người dùng cho quản trị viên.
-	Kiểm thử hệ thống
-	Kiểm thử chức năng, giao diện và tính tương thích trên các trình duyệt.
-	Đảm bảo hệ thống hoạt động ổn định, không xảy ra lỗi trong quá trình sử dụng.
-	Kiểm thử bảo mật và hiệu suất để nâng cao chất lượng.
-	Triển khai và bảo trì
-	Triển khai hệ thống lên máy chủ thực tế.
-	Theo dõi, ghi nhận phản hồi người dùng để cải thiện chức năng và giao diện.
-	Thường xuyên cập nhật, bảo trì và mở rộng hệ thống theo nhu cầu phát triển.
+1.3 Đặc tả hệ thống
+Khách hàng là người trực tiếp sử dụng hệ thống để tìm kiếm, lựa chọn và đặt mua các đầu sách mong muốn. 
+Khi truy cập vào website, khách hàng không bắt buộc phải đăng nhập để có thể xem và mua hàng. Tuy nhiên, nếu đăng ký tài khoản, họ sẽ có thêm nhiều tiện ích như lưu thông tin cá nhân, quản lý đơn hàng, nhận điểm thưởng, tham gia bình luận và đánh giá sản phẩm.
+Khi đăng ký tài khoản, người dùng cần cung cấp các thông tin cơ bản gồm họ tên, địa chỉ email, mật khẩu, nơi ở và địa chỉ giao hàng. Mỗi tài khoản chỉ thuộc về một khách hàng duy nhất, tuy nhiên một khách hàng vẫn có thể tạo nhiều tài khoản khác nhau nếu sử dụng các địa chỉ email khác nhau. Việc này giúp hệ thống dễ dàng định danh người dùng, đồng thời đảm bảo tính riêng tư cho từng tài khoản.
+Sau khi có tài khoản, khách hàng có thể đăng nhập để sử dụng các tính năng nâng cao chẳng hạn như sửa thông tin cá nhân, bổ sung các trường như ảnh đại diện, thêm các địa chỉ giao hàng khác và xem điểm tích lũy, lịch sử giao dịch,...
+Trong quá trình mua sắm, người dùng có thể tìm kiếm sách theo tên, thể loại, tác giả, giá bán hoặc từ khóa liên quan. Khi chọn một sản phẩm, hệ thống hiển thị đầy đủ thông tin chi tiết gồm tên sách, mô tả, hình ảnh, tác giả, giá, số lượng còn lại, thể loại và đánh giá từ những người đã mua trước đó. Mỗi sách thuộc về một hoặc nhiều thể loại nhưng chỉ được viết bởi một tác giả cụ thể.
+Khách hàng có thể thêm sản phẩm vào giỏ hàng, cập nhật số lượng, hoặc xóa khỏi danh sách nếu thay đổi ý định. Giỏ hàng được lưu tạm trong hệ thống, kể cả khi khách hàng chưa đăng nhập, giúp họ dễ dàng quay lại mua sắm sau.
+Khi hoàn tất lựa chọn, khách hàng tiến hành đặt hàng và thanh toán. Ở bước này, nếu là khách vãng lai, họ chỉ cần nhập thông tin cá nhân và địa chỉ nhận hàng; còn nếu đã có tài khoản, hệ thống tự động điền thông tin sẵn có. Người dùng có thể chọn hình thức thanh toán phù hợp như thanh toán khi nhận hàng (COD) hoặc chuyển khoản trực tuyến. Một khách hàng có thể tạo ra một hoặc nhiều đơn hàng, mỗi đơn hàng chứa một hoặc nhiều sách và ngược lại một sách có thể nằm trong một hoặc nhiều đơn hàng khác nhau.
+Sau khi đơn hàng được tạo, hệ thống sẽ gửi email xác nhận và tự động chuyển đơn sang trạng thái “đang xử lý”. Khách hàng có thể theo dõi tiến trình giao hàng trong mục “Lịch sử mua hàng” (nếu đã đăng nhập) hoặc tra cứu đơn hàng qua mã được gửi về email. Khi có đơn hàng mới, hệ thống tự động cập nhật tồn kho, trừ đi số lượng đã bán và đồng thời cộng điểm thưởng cho khách hàng nếu giao dịch thành công.
+Khi đơn hàng hoàn tất, khách hàng có thể đánh giá sản phẩm mà mình đã mua. Mỗi đánh giá gồm mức sao (1–5) và nội dung ngắn gọn phản ánh chất lượng sách. Hệ thống chỉ cho phép người đã mua hàng thành công mới được đánh giá, đảm bảo tính xác thực.
+Ngoài ra, khách hàng có thể bình luận về sách để trao đổi với người khác để thảo luận về nội dung, tác giả, hoặc chất lượng in ấn. Việc bình luận yêu cầu người dùng phải có tài khoản, nhằm kiểm soát và duy trì nội dung lành mạnh.
+Sau mỗi lần mua hàng, khách hàng sẽ được cộng điểm thưởng tương ứng với giá trị đơn hàng. Số điểm này được ghi nhận trong bảng tích điểm cá nhân và có thể sử dụng để giảm giá cho những lần mua sau. Nhờ đó, hệ thống khuyến khích khách hàng quay lại, đồng thời tăng mức độ gắn bó và trung thành.
+Còn quản trị viên là người có quyền cao nhất trong hệ thống, chịu trách nhiệm theo dõi và điều hành toàn bộ hoạt động. Họ đăng nhập vào giao diện quản trị bằng tài khoản có phân quyền đặc biệt và có thể thực hiện nhiều tác vụ quan trọng.
+Quản trị viên có quyền quản lý danh mục thể loại bằng cách thêm mới, chỉnh sửa hoặc xóa các thể loại sách. Việc tổ chức dữ liệu theo nhóm thể loại giúp khách hàng dễ dàng tìm kiếm, đồng thời hỗ trợ hệ thống hiển thị danh mục một cách khoa học.
+Quản trị viên thực hiện quản lý sách, bao gồm thêm mới, chỉnh sửa hoặc xóa sách khỏi hệ thống. Mỗi khi thêm sản phẩm, họ nhập các thông tin chi tiết như tên, mô tả, giá, ảnh bìa, tác giả, thể loại, ngày xuất bản và số lượng tồn kho. Nếu có sách tái bản hoặc thay đổi giá, quản trị viên có thể cập nhật nhanh để đảm bảo thông tin chính xác.
+Trong quản lý khách hàng, quản trị viên có thể xem danh sách tài khoản, kiểm tra lịch sử mua hàng, theo dõi điểm thưởng hoặc khóa/mở tài khoản khi phát hiện hành vi vi phạm.
+Quản lý đơn hàng cho phép quản trị viên xem chi tiết từng đơn hàng, bao gồm thông tin khách hàng, sản phẩm, giá trị, trạng thái và thời gian đặt. Họ có thể cập nhật trạng thái đơn hàng qua các giai đoạn như “đang xử lý”, “đang giao”, “đã giao” hoặc “đã hủy”. Hệ thống tự động lưu lịch sử thay đổi để đảm bảo minh bạch.
+Quản trị viên còn có thể tạo và quản lý mã giảm giá, thiết lập giá trị khuyến mãi, thời hạn hiệu lực và số lượng mã có thể dùng. Khi chương trình kết thúc, mã sẽ tự động bị vô hiệu hóa.
+Trong phần kiểm duyệt nội dung, quản trị viên xem xét các bình luận và đánh giá do khách hàng gửi lên. Những nội dung vi phạm chuẩn mực (ví dụ ngôn từ phản cảm, quảng cáo, spam) sẽ bị ẩn hoặc xóa khỏi hệ thống.
+Điều này giúp duy trì môi trường trao đổi văn minh, tạo sự tin cậy cho người dùng khi tham khảo ý kiến từ người khác.
+Cuối cùng, hệ thống cung cấp cho quản trị viên các công cụ thống kê và báo cáo. Dữ liệu được tự động tổng hợp gồm doanh thu, số lượng đơn hàng, sách bán chạy, lượng khách hàng mới và hiệu quả chương trình khuyến mãi. Báo cáo được thể hiện dưới dạng bảng biểu hoặc biểu đồ, giúp quản trị viên dễ dàng đánh giá tình hình kinh doanh và lập kế hoạch phát triển trong tương lai.
