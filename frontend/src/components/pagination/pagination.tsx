@@ -82,10 +82,10 @@ export default function Pagination({
 
   return (
     <div
-      className={`flex items-center gap-4 p-3 bg-white rounded ${className}`}
+      className={`flex flex-wrap md:flex-nowrap items-center gap-4 p-2 md:p-3 bg-white rounded ${className}`}
     >
       {/* Showing X of Y */}
-      <div className="flex items-center gap-2 text-sm text-gray-700">
+      <div className="flex items-center gap-2 text-sm text-gray-700 mx-auto">
         <span className="text-gray-500">{t("showing")}</span>
         <span className="font-medium">{range.from}</span>
         <span className="text-gray-500">-</span>
@@ -96,8 +96,7 @@ export default function Pagination({
 
       {/* Page size select */}
       {onPageSizeChange && (
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">/ {t("page")}</label>
+        <div className="flex items-center gap-2 mx-auto">
           <input
             type="number"
             min={1}
@@ -105,41 +104,44 @@ export default function Pagination({
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
             className="w-16 h-8 px-2 rounded border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 !text-green-600"
           />
+          <label className="text-sm text-gray-600">/ {t("page")}</label>
         </div>
       )}
 
       {/* pagination controls */}
-      <div className="flex items-center gap-2 ml-auto">
-        <button
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className={`h-8 px-3 rounded text-sm transition select-none focus:outline-none focus:ring-2 focus:ring-green-300 
+      <div className="flex flex-col md:flex-row w-full md:w-auto items-center gap-2 justify-between md:ml-auto">
+        <div className="flex items-center w-full md:w-auto justify-between gap-2 mb-4 md:mb-0">
+          <button
+            onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className={`h-8 px-3 rounded text-sm transition select-none focus:outline-none focus:ring-2 focus:ring-green-300 
             ${
               currentPage === 1
                 ? "bg-gray-100 text-gray-400"
                 : "bg-white text-gray-700 border border-gray-200 hover:bg-green-50"
             }`}
-        >
-          {t("prev")}
-        </button>
+          >
+            {t("prev")}
+          </button>
 
-        <div className="flex items-center gap-1">{renderPageNumbers()}</div>
+          <div className="flex items-center gap-1">{renderPageNumbers()}</div>
 
-        <button
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className={`h-8 px-3 rounded text-sm transition select-none focus:outline-none focus:ring-2 focus:ring-green-300 
+          <button
+            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className={`h-8 px-3 rounded text-sm transition select-none focus:outline-none focus:ring-2 focus:ring-green-300 
             ${
               currentPage === totalPages
                 ? "bg-gray-100 text-gray-400"
                 : "bg-white text-gray-700 border border-gray-200 hover:bg-green-50"
             }`}
-        >
-          {t("next")}
-        </button>
+          >
+            {t("next")}
+          </button>
+        </div>
 
         {/* Quick jump input */}
-        <div className="flex items-center gap-2 ml-3">
+        <div className="flex items-center w-full md:w-auto justify-between gap-2 mx-0 md:ml-3">
           <input
             type="number"
             min={1}

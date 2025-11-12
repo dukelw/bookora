@@ -107,7 +107,29 @@ export default function BestsellersPage() {
 
   return (
     <div className="p-6 flex flex-col items-center min-h-[70vh] max-w-7xl mx-auto">
-      <div className="mx-auto w-full flex items-center justify-between bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl px-6 py-4 shadow-md overflow-hidden mb-6">
+      <div className="mx-auto w-full flex md:hidden items-center justify-between bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl px-6 py-4 shadow-md overflow-hidden mb-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+          {/* Hàng trên */}
+          <div className="flex items-center gap-2 md:gap-3">
+            <h2 className="text-xl font-semibold tracking-wide">
+              {b("bestsellers")}
+            </h2>
+            <span className="px-3 py-1 text-xs font-semibold bg-cyan-100 text-cyan-700 rounded-full">
+              {b("hot")}
+            </span>
+            <span className="text-sm text-gray-100 italic">
+              {b("lastUpdate")}
+            </span>
+          </div>
+
+          {/* Description */}
+          <p className="text-sm text-cyan-100 md:ml-0">
+            {b("bestsellerTitle")}
+          </p>
+        </div>
+      </div>
+
+      <div className="mx-auto w-full hidden md:flex items-center justify-between bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl px-6 py-4 shadow-md overflow-hidden mb-6">
         <div className="flex items-center gap-3">
           <div>
             <h2 className="text-xl font-semibold tracking-wide">
