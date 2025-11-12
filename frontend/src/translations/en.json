@@ -669,5 +669,20 @@
     "description": "Description",
     "category": "Category",
     "addToCart": "Add to Cart"
+  },
+  "address": {
+    "loadErrorAddress": "Failed to load addresses.",
+    "createSuccess": "Address added successfully.",
+    "createError": "Failed to add address.",
+    "deleteConfirm": "Are you sure you want to delete this address?",
+    "deleteSuccess": "Address deleted successfully.",
+    "deleteError": "Failed to delete address.",
+    "setDefaultSuccess": "Default address updated successfully.",
+    "setDefaultError": "Failed to set default address.",
+    "shippingAddress": "Shipping Address",
+    "otherAddress": "Other Address",
+    "setAsDefault": "Set as Default",
+    "delete": "Delete",
+    "addNew": "Add New Address"
   }
 }

@@ -18,6 +18,7 @@ import { authService } from "@/services/authService";
 import Loader from "@/components/loader/Loader";
 import { loyaltyService } from "@/services/loyaltyService";
 import LoyaltyBalance from "@/interfaces/LoyaltyBalance";
+import { addressService } from "@/services/addressService";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
@@ -65,21 +66,39 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleGetAddresses = async () => {
+    let addressResponse = {
+      addresses: [],
+      shippingAddress: "",
+    };
+    if (user?._id) {
+      addressResponse = await addressService.getAddresses();
+    }
+    return addressResponse;
+  };
+
   // Khi component mount hoặc user đổi (login/ logout), fetch cart
   useEffect(() => {
-    handleGetCart();
-    handleGetLoyaltyPoint();
-    // populate form data when user exists
-    if (user?._id) {
-      setFormData({
-        name: user.name || "",
-        phone: user.phone || user.phoneNumber || "",
-        email: user.email || "",
-        address: user.shippingAddress || "",
-        city: user.city || "",
-        note: "",
-      });
-    }
+    const fetchData = async () => {
+      await handleGetCart();
+      await handleGetLoyaltyPoint();
+
+      if (user?._id) {
+        const addressResponse = await handleGetAddresses(); // <-- await ở đây
+        setFormData({
+          name: user.name || "",
+          phone: user.phone || user.phoneNumber || "",
+          email: user.email || "",
+          address: addressResponse.shippingAddress
+            ? addressResponse.shippingAddress
+            : user.shippingAddress || "",
+          city: user.city || "",
+          note: "",
+        });
+      }
+    };
+
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?._id]);
 
