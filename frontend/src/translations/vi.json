@@ -5,6 +5,7 @@
     "typeToSearch": "Nhập để tìm kiếm ..."
   },
   "rating": {
+    "rating": "Đánh giá",
     "fetchError": "Không thể tải đánh giá",
     "loading": "Đang tải...",
     "variant": "Biến thể",

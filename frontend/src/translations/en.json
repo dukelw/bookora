@@ -5,6 +5,7 @@
     "typeToSearch": "Enter key to search..."
   },
   "rating": {
+    "rating": "Rating",
     "fetchError": "Failed to load your rating",
     "loading": "Loading...",
     "variant": "Variant",
