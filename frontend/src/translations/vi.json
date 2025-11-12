@@ -660,5 +660,14 @@
     "placeholderSearch": "Tìm theo tên tác giả...",
     "title": "Sách của",
     "all": "Tất cả"
+  },
+  "bookDetail": {
+    "variants": "Các phiên bản",
+    "stock": "Tồn kho",
+    "isbn": "ISBN",
+    "bookInfo": "Thông tin sách",
+    "description": "Mô tả",
+    "category": "Danh mục",
+    "addToCart": "Thêm vào giỏ"
   }
 }

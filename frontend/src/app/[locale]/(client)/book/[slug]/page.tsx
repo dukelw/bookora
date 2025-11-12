@@ -21,6 +21,7 @@ import BookVariant from "@/interfaces/BookVariant";
 import CommentSection from "./components/CommentSection";
 import { getOrCreateGuestId } from "@/lib/guest";
 import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import { useTranslations } from "use-intl";
 
 export default function BookDetailPage() {
   const { bookId } = useBookStore();
@@ -32,6 +33,7 @@ export default function BookDetailPage() {
   const [mainImage, setMainImage] = useState<string>("");
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const { setCart } = useCartStore();
+  const t = useTranslations("bookDetail");
 
   useEffect(() => {
     if (!bookId) return;
@@ -86,47 +88,59 @@ export default function BookDetailPage() {
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
       {/* Tiêu đề */}
-      <h1 className="text-5xl font-extrabold text-cyan-600">{book.title}</h1>
+      <h1 className="text-3xl md:text-5xl font-extrabold text-cyan-600">
+        {book.title}
+      </h1>
+
       <p className="text-gray-500 text-lg">
         {book.author} — {book.publisher} ({book.releaseYear})
       </p>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Biến thể */}
-        <div className="col-span-1 flex flex-col gap-4">
-          <h2 className="text-xl font-semibold mb-2">Các phiên bản</h2>
+        <div className="order-2 md:order-1 col-span-1 flex flex-col gap-4">
+          <h2 className="text-xl font-semibold mb-2">{t("variants")}</h2>
           {book?.variants?.map((v: BookVariant, idx: number) => {
             const colorClass = variantColors[idx % variantColors.length];
             return (
               <div
                 key={v._id}
                 onClick={() => {
-                  // Nếu variant có image riêng thì ưu tiên, còn không thì giữ ảnh cũ
-                  if (v.image) {
-                    setMainImage(v.image);
-                  }
+                  if (v.image) setMainImage(v.image);
                 }}
-                className={`border-2 ${colorClass} rounded-xl p-4 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer`}
+                className={`border-2 ${colorClass} rounded-xl p-4 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer flex items-start gap-4`}
               >
-                <p className="font-semibold capitalize">{v.rarity}</p>
-                <p className="text-lg font-bold">
-                  {v.price.toLocaleString("vi-VN")} ₫
-                </p>
-                <p className="text-sm">Tồn kho: {v.stock}</p>
-                <p className="text-sm">ISBN: {v.isbn || "-"}</p>
+                {/* Hình bên trái */}
+                {v.image && (
+                  <img
+                    src={v.image}
+                    alt={v.rarity}
+                    className="w-20 h-20 object-cover rounded-md border border-gray-200 flex-shrink-0"
+                  />
+                )}
+
+                {/* Thông tin bên phải */}
+                <div className="flex flex-col justify-between">
+                  <p className="font-semibold capitalize">{v.rarity}</p>
+                  <p className="text-lg font-bold">
+                    {v.price.toLocaleString("vi-VN")} ₫
+                  </p>
+                  <p className="text-sm">{t("stock")}: {v.stock}</p>
+                  <p className="text-sm">{t("isbn")}: {v.isbn || "-"}</p>
+                </div>
               </div>
             );
           })}
         </div>
 
         {/* Hình ảnh + Thông tin */}
-        <div className="col-span-3 flex gap-6">
+        <div className="col-span-3 flex flex-col md:flex-row gap-6 order-1 md:order-2">
           <div className="flex-1">
             {/* Ảnh chính */}
             <img
               src={mainImage}
               alt={book.title}
-              className="w-full h-[400px] object-cover rounded-xl shadow-lg"
+              className="w-full h-[250px] md:h-[400px] object-cover rounded-xl shadow-lg"
             />
 
             {/* Thumbnail */}
@@ -147,14 +161,15 @@ export default function BookDetailPage() {
           </div>
 
           {/* Thông tin cơ bản */}
-          <div className="w-1/3 space-y-4">
-            <h2 className="text-xl font-semibold">Thông tin sách</h2>
-            <p className="text-gray-500">
-              <span className="font-medium text-gray-700">Mô tả:</span>{" "}
+          <div className="md:w-1/3 space-y-4">
+            <h2 className="text-xl font-semibold">{t("bookInfo")}</h2>
+            <p className="text-gray-500 text-justify">
+              <span className="font-medium text-gray-700">{t("description")}:</span>{" "}
               {book.description}
             </p>
+
             <div>
-              <span className="font-medium text-gray-700">Danh mục:</span>
+              <span className="font-medium text-gray-700">{t("category")}:</span>
               <div className="flex flex-wrap gap-2 mt-2">
                 {book.category.map((c) => (
                   <span
@@ -169,7 +184,7 @@ export default function BookDetailPage() {
             </div>
 
             {/* Nút hành động */}
-            <div className="flex gap-4 mt-6">
+            <div className="flex flex-col sm:flex-row gap-4 mt-6 items-center sm:items-start">
               <div className="flex gap-4 mt-6">
                 <WishlistButton
                   bookId={book._id}
@@ -180,7 +195,7 @@ export default function BookDetailPage() {
                   onClick={() => setIsCartModalOpen(true)}
                   className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white rounded-lg shadow hover:bg-cyan-700 transition"
                 >
-                  <FaShoppingCart /> Thêm vào giỏ
+                  <FaShoppingCart /> {t("addToCart")}
                 </button>
               </div>
 

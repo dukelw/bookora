@@ -659,5 +659,14 @@
     "placeholderSearch": "Search by author name...",
     "title": "Books by",
     "all": "All"
+  },
+  "bookDetail": {
+    "variants": "Variants",
+    "stock": "Stock",
+    "isbn": "ISBN",
+    "bookInfo": "Book Information",
+    "description": "Description",
+    "category": "Category",
+    "addToCart": "Add to Cart"
   }
 }
