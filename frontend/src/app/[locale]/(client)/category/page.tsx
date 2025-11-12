@@ -52,9 +52,9 @@ export default function CategoryPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 max-w-7xl">
+    <div className="container mx-auto px-6 md:px-0 py-8 max-w-7xl">
       {/* Tabs Category */}
-      <div className="flex flex-wrap gap-3 py-3 px-6 md:py-0 md:px-0 mb-8 border-b pb-3">
+      <div className="flex flex-wrap gap-3 py-3 md:py-0 md:px-0 mb-8 border-b pb-3">
         {categories.map((cat) => (
           <button
             key={cat._id}
