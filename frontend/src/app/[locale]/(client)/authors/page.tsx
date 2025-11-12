@@ -11,8 +11,10 @@ import { useTranslations } from "use-intl";
 
 export default function AuthorsPage() {
   const t = useTranslations("authors");
-  
-  const [authors, setAuthors] = useState<{ author: string; books: number }[]>([]);
+
+  const [authors, setAuthors] = useState<{ author: string; books: number }[]>(
+    []
+  );
   const [activeAuthor, setActiveAuthor] = useState<string | null>(null);
   const [books, setBooks] = useState<Book[]>([]);
   const [search, setSearch] = useState("");
@@ -31,7 +33,11 @@ export default function AuthorsPage() {
 
   const fetchAuthors = async (searchValue = "", page = 1, limit = 20) => {
     try {
-      const res = await bookService.getAuthors({ search: searchValue, page, limit });
+      const res = await bookService.getAuthors({
+        search: searchValue,
+        page,
+        limit,
+      });
       setAuthors(res.items);
       setAuthorMeta(res.meta);
     } catch {
@@ -54,7 +60,8 @@ export default function AuthorsPage() {
         images: Array.isArray(b.images) ? b.images : [],
         variants: Array.isArray(b.variants) ? b.variants : [],
         category: Array.isArray(b.category) ? b.category : [],
-        mainImage: b.mainImage || b?.images?.[0]?.url || "/images/placeholder.png",
+        mainImage:
+          b.mainImage || b?.images?.[0]?.url || "/images/placeholder.png",
       }));
 
       setBooks(safeBooks);
@@ -92,7 +99,7 @@ export default function AuthorsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 max-w-7xl">
+    <div className="container mx-auto py-8 px-6 md:px-0 max-w-7xl">
       <div className="flex gap-2 mb-6">
         <input
           value={search}
@@ -120,8 +127,12 @@ export default function AuthorsPage() {
               totalItems={bookMeta.total}
               currentPage={bookMeta.page}
               pageSize={bookMeta.limit}
-              onPageChange={(p) => fetchBooksByAuthor(activeAuthor || undefined, p, bookMeta.limit)}
-              onPageSizeChange={(s) => fetchBooksByAuthor(activeAuthor || undefined, 1, s)}
+              onPageChange={(p) =>
+                fetchBooksByAuthor(activeAuthor || undefined, p, bookMeta.limit)
+              }
+              onPageSizeChange={(s) =>
+                fetchBooksByAuthor(activeAuthor || undefined, 1, s)
+              }
             />
           </div>
         )}

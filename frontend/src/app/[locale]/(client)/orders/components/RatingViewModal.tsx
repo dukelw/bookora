@@ -1,5 +1,5 @@
 "use client";
-import { Modal, ModalBody } from "flowbite-react";
+import { Modal, ModalBody, ModalHeader } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { ratingService } from "@/services/ratingService";
 import { toast } from "react-toastify";
@@ -37,6 +37,7 @@ export default function RatingViewModal({
 
   return (
     <Modal show={show} onClose={onClose} size="4xl" dismissible>
+      <ModalHeader>{t("rating")}</ModalHeader>
       <ModalBody>
         {loading ? (
           <p className="text-gray-500 text-center">{t("loading")}</p>

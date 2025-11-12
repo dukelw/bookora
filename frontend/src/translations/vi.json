@@ -5,6 +5,7 @@
     "typeToSearch": "Nhập để tìm kiếm ..."
   },
   "rating": {
+    "rating": "Đánh giá",
     "fetchError": "Không thể tải đánh giá",
     "loading": "Đang tải...",
     "variant": "Biến thể",
@@ -660,5 +661,29 @@
     "placeholderSearch": "Tìm theo tên tác giả...",
     "title": "Sách của",
     "all": "Tất cả"
+  },
+  "bookDetail": {
+    "variants": "Các phiên bản",
+    "stock": "Tồn kho",
+    "isbn": "ISBN",
+    "bookInfo": "Thông tin sách",
+    "description": "Mô tả",
+    "category": "Danh mục",
+    "addToCart": "Thêm vào giỏ"
+  },
+  "address": {
+    "loadErrorAddress": "Tải địa chỉ thất bại.",
+    "createSuccess": "Thêm địa chỉ thành công.",
+    "createError": "Thêm địa chỉ thất bại.",
+    "deleteConfirm": "Bạn có chắc muốn xóa địa chỉ này?",
+    "deleteSuccess": "Xóa địa chỉ thành công.",
+    "deleteError": "Xóa địa chỉ thất bại.",
+    "setDefaultSuccess": "Cập nhật địa chỉ mặc định thành công.",
+    "setDefaultError": "Cập nhật địa chỉ mặc định thất bại.",
+    "shippingAddress": "Địa chỉ giao hàng",
+    "otherAddress": "Địa chỉ khác",
+    "setAsDefault": "Đặt làm mặc định",
+    "delete": "Xóa",
+    "addNew": "Thêm địa chỉ mới"
   }
 }

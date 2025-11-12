@@ -21,6 +21,25 @@ services:
     command: ["redis-server", "--save", "", "--appendonly", "no"]
     networks:
       - bookora-network
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.13
+    container_name: bookora-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - bookora-network
 
   backend:
     build:
@@ -79,3 +98,4 @@ networks:
 
 volumes:
   mongo_data:
+  esdata:

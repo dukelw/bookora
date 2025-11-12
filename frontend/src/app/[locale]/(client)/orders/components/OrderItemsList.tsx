@@ -55,7 +55,7 @@ export default function OrderItemsList({
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-white truncate max-w-[200px] sm:max-w-[280px]">
+                <p className="font-medium text-white truncate max-w-[120px] md:max-w-[200px] sm:max-w-[280px]">
                   {item.book?.title}
                 </p>
                 {variant && (
