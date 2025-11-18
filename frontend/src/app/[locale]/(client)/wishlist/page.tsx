@@ -23,6 +23,7 @@ export default function WishlistPage() {
 
   const fetchData = async () => {
     try {
+      if (!user?._id) return;
       setLoading(true);
       const res = await wishlistService.list({ page: currentPage, limit });
       setItems(res?.items || []);
@@ -54,7 +55,9 @@ export default function WishlistPage() {
       <div className="max-w-6xl mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-center">{t("title")}</h2>
 
-        {loading && <div className="opacity-80 text-center">{t("loading")}</div>}
+        {loading && (
+          <div className="opacity-80 text-center">{t("loading")}</div>
+        )}
 
         {!loading && items.length === 0 && (
           <div className="bg-neutral-900 p-8 rounded-lg text-center">

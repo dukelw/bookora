@@ -3,30 +3,44 @@
 import { useState } from "react";
 import { useTranslations } from "use-intl";
 import { Label, TextInput, Button, Spinner } from "flowbite-react";
-import { FaRedoAlt, FaSave } from "react-icons/fa";
-import { LockClosedIcon } from "@heroicons/react/24/outline";
+import {
+  FaRedoAlt,
+  FaSave,
+  FaEye,
+  FaEyeSlash,
+  FaCheck,
+  FaTimes,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 import { authService } from "@/services/authService";
 
 export default function ChangePassword() {
   const t = useTranslations("user");
 
+  // States
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const hasUpperCase = /[A-Z]/.test(newPassword);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+  // Show/hide password
+  const [showOld, setShowOld] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  const canSubmit =
-    oldPassword.length > 0 &&
-    newPassword.length >= 6 &&
-    hasUpperCase &&
-    hasSpecialChar &&
-    newPassword === confirmPassword &&
-    !submitting;
+  // Validate conditions
+  const conditions = {
+    length: newPassword.length >= 6,
+    upper: /[A-Z]/.test(newPassword),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
+    match: newPassword === confirmPassword,
+    oldFilled: oldPassword.length > 0,
+    confirmFilled: confirmPassword.length > 0,
+  };
 
+  const canSubmit = Object.values(conditions).every(Boolean) && !submitting;
+
+  // Handle submit
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
@@ -47,63 +61,120 @@ export default function ChangePassword() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto mt-8">
       <div className="text-center">
         <h1 className="text-2xl font-bold">{t("changePassword")}</h1>
       </div>
-      <div>
+
+      {/* Old Password */}
+      <div className="relative">
         <Label htmlFor="oldPassword">{t("oldPassword")}</Label>
         <TextInput
           id="oldPassword"
-          type="password"
+          type={showOld ? "text" : "password"}
           placeholder="••••••••"
-          icon={LockClosedIcon}
           value={oldPassword}
           onChange={(e) => setOldPassword(e.target.value)}
           required
         />
+        <span
+          className="absolute right-3 top-10 cursor-pointer"
+          onClick={() => setShowOld(!showOld)}
+        >
+          {showOld ? <FaEyeSlash /> : <FaEye />}
+        </span>
       </div>
 
-      <div>
+      {/* New Password */}
+      <div className="relative">
         <Label htmlFor="newPassword">{t("newPassword")}</Label>
         <TextInput
           id="newPassword"
-          type="password"
+          type={showNew ? "text" : "password"}
           placeholder="••••••••"
-          icon={LockClosedIcon}
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
         />
-        <p className={`text-red-600 text-sm italic mt-2 ${
-            hasUpperCase && hasSpecialChar && newPassword.length >= 6 ? "hidden" : ""
-          }`}
+        <span
+          className="absolute right-3 top-10 cursor-pointer"
+          onClick={() => setShowNew(!showNew)}
         >
-          {t("note")}
-        </p>
+          {showNew ? <FaEyeSlash /> : <FaEye />}
+        </span>
 
+        {/* Live validation checklist */}
+        <ul className="text-sm mt-2 space-y-1">
+          <li
+            className={
+              conditions.length
+                ? "text-green-600 flex items-center gap-1"
+                : "text-red-600 flex items-center gap-1"
+            }
+          >
+            {conditions.length ? <FaCheck /> : <FaTimes />} Ít nhất 6 ký tự
+          </li>
+          <li
+            className={
+              conditions.upper
+                ? "text-green-600 flex items-center gap-1"
+                : "text-red-600 flex items-center gap-1"
+            }
+          >
+            {conditions.upper ? <FaCheck /> : <FaTimes />} Chữ hoa ít nhất 1 ký
+            tự
+          </li>
+          <li
+            className={
+              conditions.special
+                ? "text-green-600 flex items-center gap-1"
+                : "text-red-600 flex items-center gap-1"
+            }
+          >
+            {conditions.special ? <FaCheck /> : <FaTimes />} Chứa ký tự đặc biệt
+          </li>
+        </ul>
       </div>
 
-      <div>
+      {/* Confirm Password */}
+      <div className="relative">
         <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
         <TextInput
           id="confirmPassword"
-          type="password"
+          type={showConfirm ? "text" : "password"}
           placeholder="••••••••"
-          icon={LockClosedIcon}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
           color={
             confirmPassword
-              ? newPassword === confirmPassword
+              ? conditions.match
                 ? "success"
                 : "failure"
               : undefined
           }
         />
+        <span
+          className="absolute right-3 top-10 cursor-pointer"
+          onClick={() => setShowConfirm(!showConfirm)}
+        >
+          {showConfirm ? <FaEyeSlash /> : <FaEye />}
+        </span>
+
+        {/* Match password */}
+        {confirmPassword && (
+          <p
+            className={`text-sm mt-2 ${
+              conditions.match ? "text-green-600" : "text-red-600"
+            } flex items-center gap-1`}
+          >
+            {conditions.match ? <FaCheck /> : <FaTimes />}{" "}
+            {conditions.match ? "Mật khẩu khớp" : "Mật khẩu không khớp"}
+          </p>
+        )}
       </div>
-      
+
+      {/* Buttons */}
       <div className="flex gap-3 mt-4">
         <Button
           color="red"
@@ -116,6 +187,7 @@ export default function ChangePassword() {
           className="flex-1 flex justify-center items-center gap-2"
         >
           <FaRedoAlt />
+          Reset
         </Button>
 
         <Button
@@ -125,9 +197,9 @@ export default function ChangePassword() {
           className="flex-1 flex justify-center items-center gap-2"
         >
           {submitting ? <Spinner size="sm" /> : <FaSave />}
+          Save
         </Button>
       </div>
-
     </form>
   );
 }
