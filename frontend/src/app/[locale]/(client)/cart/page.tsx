@@ -60,6 +60,7 @@ export default function CheckoutPage() {
   };
 
   const handleGetLoyaltyPoint = async () => {
+    if (user?._id === undefined) return;
     const res = await loyaltyService.getBalance();
     if (res) {
       setLoyaltyPoint(res);
