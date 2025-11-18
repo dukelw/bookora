@@ -220,6 +220,11 @@
     "placeholderMessage": "Enter the content you want to send"
   },
   "cart": {
+    "outOfStock": "Out of stock",
+    "insufficientStock": "Insufficient stock (remaining {stock})",
+    "minQuantity": "Minimum quantity is 1",
+    "inStock": "In Stock",
+    "maxStockReached": "Maximum stock reached",
     "tax": "Tax",
     "loyaltyPointsUsed": "Loyalty point",
     "loyaltyPointsAmount": "Loyalty amount",
