@@ -95,7 +95,6 @@ async function bootstrap() {
     next();
   });
 
-  console.log(process.env.CLIENT_URL);
   const allowedOrigins = [
     process.env.CLIENT_URL,
     'http://localhost:3000',
