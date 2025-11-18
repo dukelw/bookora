@@ -64,7 +64,7 @@ services:
     build:
       context: ./mail-service
       dockerfile: Dockerfile
-    container_name: mail-service
+    container_name: bookora-mail-service
     restart: always
     ports:
       - "4001:4001"
@@ -74,6 +74,19 @@ services:
       REDIS_HOST: redis
     depends_on:
       - redis
+    networks:
+      - bookora-network
+
+  upload-service:
+    build:
+      context: ./upload-service
+      dockerfile: Dockerfile
+    container_name: bookora-upload-service
+    restart: always
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./upload-service/.env.pro
     networks:
       - bookora-network
 

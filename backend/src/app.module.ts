@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { RatingModule } from './modules/rating/rating.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
-import { CloudinaryModule } from './modules/upload/cloudinary/cloudinary.module';
 import { MongoDBModule } from './modules/databases/mongodb/mongodb.module';
 import { UserModule } from './modules/user/user.module';
 import { SliderModule } from './modules/slider/slider.module';
@@ -50,7 +49,6 @@ import { LoyaltyModule } from './modules/loyalty/loyalty.module';
     UserModule,
     AuthModule,
     SliderModule,
-    CloudinaryModule,
     CategoryModule,
     BookModule,
     BookVariantModule,

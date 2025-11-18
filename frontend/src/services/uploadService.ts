@@ -1,7 +1,7 @@
 import { api } from "../lib/axios";
 import { AxiosResponse } from "axios";
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/cloudinary`;
+const API_URL = `${process.env.NEXT_PUBLIC_UPLOAD_URL}/cloudinary`;
 
 export const uploadService = {
   async uploadFile(file: File): Promise<string> {
