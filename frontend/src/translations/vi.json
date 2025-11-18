@@ -182,6 +182,11 @@
     "placeholderMessage": "Nhập nội dung bạn cần gửi"
   },
   "cart": {
+    "outOfStock": "Hết hàng",
+    "insufficientStock": "Số lượng vượt quá tồn kho (còn lại {stock})",
+    "minQuantity": "Số lượng tối thiểu là 1",
+    "inStock": "Còn hàng",
+    "maxStockReached": "Đã đạt số lượng tối đa",
     "tax": "Thuế",
     "loyaltyPointsUsed": "Điểm tích lũy",
     "loyaltyPointsAmount": "Số tiền giảm theo điểm",

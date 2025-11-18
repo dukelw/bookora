@@ -22,7 +22,7 @@ import { addressService } from "@/services/addressService";
 
 export default function CheckoutPage() {
   const t = useTranslations("cart");
-  const { user, setUser } = useAuthStore(); // nếu bạn có action setUser trong authStore, dùng để cập nhật user sau register
+  const { user, setUser } = useAuthStore();
   const [cart, setCart] = useState<any>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
@@ -122,7 +122,6 @@ export default function CheckoutPage() {
 
   const handleSubmit = async () => {
     try {
-      // ensure we have a cart (guest will have guest cart created on add)
       if (!cart) {
         toast.error("Không tìm thấy giỏ hàng!");
         return;
@@ -152,14 +151,10 @@ export default function CheckoutPage() {
           address: formData.address,
         });
 
-        // update auth store if you have setter (so user is considered logged)
         if (res?.user) {
-          // if your authStore has a setUser or setAuth action, call it:
           try {
-            setUser?.(res.user); // optional: only if your store provides it
-          } catch {
-            // ignore if store doesn't expose it
-          }
+            setUser?.(res.user);
+          } catch {}
           currentUser = res.user;
         } else {
           toast.error("Tạo tài khoản thất bại");

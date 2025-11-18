@@ -88,7 +88,8 @@ export class CartService {
 
     const existingItem = cart.items.find(
       (item) =>
-        item.book.toString() === dto.bookId && item.variantId === dto.variantId,
+        item.book._id.toString() === dto.bookId &&
+        item.variantId === dto.variantId,
     );
 
     if (existingItem) {
