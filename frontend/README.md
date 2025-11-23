@@ -1,0 +1,1 @@
+Quản trị viên là người chịu trách nhiệm vận hành, duy trì và đảm bảo hệ thống hoạt động ổn định, chính xác, an toàn. Họ là đối tượng có quyền cao hơn người dùng thông thường, có thể truy cập vào khu vực quản trị để thực hiện các nghiệp vụ quản lý liên quan đến sản phẩm, khách hàng, đơn hàng, bình luận, đánh giá và hệ thống khuyến mãi.
