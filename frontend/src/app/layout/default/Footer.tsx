@@ -23,6 +23,7 @@ const AppFooter = () => {
   const [inImages, setImages] = useState<
     { image: string; title?: string; link?: string }[]
   >([]);
+  
   useEffect(() => {
     const fetchImages = async () => {
       try {
