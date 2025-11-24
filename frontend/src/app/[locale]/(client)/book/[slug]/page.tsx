@@ -125,8 +125,12 @@ export default function BookDetailPage() {
                   <p className="text-lg font-bold">
                     {v.price.toLocaleString("vi-VN")} ₫
                   </p>
-                  <p className="text-sm">{t("stock")}: {v.stock}</p>
-                  <p className="text-sm">{t("isbn")}: {v.isbn || "-"}</p>
+                  <p className="text-sm">
+                    {t("stock")}: {v.stock}
+                  </p>
+                  <p className="text-sm">
+                    {t("isbn")}: {v.isbn || "-"}
+                  </p>
                 </div>
               </div>
             );
@@ -140,7 +144,7 @@ export default function BookDetailPage() {
             <img
               src={mainImage}
               alt={book.title}
-              className="w-full h-[250px] md:h-[400px] object-cover rounded-xl shadow-lg"
+              className="w-full h-[400px] object-contain bg-white rounded-xl shadow-lg p-2"
             />
 
             {/* Thumbnail */}
@@ -164,12 +168,16 @@ export default function BookDetailPage() {
           <div className="md:w-1/3 space-y-4">
             <h2 className="text-xl font-semibold">{t("bookInfo")}</h2>
             <p className="text-gray-500 text-justify">
-              <span className="font-medium text-gray-700">{t("description")}:</span>{" "}
+              <span className="font-medium text-gray-700">
+                {t("description")}:
+              </span>{" "}
               {book.description}
             </p>
 
             <div>
-              <span className="font-medium text-gray-700">{t("category")}:</span>
+              <span className="font-medium text-gray-700">
+                {t("category")}:
+              </span>
               <div className="flex flex-wrap gap-2 mt-2">
                 {book.category.map((c) => (
                   <span
