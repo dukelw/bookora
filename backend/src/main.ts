@@ -90,11 +90,6 @@ async function createIndexIfNotExists() {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use((req, res, next) => {
-    console.log('Request handled by: ', os.hostname());
-    next();
-  });
-
   const allowedOrigins = [
     process.env.CLIENT_URL,
     'http://localhost:3000',

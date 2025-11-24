@@ -12,14 +12,14 @@ import { randomUUID } from 'crypto';
 export class BookoraVnpayService {
   constructor(private readonly vnpay: VnpayService) {}
 
-  async createPaymentUrl(amount: number, ipAddr: string, redirectUrl?: string) {
+  createPaymentUrl(amount: number, ipAddr: string, redirectUrl?: string) {
     const txnRef = randomUUID().replace(/-/g, '').slice(0, 8);
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const url = await this.vnpay.buildPaymentUrl({
-      vnp_Amount: amount * 100,
+    const url = this.vnpay.buildPaymentUrl({
+      vnp_Amount: amount,
       vnp_IpAddr: ipAddr,
       vnp_TxnRef: txnRef,
       vnp_OrderInfo: `Thanh toán đơn hàng ${txnRef}`,
