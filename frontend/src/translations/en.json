@@ -305,6 +305,8 @@
     "note": "Note"
   },
   "book": {
+    "nameAsc": "Name A-Z",
+    "nameDesc": "Name Z-A",
     "noBooks": "No books available",
     "noImage": "No Image",
     "sold": "Sold",

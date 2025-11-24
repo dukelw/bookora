@@ -105,7 +105,7 @@ export default function BookCreationForm({
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const cats = await categoryService.getCategories();
+        const cats = await categoryService.getCategories(undefined, 1, 100);
         setCategories(cats.items);
       } catch (error) {
         console.error("Failed to load categories:", error);

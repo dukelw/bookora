@@ -305,6 +305,8 @@
     "note": "Ghi chú"
   },
   "book": {
+    "nameAsc": "Tên A-Z",
+    "nameDesc": "Tên Z-A",
     "noBooks": "Không có sách nào",
     "noImage": "Không có ảnh",
     "sold": "Đã bán",

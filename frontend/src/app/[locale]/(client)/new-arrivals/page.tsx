@@ -17,7 +17,9 @@ export default function NewArrivalsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(12);
 
-  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [sortOrder, setSortOrder] = useState<
+    "newest" | "oldest" | "name-asc" | "name-desc"
+  >("newest");
   const [from, setFrom] = useState(() => {
     const today = new Date();
     const oneMonthAgo = new Date(today);
@@ -41,20 +43,20 @@ export default function NewArrivalsPage() {
     const loadFilters = async () => {
       try {
         const [catRes, bookRes] = await Promise.all([
-          categoryService.getCategories(),
+          categoryService.getCategories(undefined, 1, 100),
           bookService.getBooks(),
         ]);
         setCategoryOptions(catRes.items || []);
 
-        const authorSet = new Set<string>();
         const publisherSet = new Set<string>();
 
         (bookRes.items || []).forEach((b: any) => {
-          if (b.author) authorSet.add(b.author);
           if (b.publisher) publisherSet.add(b.publisher);
         });
 
-        setAuthorOptions(Array.from(authorSet));
+        const authorRes = await bookService.getAuthors({ limit: 100 });
+        const apiAuthors = authorRes.items.map((item: any) => item.author);
+        setAuthorOptions(apiAuthors);
         setPublisherOptions(Array.from(publisherSet));
       } catch (err) {
         console.error("Failed to load filter options:", err);
@@ -90,6 +92,13 @@ export default function NewArrivalsPage() {
           images: b.mainImage ? [{ url: b.mainImage, isMain: true }] : [],
         };
       });
+
+      if (sortOrder === "name-asc") {
+        mapped.sort((a: any, b: any) => a.title.localeCompare(b.title));
+      }
+      if (sortOrder === "name-desc") {
+        mapped.sort((a: any, b: any) => b.title.localeCompare(a.title));
+      }
 
       setBooks(mapped);
       setTotalItems(res.meta?.total);
@@ -224,6 +233,8 @@ export default function NewArrivalsPage() {
           >
             <option value="newest">{b("newest")}</option>
             <option value="oldest">{b("oldest")}</option>
+            <option value="name-asc">{b("nameAsc")}</option>
+            <option value="name-desc">{b("nameDesc")}</option>
           </select>
         </div>
         <div>

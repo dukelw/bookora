@@ -17,7 +17,6 @@ export default function BestsellersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(12);
 
-  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
@@ -28,6 +27,9 @@ export default function BestsellersPage() {
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [authorOptions, setAuthorOptions] = useState<string[]>([]);
   const [publisherOptions, setPublisherOptions] = useState<string[]>([]);
+  const [sortOrder, setSortOrder] = useState<
+    "desc" | "asc" | "name-asc" | "name-desc"
+  >("desc");
 
   const [showMobileFilter, setShowMobileFilter] = useState(false);
 
@@ -35,7 +37,7 @@ export default function BestsellersPage() {
     const loadFilters = async () => {
       try {
         const [catRes, bookRes] = await Promise.all([
-          categoryService.getCategories(),
+          categoryService.getCategories(undefined, 1, 100),
           bookService.getBooks(),
         ]);
         setCategoryOptions(catRes.items || []);
@@ -47,7 +49,9 @@ export default function BestsellersPage() {
           if (b.publisher) publisherSet.add(b.publisher);
         });
 
-        setAuthorOptions(Array.from(authorSet));
+        const authorRes = await bookService.getAuthors({ limit: 100 });
+        const apiAuthors = authorRes.items.map((item: any) => item.author);
+        setAuthorOptions(apiAuthors);
         setPublisherOptions(Array.from(publisherSet));
       } catch (err) {
         console.error("Failed to load filter options:", err);
@@ -91,6 +95,13 @@ export default function BestsellersPage() {
           }
         })
       );
+
+      if (sortOrder === "name-asc") {
+        enriched.sort((a, b) => a.title.localeCompare(b.title));
+      }
+      if (sortOrder === "name-desc") {
+        enriched.sort((a, b) => b.title.localeCompare(a.title));
+      }
 
       // 3️⃣ Cập nhật state
       setBooks(enriched);
@@ -224,6 +235,8 @@ export default function BestsellersPage() {
           >
             <option value="desc">{b("bestselling")}</option>
             <option value="asc">{b("leastSelling")}</option>
+            <option value="name-asc">{b("nameAsc")}</option>
+            <option value="name-desc">{b("nameDesc")}</option>
           </select>
         </div>
         <div>
