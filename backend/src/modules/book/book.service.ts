@@ -35,37 +35,6 @@ export class BookService {
     return savedBook;
   }
 
-  // async findAll(searchKey?: string, page = 1, limit = 10) {
-  //   const filter: any = {};
-
-  //   if (searchKey) {
-  //     filter.$or = [
-  //       { title: { $regex: searchKey, $options: 'i' } },
-  //       { author: { $regex: searchKey, $options: 'i' } },
-  //     ];
-  //   }
-
-  //   const skip = (page - 1) * limit;
-
-  //   const [items, total] = await Promise.all([
-  //     this.bookModel
-  //       .find(filter)
-  //       .populate('category')
-  //       .skip(skip)
-  //       .limit(limit)
-  //       .exec(),
-  //     this.bookModel.countDocuments(filter),
-  //   ]);
-
-  //   return {
-  //     items,
-  //     total,
-  //     page,
-  //     limit,
-  //     totalPages: Math.ceil(total / limit),
-  //   };
-  // }
-
   // Index một book lên ES (gọi sau create/update)
   async indexBook(book: any) {
     const body = {
