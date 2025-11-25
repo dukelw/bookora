@@ -225,6 +225,7 @@
     "payWithCod": "Thanh toán khi nhận hàng"
   },
   "order": {
+    "statusHistory": "Lịch sử trạng thái",
     "loyaltyAmount": "Giảm giá bởi điểm",
     "tax": "Thuế",
     "title": "Đơn hàng của bạn",
@@ -457,6 +458,13 @@
       "deleteConfirmMessage": "Bạn có chắc muốn xóa danh mục này không?"
     },
     "p": {
+      "orderID": "Mã đơn hàng",
+      "today": "Hôm nay",
+      "yesterday": "Hôm qua",
+      "this_week": "Tuần này",
+      "custom": "Tùy chỉnh",
+      "allTime": "Tất cả thời gian",
+      "this_month": "Tháng này",
       "updateSuccess": "Cập nhật đơn hàng thành công!",
       "updateFailed": "Cập nhật đơn hàng thất bại!",
       "dashboard": "Trang quản trị",

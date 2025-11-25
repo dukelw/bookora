@@ -19,7 +19,6 @@ import { useTranslations } from "use-intl";
 import { formatCurrency } from "@/utils/format";
 import OrderDetailModal from "./components/OrderDetailModal";
 import { OrderStatus } from "@/enums";
-import { userService } from "@/services/userService";
 import { UserInfoCell } from "./components/UserInfoCell";
 
 export default function OrderManagementPage() {
@@ -34,6 +33,8 @@ export default function OrderManagementPage() {
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [showDetail, setShowDetail] = useState(false);
   const [newStatus, setNewStatus] = useState<string>("");
+  const [timeFilter, setTimeFilter] = useState<string>("");
+  const [customDateRange, setCustomDateRange] = useState<string>("");
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -41,6 +42,8 @@ export default function OrderManagementPage() {
         page: currentPage,
         limit: pageSize,
         status: statusFilter,
+        timePreset: timeFilter,
+        dateRange: customDateRange,
       });
       setOrders(res.items || res.data || []);
       setTotal(res.total || 0);
@@ -48,7 +51,7 @@ export default function OrderManagementPage() {
       console.error(err);
       toast.error(t("errorLoad"));
     }
-  }, [currentPage, pageSize, statusFilter, t]);
+  }, [currentPage, pageSize, statusFilter, timeFilter, customDateRange, t]);
 
   useEffect(() => {
     fetchOrders();
@@ -71,10 +74,10 @@ export default function OrderManagementPage() {
   };
 
   const columns: Column<any>[] = [
-    { key: "_id", label: "Order ID" },
+    { key: "_id", label: t("p.orderID") },
     {
       key: "user",
-      label: "Người mua",
+      label: t("p.buyer"),
       render: (order) => <UserInfoCell userId={order.user} />,
     },
     {
@@ -163,12 +166,13 @@ export default function OrderManagementPage() {
 
       <div className="p-6 shadow rounded-2xl">
         {/* Filter */}
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-wrap gap-4 items-center mb-6">
+          {/* Status Filter */}
           <Dropdown
             inline
             arrowIcon={false}
             label={
-              <button className="w-48 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center">
+              <button className="min-w-[180px] px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 flex justify-between items-center transition-colors">
                 {statusFilter ? t(`p.${statusFilter}`) : t("p.all")}
                 <FaChevronDown className="ml-2" />
               </button>
@@ -178,7 +182,6 @@ export default function OrderManagementPage() {
             <DropdownItem onClick={() => setStatusFilter("")}>
               {t("p.all")}
             </DropdownItem>
-
             {Object.values(OrderStatus).map((status) => (
               <DropdownItem
                 key={status}
@@ -188,6 +191,49 @@ export default function OrderManagementPage() {
               </DropdownItem>
             ))}
           </Dropdown>
+
+          {/* Time Filter */}
+          <Dropdown
+            inline
+            arrowIcon={false}
+            label={
+              <button className="min-w-[180px] px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 flex justify-between items-center transition-colors">
+                {timeFilter ? t(`p.${timeFilter}`) : t("p.allTime")}
+                <FaChevronDown className="ml-2" />
+              </button>
+            }
+            dismissOnClick
+          >
+            {[
+              "all",
+              "today",
+              "yesterday",
+              "this_week",
+              "this_month",
+              "custom",
+            ].map((preset) => (
+              <DropdownItem
+                key={preset}
+                onClick={() => {
+                  setTimeFilter(preset);
+                  if (preset !== "custom") setCustomDateRange("");
+                }}
+              >
+                {preset === "all" ? t("p.allTime") : t(`p.${preset}`)}
+              </DropdownItem>
+            ))}
+          </Dropdown>
+
+          {/* Custom Date Range */}
+          {timeFilter === "custom" && (
+            <input
+              type="text"
+              value={customDateRange}
+              onChange={(e) => setCustomDateRange(e.target.value)}
+              placeholder="YYYY-MM-DD,YYYY-MM-DD"
+              className="border border-gray-300 rounded-lg px-3 py-2 w-[220px] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            />
+          )}
         </div>
 
         <div className="overflow-x-auto rounded">

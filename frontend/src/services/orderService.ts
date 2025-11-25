@@ -59,11 +59,15 @@ export const orderService = {
     limit = 10,
     status = "",
     userId = "",
+    timePreset = "",
+    dateRange = "",
   }: {
     page?: number;
     limit?: number;
     status?: string;
     userId?: string;
+    timePreset?: string;
+    dateRange?: string;
   } = {}) {
     const params = new URLSearchParams({
       page: String(page),
@@ -71,6 +75,8 @@ export const orderService = {
     });
     if (status) params.append("status", status);
     if (userId) params.append("userId", userId);
+    if (timePreset) params.append("timePreset", timePreset);
+    if (dateRange) params.append("dateRange", dateRange);
 
     const res: AxiosResponse = await api.get(
       `${API_URL}/all?${params.toString()}`

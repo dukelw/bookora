@@ -32,4 +32,22 @@ export class GetAllOrdersDto {
     description: 'Lọc theo user (tùy chọn)',
   })
   userId?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: 'today',
+    description:
+      'Filter theo thời gian: today | yesterday | this_week | this_month | custom',
+  })
+  timePreset?: 'today' | 'yesterday' | 'this_week' | 'this_month' | 'custom';
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: '2025-11-01,2025-11-25',
+    description:
+      'Dùng khi timePreset = custom. Format: startDate,endDate (YYYY-MM-DD)',
+  })
+  dateRange?: string;
 }

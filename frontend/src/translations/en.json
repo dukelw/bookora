@@ -73,7 +73,8 @@
     "phone": "Phone",
     "email": "Email",
     "address": "Address",
-    "note": "Note"
+    "note": "Note",
+    "statusHistory": "Status History"
   },
   "user": {
     "phone": "Phone Number",
@@ -457,8 +458,15 @@
       "deleteConfirmMessage": "Are you sure you want to delete this category?"
     },
     "p": {
-      "updateSuccess": "Cập nhật đơn hàng thành công!",
-      "updateFailed": "Cập nhật đơn hàng thất bại!",
+      "orderID": "Order ID",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "this_week": "This Week",
+      "custom": "Custom",
+      "allTime": "All Time",
+      "this_month": "This Month",
+      "updateSuccess": "Order updated successfully!",
+      "updateFailed": "Order update failed!",
       "dashboard": "Dashboard",
       "orderManagement": "Order Management",
       "buyer": "Buyer",

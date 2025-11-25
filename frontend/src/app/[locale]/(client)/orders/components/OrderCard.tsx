@@ -15,6 +15,7 @@ import { useState } from "react";
 import { eventBus } from "@/utils/eventBus";
 import { useTranslations } from "use-intl";
 import { OrderStatus } from "@/enums";
+import OrderStatusTimeline from "./OrderStatusTimeline";
 
 export default function OrderCard({ order, expanded, onToggle }: any) {
   const t = useTranslations("order");
@@ -163,6 +164,15 @@ export default function OrderCard({ order, expanded, onToggle }: any) {
             >
               <OrderShippingInfo shipping={order.shippingAddress} />
               <OrderPaymentInfo payment={order} />
+              {/* Timeline trạng thái */}
+              <div>
+                <h6 className="text-white font-semibold mb-2">
+                  {t("statusHistory")}
+                </h6>
+                <OrderStatusTimeline
+                  statusHistory={order.statusHistory || []}
+                />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

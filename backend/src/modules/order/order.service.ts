@@ -159,6 +159,12 @@ export class OrderService {
       loyaltyPointsUsed: Number(used) || 0,
       loyaltyDiscountAmount: Number(loyaltyDiscountAmount),
       loyaltyPointsEarned: 0, // sẽ cộng khi PAID/SHIPPED
+      statusHistory: [
+        {
+          status: OrderStatus.PENDING,
+          updatedAt: new Date(),
+        },
+      ],
     };
     const createdOrder = await this.orderModel.create(createPayload);
 
@@ -295,6 +301,10 @@ export class OrderService {
 
     // 2) Gán trạng thái
     order.status = status;
+    order.statusHistory.push({
+      status,
+      updatedAt: new Date(),
+    });
 
     // 3) PAID/SHIPPED lần đầu -> cộng điểm
     if (
@@ -336,16 +346,74 @@ export class OrderService {
   }
 
   async findAllOrders(dto: GetAllOrdersDto) {
-    const { status, userId } = dto;
+    const { status, userId, timePreset, dateRange } = dto;
 
+    // ---- Pagination ----
     const pageNum = Math.max(1, Number(dto.page) || 1);
-    const pageSize = Math.max(1, Math.min(100, Number(dto.limit) || 10));
+    const pageSize = Math.max(1, Math.min(100, Number(dto.limit) || 20)); // default 20
     const skip = (pageNum - 1) * pageSize;
 
+    // ---- Build query ----
     const query: any = {};
     if (status) query.status = status;
     if (userId) query.user = userId;
 
+    // ---- Filter theo thời gian ----
+    if (timePreset) {
+      const now = new Date();
+      let start: Date | undefined;
+      let end: Date | undefined;
+
+      switch (timePreset) {
+        case 'today':
+          start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          end = new Date(start);
+          end.setDate(end.getDate() + 1);
+          break;
+
+        case 'yesterday':
+          start = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() - 1,
+          );
+          end = new Date(start);
+          end.setDate(end.getDate() + 1);
+          break;
+
+        case 'this_week': {
+          const dayOfWeek = now.getDay(); // 0 (Chủ nhật) - 6 (Thứ bảy)
+          start = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() - dayOfWeek,
+          );
+          end = new Date(start);
+          end.setDate(end.getDate() + 7);
+          break;
+        }
+
+        case 'this_month':
+          start = new Date(now.getFullYear(), now.getMonth(), 1);
+          end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+          break;
+
+        case 'custom':
+          if (dateRange) {
+            const [startStr, endStr] = dateRange.split(',');
+            start = new Date(startStr);
+            end = new Date(endStr);
+            end.setDate(end.getDate() + 1); // bao gồm ngày cuối
+          }
+          break;
+      }
+
+      if (start && end) {
+        query.createdAt = { $gte: start, $lt: end };
+      }
+    }
+
+    // ---- Query database ----
     const [orders, total] = await Promise.all([
       this.orderModel
         .find(query)
@@ -357,11 +425,12 @@ export class OrderService {
               'title author publisher price slug images variants description',
           },
         ])
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1 }) // mới nhất lên đầu
         .skip(skip)
         .limit(pageSize)
         .lean()
         .exec(),
+
       this.orderModel.countDocuments(query),
     ]);
 

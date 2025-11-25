@@ -79,6 +79,17 @@ export class Order extends Document {
 
   @Prop({ type: Types.ObjectId, ref: 'Cart', required: true })
   cart: Types.ObjectId;
+
+  @Prop({
+    type: [
+      {
+        status: { type: String, enum: OrderStatus, required: true },
+        updatedAt: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  })
+  statusHistory: { status: OrderStatus; updatedAt: Date }[];
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
